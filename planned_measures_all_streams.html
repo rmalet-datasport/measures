@@ -11,11 +11,13 @@
   .top { margin-bottom: 2rem; }
   .top h1 { font-size: 22px; font-weight: 600; color: #111; margin-bottom: 4px; }
   .top p { font-size: 13px; color: #888; }
-  .summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 2rem; }
+  .summary { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 2rem; }
   .metric { background: #fff; border: 0.5px solid #e0ddd6; border-radius: 10px; padding: 1rem 1.125rem; }
   .metric-label { font-size: 12px; color: #888; margin-bottom: 4px; }
   .metric-value { font-size: 26px; font-weight: 600; color: #111; }
-  .filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; align-items: center; }
+  .filters-group { margin-bottom: 1.5rem; }
+  .filter-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #bbb; margin-right: 2px; white-space: nowrap; }
   .filter-btn { font-size: 13px; padding: 5px 14px; border-radius: 20px; border: 1px solid #d8d5ce; background: #fff; color: #666; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 6px; }
   .filter-btn:hover { border-color: #aaa; color: #333; }
   .filter-btn.active { background: #111; color: #fff; border-color: #111; }
@@ -72,14 +74,24 @@
     <p>5 streams · 4 quarters · Effort / impact view</p>
   </div>
   <div class="summary" id="summary"></div>
-  <div class="filters" id="filters">
-    <button class="filter-btn active" data-stream="all">All</button>
-    <button class="filter-btn" data-stream="global"><span class="dot dot-global"></span>Global</button>
-    <button class="filter-btn" data-stream="coach"><span class="dot dot-coach"></span>Quick Wins Coach</button>
-    <button class="filter-btn" data-stream="b2b"><span class="dot dot-b2b"></span>B2B</button>
-    <button class="filter-btn" data-stream="b2c"><span class="dot dot-b2c"></span>B2C</button>
-    <button class="filter-btn" data-stream="data"><span class="dot dot-data"></span>Data collection</button>
-    <button class="filter-btn" data-stream="magazine"><span class="dot dot-magazine"></span>Fit for Life Magazine</button>
+  <div class="filters-group">
+    <div class="filters" id="filters">
+      <span class="filter-label">Stream</span>
+      <button class="filter-btn active" data-stream="all">All</button>
+      <button class="filter-btn" data-stream="global"><span class="dot dot-global"></span>Global</button>
+      <button class="filter-btn" data-stream="coach"><span class="dot dot-coach"></span>Quick Wins Coach</button>
+      <button class="filter-btn" data-stream="b2b"><span class="dot dot-b2b"></span>B2B</button>
+      <button class="filter-btn" data-stream="b2c"><span class="dot dot-b2c"></span>B2C</button>
+      <button class="filter-btn" data-stream="data"><span class="dot dot-data"></span>Data collection</button>
+      <button class="filter-btn" data-stream="magazine"><span class="dot dot-magazine"></span>Fit for Life Magazine</button>
+    </div>
+    <div class="filters" id="status-filters">
+      <span class="filter-label">Status</span>
+      <button class="filter-btn active" data-status="all">All</button>
+      <button class="filter-btn" data-status="todo">To do</button>
+      <button class="filter-btn" data-status="inprogress">In progress</button>
+      <button class="filter-btn" data-status="done">Done</button>
+    </div>
   </div>
   <div id="table-container"></div>
 </div>
@@ -176,15 +188,18 @@ const impactLabels = { low:"Low", med:"Medium", high:"High", vhigh:"Very high" }
 const statusLabels = { todo:"To do", inprogress:"In progress", done:"Done" };
 
 let activeStream = "all";
+let activeStatus = "all";
 
 function renderSummary(data) {
   const total      = data.length;
+  const done       = data.filter(m => m.status === "done").length;
   const inprogress = data.filter(m => m.status === "inprogress").length;
   const quickWins  = data.filter(m => m.effort === "low" && (m.impact === "high" || m.impact === "vhigh")).length;
   const q3         = data.filter(m => m.q === "Q3 2026").length;
   document.getElementById("summary").innerHTML = `
     <div class="metric"><div class="metric-label">Total measures</div><div class="metric-value">${total}</div></div>
-    <div class="metric"><div class="metric-label">In progress</div><div class="metric-value">${inprogress}</div></div>
+    <div class="metric"><div class="metric-label">Done</div><div class="metric-value" style="color:#2d6a4a">${done}</div></div>
+    <div class="metric"><div class="metric-label">In progress</div><div class="metric-value" style="color:#854F0B">${inprogress}</div></div>
     <div class="metric"><div class="metric-label">Quick wins</div><div class="metric-value">${quickWins}</div></div>
     <div class="metric"><div class="metric-label">To deliver Q3 2026</div><div class="metric-value">${q3}</div></div>
   `;
@@ -192,11 +207,17 @@ function renderSummary(data) {
 
 function renderTable() {
   const streams = activeStream === "all" ? ["global","coach","b2b","b2c","data","magazine"] : [activeStream];
-  const filtered = measures.filter(m => activeStream === "all" || m.stream === activeStream);
+  const filtered = measures.filter(m =>
+    (activeStream === "all" || m.stream === activeStream) &&
+    (activeStatus === "all" || m.status === activeStatus)
+  );
   renderSummary(filtered);
   let html = "";
   streams.forEach(s => {
-    const rows = measures.filter(m => m.stream === s);
+    const rows = measures.filter(m =>
+      m.stream === s &&
+      (activeStatus === "all" || m.status === activeStatus)
+    );
     if (!rows.length) return;
     const meta = streamMeta[s];
     html += `<div class="stream-section">
@@ -227,7 +248,15 @@ document.getElementById("filters").addEventListener("click", e => {
   const btn = e.target.closest(".filter-btn");
   if (!btn) return;
   activeStream = btn.dataset.stream;
-  document.querySelectorAll(".filter-btn").forEach(b => b.classList.toggle("active", b === btn));
+  document.querySelectorAll("#filters .filter-btn").forEach(b => b.classList.toggle("active", b === btn));
+  renderTable();
+});
+
+document.getElementById("status-filters").addEventListener("click", e => {
+  const btn = e.target.closest(".filter-btn");
+  if (!btn) return;
+  activeStatus = btn.dataset.status;
+  document.querySelectorAll("#status-filters .filter-btn").forEach(b => b.classList.toggle("active", b === btn));
   renderTable();
 });
 

@@ -71,7 +71,7 @@
 <div class="page">
   <div class="top">
     <h1>Planned Measures</h1>
-    <p>5 streams · 4 quarters · Effort / impact view</p>
+    <p>6 streams · 4 quarters · Effort / impact view</p>
   </div>
   <div class="summary" id="summary"></div>
   <div class="filters-group">
@@ -105,14 +105,14 @@ const measures = [
   { stream:"global", name:"Sleeping accounts - retargeting", sub:"personalized retargeting campaigns", q:"Q4 2026", effort:"high", impact:"low", status:"todo" },
   { stream:"global", name:"Email A/B test system", sub:"set up an ab test system for our emails", q:"Q4 2026", effort:"vhigh", impact:"high", status:"todo" },
 
-  { stream:"coach", name:"Teaser Coach in confirmation email", sub:"HTML template in progress", q:"Q3 2026", effort:"low", impact:"high", status:"inprogress" },
-  { stream:"coach", name:"Post registration email teasing", sub:"Teasing pre race with sequencing and different bias", q:"Q3 2026", effort:"low", impact:"high", status:"todo" },
-  { stream:"coach", name:"Post race email teasing", sub:"Post race subscription teasing with a sequencing J+1 → J+21", q:"Q3 2026", effort:"low", impact:"med", status:"todo" },
+  { stream:["coach","magazine"], name:"Teaser Coach in confirmation email", sub:"HTML template in progress", q:"Q3 2026", effort:"low", impact:"high", status:"inprogress" },
+  { stream:["coach","magazine"], name:"Post registration email teasing", sub:"Teasing pre race with sequencing and different bias", q:"Q3 2026", effort:"low", impact:"high", status:"todo" },
+  { stream:["coach","magazine"], name:"Post race email teasing", sub:"Post race subscription teasing with a sequencing J+1 → J+21", q:"Q3 2026", effort:"low", impact:"med", status:"todo" },
   { stream:"coach", name:"Email A/B test", sub:"Funnel overview + variants based on emails with engagement", q:"Q4 2026", effort:"med", impact:"med", status:"todo" },
-  { stream:"coach", name:"Dashboard page CTA Coach", sub:"Design to be defined", q:"Q4 2026", effort:"low", impact:"vhigh", status:"todo" },
-  { stream:"coach", name:"Results page CTA Coach", sub:"Design to be defined", q:"Q4 2026", effort:"low", impact:"vhigh", status:"todo" },
-  { stream:"coach", name:"Athlete search page CTA Coach", sub:"teasing for the coach on results page?", q:"Q3 2026", effort:"low", impact:"low", status:"todo" },
-  { stream:"coach", name:"myDS ab tests on teasing", sub:"to be set up after implementation", q:"Q4 2026", effort:"low", impact:"vhigh", status:"todo" },
+  { stream:["coach","magazine"], name:"Dashboard page CTA Coach", sub:"Design to be defined", q:"Q4 2026", effort:"low", impact:"vhigh", status:"todo" },
+  { stream:["coach","magazine"], name:"Results page CTA Coach", sub:"Design to be defined", q:"Q4 2026", effort:"low", impact:"vhigh", status:"todo" },
+  { stream:["coach","magazine"], name:"Athlete search page CTA Coach", sub:"teasing for the coach on results page?", q:"Q3 2026", effort:"low", impact:"low", status:"todo" },
+  { stream:["coach","magazine"], name:"myDS ab tests on teasing", sub:"to be set up after implementation", q:"Q4 2026", effort:"low", impact:"vhigh", status:"todo" },
   { stream:"coach", name:"Fit for Life Coach KPIs", sub:"define list of KPIs that are missing", q:"Q3 2026", effort:"high", impact:"high", status:"inprogress" },
   { stream:"coach", name:"Tracking reporting", sub:"create a global reporting with metabase + analytics", q:"Q4 2026", effort:"high", impact:"high", status:"todo" },
   { stream:"coach", name:"Satisfation online form", sub:"create an online form to check satisfaction", q:"Q3 2026", effort:"low", impact:"low", status:"done" },
@@ -205,17 +205,21 @@ function renderSummary(data) {
   `;
 }
 
+function inStream(m, s) {
+  return Array.isArray(m.stream) ? m.stream.includes(s) : m.stream === s;
+}
+
 function renderTable() {
   const streams = activeStream === "all" ? ["global","coach","b2b","b2c","data","magazine"] : [activeStream];
   const filtered = measures.filter(m =>
-    (activeStream === "all" || m.stream === activeStream) &&
+    (activeStream === "all" || inStream(m, activeStream)) &&
     (activeStatus === "all" || m.status === activeStatus)
   );
   renderSummary(filtered);
   let html = "";
   streams.forEach(s => {
     const rows = measures.filter(m =>
-      m.stream === s &&
+      inStream(m, s) &&
       (activeStatus === "all" || m.status === activeStatus)
     );
     if (!rows.length) return;

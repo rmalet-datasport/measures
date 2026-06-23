@@ -34,6 +34,14 @@
   .measure-row { display: grid; grid-template-columns: 2.2fr 0.8fr 0.8fr 0.8fr 0.8fr; padding: 11px 16px; border-bottom: 0.5px solid #f0ede8; align-items: center; transition: background 0.1s; }
   .measure-row:last-child { border-bottom: none; }
   .measure-row:hover { background: #faf9f7; }
+  .measure-row.is-done { background: #f2faf5; }
+  .measure-row.is-done:hover { background: #e8f6ed; }
+  .measure-row.is-done .measure-name { color: #2d6a4a; }
+  .measure-row.is-done .measure-sub { color: #6aab87; }
+  .measure-row.is-inprogress { background: #fffbf2; }
+  .measure-row.is-inprogress:hover { background: #fef6e4; }
+  .measure-row.is-inprogress .measure-name { color: #7a4a0a; }
+  .measure-row.is-inprogress .measure-sub { color: #b8894a; }
   .measure-name { font-size: 13.5px; color: #111; font-weight: 500; line-height: 1.35; }
   .measure-sub { font-size: 12px; color: #999; margin-top: 2px; font-weight: 400; }
   .badge { font-size: 11px; padding: 3px 9px; border-radius: 20px; display: inline-block; font-weight: 500; white-space: nowrap; }
@@ -95,7 +103,7 @@ const measures = [
   { stream:"coach", name:"myDS ab tests on teasing", sub:"to be set up after implementation", q:"Q4 2026", effort:"low", impact:"vhigh", status:"todo" },
   { stream:"coach", name:"Fit for Life Coach KPIs", sub:"define list of KPIs that are missing", q:"Q3 2026", effort:"high", impact:"high", status:"inprogress" },
   { stream:"coach", name:"Tracking reporting", sub:"create a global reporting with metabase + analytics", q:"Q4 2026", effort:"high", impact:"high", status:"todo" },
-  { stream:"coach", name:"Satisfation online form", sub:"create an online form to check satisfaction", q:"Q3 2026", effort:"low", impact:"low", status:"inprogress" },
+  { stream:"coach", name:"Satisfation online form", sub:"create an online form to check satisfaction", q:"Q3 2026", effort:"low", impact:"low", status:"done" },
 
   { stream:"b2b", name:"Custom events GA4", sub:"page_view, reg_start, reg_complete, payment_complete", q:"Q3 2026", effort:"med", impact:"high", status:"inprogress" },
   { stream:"b2b", name:"Heatmap tool + drop-out session recording", sub:"Define if we already have a tool", q:"Q3 2026", effort:"low", impact:"high", status:"todo" },
@@ -111,6 +119,7 @@ const measures = [
   { stream:"b2b", name:"NPS survey post 48h", sub:"", q:"Q4 2026", effort:"low", impact:"med", status:"todo" },
   { stream:"b2b", name:"Best practices content + activation", sub:"Regular sessions with organizers", q:"Q1 2027", effort:"med", impact:"med", status:"todo" },
   { stream:"b2b", name:"B2B KPIs", sub:"define list of KPIs that are missing", q:"Q3 2026", effort:"high", impact:"high", status:"todo" },
+  { stream:"b2b", name:"Sparta Co-Pilot — AI Marketing Co-pilot", sub:"POC · AI campaign generator per segment × gate × channel, smart athlete segmentation, brand voice upload · Copenhagen Marathon demo", q:"Q3 2026", effort:"vhigh", impact:"vhigh", status:"done" },
   { stream:"b2b", name:"AI Campaign Manager tool", sub:"AI tool to help event organizers to create their campaigns", q:"Q3 2026", effort:"vhigh", impact:"high", status:"todo" },
   { stream:"b2b", name:"AI Assets Creation tool", sub:"AI tool to help event organizers to create their assets", q:"Q3 2026", effort:"vhigh", impact:"high", status:"todo" },
   { stream:"b2b", name:"Referal Program", sub:"refer a friend", q:"Q3 2026", effort:"med", impact:"vhigh", status:"todo" },
@@ -201,7 +210,7 @@ function renderTable() {
           <div class="col-header">Status</div>
         </div>`;
     rows.forEach(m => {
-      html += `<div class="measure-row">
+      html += `<div class="measure-row${m.status === 'done' ? ' is-done' : m.status === 'inprogress' ? ' is-inprogress' : ''}">
         <div><div class="measure-name">${m.name}</div>${m.sub ? `<div class="measure-sub">${m.sub}</div>` : ""}</div>
         <div><span class="badge badge-q">${m.q}</span></div>
         <div><span class="badge effort-${m.effort}">${effortLabels[m.effort]}</span></div>

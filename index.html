@@ -105,17 +105,19 @@ const measures = [
   { stream:"global", name:"Sleeping accounts - retargeting", sub:"personalized retargeting campaigns", q:"Q4 2026", effort:"high", impact:"low", status:"todo" },
   { stream:"global", name:"Email A/B test system", sub:"set up an ab test system for our emails", q:"Q4 2026", effort:"vhigh", impact:"high", status:"todo" },
 
-  { stream:["coach","magazine"], name:"Teaser Coach in confirmation email", sub:"HTML template in progress", q:"Q3 2026", effort:"low", impact:"high", status:"inprogress" },
+  { stream:["coach","magazine"], name:"Teaser in confirmation email", sub:"HTML template in progress", q:"Q3 2026", effort:"low", impact:"high", status:"inprogress" },
   { stream:["coach","magazine"], name:"Post registration email teasing", sub:"Teasing pre race with sequencing and different bias", q:"Q3 2026", effort:"low", impact:"high", status:"todo" },
   { stream:["coach","magazine"], name:"Post race email teasing", sub:"Post race subscription teasing with a sequencing J+1 → J+21", q:"Q3 2026", effort:"low", impact:"med", status:"todo" },
   { stream:"coach", name:"Email A/B test", sub:"Funnel overview + variants based on emails with engagement", q:"Q4 2026", effort:"med", impact:"med", status:"todo" },
-  { stream:["coach","magazine"], name:"Dashboard page CTA Coach", sub:"Design to be defined", q:"Q4 2026", effort:"low", impact:"vhigh", status:"todo" },
-  { stream:["coach","magazine"], name:"Results page CTA Coach", sub:"Design to be defined", q:"Q4 2026", effort:"low", impact:"vhigh", status:"todo" },
-  { stream:["coach","magazine"], name:"Athlete search page CTA Coach", sub:"teasing for the coach on results page?", q:"Q3 2026", effort:"low", impact:"low", status:"todo" },
+  { stream:["coach","magazine"], name:"Dashboard page CTA", sub:"Design to be defined", q:"Q4 2026", effort:"low", impact:"vhigh", status:"todo" },
+  { stream:["coach","magazine"], name:"Results page CTA", sub:"Design to be defined", q:"Q4 2026", effort:"low", impact:"vhigh", status:"todo" },
+  { stream:["coach","magazine"], name:"Athlete search page CTA", sub:"teasing for the coach on athletes' search page?", q:"Q3 2026", effort:"low", impact:"low", status:"todo" },
   { stream:["coach","magazine"], name:"myDS ab tests on teasing", sub:"to be set up after implementation", q:"Q4 2026", effort:"low", impact:"vhigh", status:"todo" },
+  { stream:["coach","magazine"], name:"Congratulation's email", sub:"integrate teaser in the congratulation's email", q:"Q4 2026", effort:"low", impact:"high", status:"todo" },
+  { stream:["coach","magazine"], name:"Fit for Life Newsletter", sub:"Use Fit for Life Newsletter to promote our products (coach + abo)", q:"Q4 2026", effort:"low", impact:"high", status:"todo" },
   { stream:"coach", name:"Fit for Life Coach KPIs", sub:"define list of KPIs that are missing", q:"Q3 2026", effort:"high", impact:"high", status:"inprogress" },
   { stream:"coach", name:"Tracking reporting", sub:"create a global reporting with metabase + analytics", q:"Q4 2026", effort:"high", impact:"high", status:"todo" },
-  { stream:"coach", name:"Satisfation online form", sub:"create an online form to check satisfaction", q:"Q3 2026", effort:"low", impact:"low", status:"done" },
+  { stream:"coach", name:"Satisfaction online form", sub:"create an online form to check satisfaction", q:"Q3 2026", effort:"low", impact:"low", status:"done" },
   { stream:"coach", name:"Online form Executive Reporting", sub:"create the summary exec of feedback on the coach", q:"Q3 2026", effort:"low", impact:"low", status:"inprogress" },
 
   { stream:"b2b", name:"Custom events GA4", sub:"page_view, reg_start, reg_complete, payment_complete", q:"Q3 2026", effort:"med", impact:"high", status:"inprogress" },
@@ -174,7 +176,17 @@ const measures = [
   { stream:"data", name:"Other sports", sub:"Enriched profile to know if they practice others sports", q:"Q4 2026", effort:"low", impact:"med", status:"todo" },
   { stream:"data", name:"Club Members", sub:"Information on knowing if they belong to sports clubs", q:"Q4 2026", effort:"low", impact:"med", status:"todo" },
  
-  { stream:"magazine", name:"Fit for Life magazine — plan", sub:"To discuss with stakeholdes", q:"Q4 2026", effort:"vhigh", impact:"vhigh", status:"in progress" },
+  { stream:"magazine", name:"Fit for Life magazine — plan", sub:"To discuss with stakeholdes", q:"Q4 2026", effort:"vhigh", impact:"vhigh", status:"inprogress" },
+  { stream:"magazine", name:"Website Home Datasport", sub:"Pre-race touchpoint — magazine presence on the Datasport home page", q:"Q4 2026", effort:"med", impact:"med", status:"todo" },
+  { stream:"magazine", name:"Articles / content pages", sub:"Pre-race touchpoint — magazine integration within articles / content", q:"Q4 2026", effort:"med", impact:"med", status:"todo" },
+  { stream:"magazine", name:"Online registration (OnReg)", sub:"Pre-race touchpoint — magazine offer during online race registration", q:"Q4 2026", effort:"med", impact:"med", status:"todo" },
+  { stream:"magazine", name:"Welcome Mail", sub:"Pre-race touchpoint — magazine teasing in the welcome mail", q:"Q4 2026", effort:"med", impact:"med", status:"todo" },
+  { stream:"magazine", name:"Fit for Life Website", sub:"Optimize the website to increase conversions on the magazine via touchpoints", q:"Q4 2026", effort:"med", impact:"med", status:"todo" },
+  { stream:["magazine", "coach"], name:"Start list", sub:"Pre-race touchpoint — magazine presence on the start list", q:"Q4 2026", effort:"med", impact:"med", status:"todo" },
+  { stream:"magazine", name:"Datasport Newsletter", sub:"Pre-race touchpoint — magazine teasing in the Datasport newsletter", q:"Q4 2026", effort:"med", impact:"med", status:"todo" },
+  { stream:"magazine", name:"FFL Coach", sub:"Pre-race touchpoint — cross-promotion of the magazine via the Fit for Life Coach", q:"Q4 2026", effort:"med", impact:"med", status:"todo" },
+  { stream:"magazine", name:"follow-up emails on sample receivers", sub:"Create a dedicated communication on the receivers of the magazine samples", q:"Q4 2026", effort:"med", impact:"high", status:"todo" },
+  { stream:"magazine", name:"Digital Presence by partners", sub:"Define a strategy for digital acquisition by partners (define best practices and acquisition strategy)", q:"Q4 2026", effort:"vhigh", impact:"high", status:"todo" },
 ];
 
 const streamMeta = {

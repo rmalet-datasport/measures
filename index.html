@@ -28,6 +28,32 @@
   .dot-b2c { background: #378ADD; }
   .dot-data { background: #7F77DD; }
   .dot-magazine { background: #51cad0; }
+  .tabs { display:flex; gap:24px; margin-bottom:1.5rem; border-bottom:1px solid #e0ddd6; }
+  .tab-btn { font-size:14px; font-weight:600; padding:0 0 10px; border:none; background:none; color:#999; cursor:pointer; border-bottom:2px solid transparent; }
+  .tab-btn:hover { color:#333; }
+  .tab-btn.active { color:#111; border-bottom-color:#111; }
+  .gantt-wrap { --label-w: 230px; background:#fff; }
+  .gantt-header, .gantt-row { display:grid; grid-template-columns:var(--label-w) 1fr; align-items:center; gap:12px; padding:9px 16px; }
+  .gantt-header { background:#F7F6F3; border-bottom:0.5px solid #e0ddd6; position:relative; }
+  .gantt-header-quarters { display:flex; position:relative; }
+  .gantt-header-quarters > div { flex:1; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:#999; }
+  .gantt-row { border-bottom:0.5px solid #f0ede8; }
+  .gantt-row:last-child { border-bottom:none; }
+  .gantt-row:hover { background:#faf9f7; }
+  .gantt-label { font-size:12.5px; font-weight:500; color:#333; display:flex; flex-direction:column; gap:2px; }
+  .gantt-label-title { display:flex; align-items:center; gap:7px; }
+  .gantt-label-sub { font-size:11px; font-weight:400; color:#999; line-height:1.3; }
+  .gantt-track { position:relative; height:22px; }
+  .gantt-bar { position:absolute; top:50%; transform:translateY(-50%); height:20px; border-radius:6px; display:flex; align-items:center; padding:0 8px; overflow:hidden; box-shadow:0 1px 2px rgba(0,0,0,0.08); }
+  .gantt-today { position:absolute; top:-9px; bottom:-9px; width:0; border-left:1.5px dashed #E24B4A; z-index:2; pointer-events:none; }
+  .gantt-today-label { position:absolute; top:-9px; transform:translate(-50%,-100%); font-size:9.5px; font-weight:700; color:#E24B4A; background:#fff; padding:1px 5px; border-radius:4px; white-space:nowrap; z-index:3; }
+  .seg-todo { background:#d8d5ce; }
+  .seg-inprogress { background:repeating-linear-gradient(45deg, #f0b95c 0 6px, #e8ab4c 6px 12px); }
+  .seg-done { background:#6aab87; }
+  .found-dot { width:7px; height:7px; border-radius:50%; background:#534AB7; display:inline-block; flex-shrink:0; }
+  .roadmap-legend { display:flex; flex-wrap:wrap; gap:16px; margin-top:14px; padding:12px 16px 0; font-size:11.5px; color:#888; }
+  .roadmap-legend span { display:flex; align-items:center; gap:6px; }
+  .legend-seg { width:10px; height:10px; border-radius:3px; display:inline-block; }
   .stream-section { margin-bottom: 2rem; }
   .stream-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #888; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px; }
   .table-wrap { background: #fff; border: 0.5px solid #e0ddd6; border-radius: 10px; overflow: hidden; }
@@ -48,6 +74,7 @@
   .measure-sub { font-size: 12px; color: #999; margin-top: 2px; font-weight: 400; }
   .badge { font-size: 11px; padding: 3px 9px; border-radius: 20px; display: inline-block; font-weight: 500; white-space: nowrap; }
   .badge-q { background: #F0EDE8; color: #666; }
+  .badge-foundation { background: #EEEDFE; color: #534AB7; margin-left: 7px; vertical-align: middle; }
   .effort-low  { background: #EAF3DE; color: #3B6D11; }
   .effort-med  { background: #FFF3DC; color: #854F0B; }
   .effort-high { background: #FDECEC; color: #A32D2D; }
@@ -64,6 +91,7 @@
     .summary { grid-template-columns: repeat(2, 1fr); }
     .col-headers, .measure-row { grid-template-columns: 1fr 1fr; }
     .col-header:not(:first-child):not(:nth-child(3)), .measure-row > *:not(:first-child):not(:nth-child(3)) { display: none; }
+    .gantt-wrap { --label-w: 110px; }
   }
 </style>
 </head>
@@ -73,37 +101,93 @@
     <h1>Planned Measures</h1>
     <p>6 streams · 4 quarters · Effort / impact view</p>
   </div>
-  <div class="summary" id="summary"></div>
-  <div class="filters-group">
-    <div class="filters" id="filters">
-      <span class="filter-label">Stream</span>
-      <button class="filter-btn active" data-stream="all">All</button>
-      <button class="filter-btn" data-stream="global"><span class="dot dot-global"></span>Global</button>
-      <button class="filter-btn" data-stream="coach"><span class="dot dot-coach"></span>Quick Wins Coach</button>
-      <button class="filter-btn" data-stream="b2b"><span class="dot dot-b2b"></span>B2B</button>
-      <button class="filter-btn" data-stream="b2c"><span class="dot dot-b2c"></span>B2C</button>
-      <button class="filter-btn" data-stream="data"><span class="dot dot-data"></span>Data collection</button>
-      <button class="filter-btn" data-stream="magazine"><span class="dot dot-magazine"></span>Fit for Life Magazine</button>
-    </div>
-    <div class="filters" id="status-filters">
-      <span class="filter-label">Status</span>
-      <button class="filter-btn active" data-status="all">All</button>
-      <button class="filter-btn" data-status="todo">To do</button>
-      <button class="filter-btn" data-status="inprogress">In progress</button>
-      <button class="filter-btn" data-status="done">Done</button>
-    </div>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="roadmap">Roadmap</button>
+    <button class="tab-btn" data-tab="mesures">Detailed measures</button>
   </div>
-  <div id="table-container"></div>
+
+  <div class="tab-panel" id="tab-roadmap">
+    <div class="summary" id="roadmap-summary"></div>
+    <div class="filters-group">
+      <div class="filters" id="roadmap-filters">
+        <span class="filter-label">Stream</span>
+        <button class="filter-btn active" data-stream="all">All</button>
+        <button class="filter-btn" data-stream="global"><span class="dot dot-global"></span>Global</button>
+        <button class="filter-btn" data-stream="coach"><span class="dot dot-coach"></span>Quick Wins Coach</button>
+        <button class="filter-btn" data-stream="b2b"><span class="dot dot-b2b"></span>B2B</button>
+        <button class="filter-btn" data-stream="b2c"><span class="dot dot-b2c"></span>B2C</button>
+        <button class="filter-btn" data-stream="data"><span class="dot dot-data"></span>Data collection</button>
+        <button class="filter-btn" data-stream="magazine"><span class="dot dot-magazine"></span>Fit for Life Magazine</button>
+      </div>
+    </div>
+    <div id="roadmap"></div>
+  </div>
+
+  <div class="tab-panel" id="tab-mesures" style="display:none">
+    <div class="summary" id="summary"></div>
+    <div class="filters-group">
+      <div class="filters" id="filters">
+        <span class="filter-label">Stream</span>
+        <button class="filter-btn active" data-stream="all">All</button>
+        <button class="filter-btn" data-stream="global"><span class="dot dot-global"></span>Global</button>
+        <button class="filter-btn" data-stream="coach"><span class="dot dot-coach"></span>Quick Wins Coach</button>
+        <button class="filter-btn" data-stream="b2b"><span class="dot dot-b2b"></span>B2B</button>
+        <button class="filter-btn" data-stream="b2c"><span class="dot dot-b2c"></span>B2C</button>
+        <button class="filter-btn" data-stream="data"><span class="dot dot-data"></span>Data collection</button>
+        <button class="filter-btn" data-stream="magazine"><span class="dot dot-magazine"></span>Fit for Life Magazine</button>
+      </div>
+      <div class="filters" id="status-filters">
+        <span class="filter-label">Status</span>
+        <button class="filter-btn active" data-status="all">All</button>
+        <button class="filter-btn" data-status="todo">To do</button>
+        <button class="filter-btn" data-status="inprogress">In progress</button>
+        <button class="filter-btn" data-status="done">Done</button>
+      </div>
+    </div>
+    <div id="table-container"></div>
+  </div>
 </div>
 
 <script>
+  const roadmapItems = [
+    { stream:"global", name:"Tracking setup", sub:"GA4 cross-domain + entry point mapping", qStart:"Q3 2026", qEnd:"Q3 2026", status:"inprogress", foundation:true },
+    { stream:"global", name:"AB testing tool installation", sub:"Tool setup + extension to emails", qStart:"Q3 2026", qEnd:"Q4 2026", status:"inprogress", foundation:true },
+    { stream:"global", name:"Sleeping accounts reactivation", sub:"Emailing + personalized retargeting", qStart:"Q4 2026", qEnd:"Q4 2026", status:"todo" },
+  
+    { stream:["coach","magazine"], name:"Mapping of touchpoints", sub:"Map every touchpoint potentially linking for promotion of the coach and/or magazine", qStart:"Q3 2026", qEnd:"Q3 2026", status:"inprogress", foundation:true },
+    { stream:["coach","magazine"], name:"Channel strategy definition", sub:"Define channel mix and priorities per touchpoint", qStart:"Q3 2026", qEnd:"Q3 2026", status:"inprogress", foundation:true },
+    { stream:["coach","magazine"], name:"Tracking setup", sub:"Track where conversions come from (Onreg, articles, partners...)", qStart:"Q4 2026", qEnd:"Q4 2026", status:"todo" },
+  
+    { stream:"coach", name:"Coach KPIs & reporting", sub:"Define KPIs to track, Missing KPIs + set-up global reporting", qStart:"Q3 2026", qEnd:"Q3 2026", status:"inprogress", foundation:true },
+  
+    { stream:"b2b", name:"tracking & reporting", sub:"set up automatic and online reporting for Onreg - start with a test for 1 event", qStart:"Q4 2026", qEnd:"Q4 2026", status:"inprogress", foundation:true },
+    { stream:"b2b", name:"Funnel conversion optimization", sub:"define solutions to improve registrations funnel", qStart:"Q3 2026", qEnd:"Q3 2026", status:"todo" },
+    { stream:"b2b", name:"Define lifecycle communications", sub:"Map what is currently being done and potentially missing", qStart:"Q4 2026", qEnd:"Q4 2026", status:"todo", foundation:true },
+    { stream:"b2b", name:"Define potential improvement tools for Event organizers", sub:"NPS, best practices, KPI definition", qStart:"Q3 2026", qEnd:"Q1 2027", status:"todo", foundation:true },
+  
+    { stream:"b2c", name:"B2C entry point audit & mapping", sub:"Sleeping accounts, engaging touchepoints, SEO, content, KPIs", qStart:"Q3 2026", qEnd:"Q3 2026", status:"inprogress", foundation:true },
+    { stream:"b2c", name:"offer ideas to increase athletes' engagement", sub:"define what could be offered to our athletes to engage them more on our plateforms", qStart:"Q3 2026", qEnd:"Q3 2026", status:"inprogress", foundation:true },
+    { stream:"b2c", name:"Proposal: Athlete performance features", sub:"Personalized data, progress tracking, Datasport index", qStart:"Q4 2026", qEnd:"Q4 2026", status:"todo" },
+    { stream:"b2c", name:"Proposal: Race features", sub:"Prediction, recommendation, app, partnerships", qStart:"Q4 2026", qEnd:"Q4 2026", status:"todo" },
+    { stream:"b2c", name:"Proposal: Gamification", sub:"Friend challenges, exclusive-access badges", qStart:"Q4 2026", qEnd:"Q4 2026", status:"todo" },
+    { stream:"b2c", name:"Product portfolio expansion", sub:"Definition and research of new products (partnerships, upsell - cross sell)", qStart:"Q4 2026", qEnd:"Q4 2026", status:"todo", foundation:true },
+    { stream:"b2c", name:"Athlete segmentation & personas", sub:"Dynamic segmentation, conversion matrix, upsell strategy", qStart:"Q4 2026", qEnd:"Q4 2026", status:"todo", foundation:true },
+  
+    { stream:"data", name:"Athlete data collection strategy", sub:"Mapping, collection tools, stakeholder alignment", qStart:"Q3 2026", qEnd:"Q3 2026", status:"todo", foundation:true },
+    { stream:"data", name:"Profile enrichment at registration", sub:"Race goal, experience level, acquisition channel...", qStart:"Q3 2026", qEnd:"Q3 2026", status:"todo", foundation:true },
+    { stream:"data", name:"Post-race profile enrichment", sub:"Multi-event history, equipment, budget, other sports", qStart:"Q4 2026", qEnd:"Q4 2026", status:"todo", foundation:true },
+  
+    { stream:"magazine", name:"Strategy discussion with stakeholders", sub:"Align on objectives, priorities and ownership across teams", qStart:"Q3 2026", qEnd:"Q3 2026", status:"inprogress", foundation:true },
+    { stream:"magazine", name:"Website audit", sub:"Audit fitforlife.ch pages relevant to the magazine funnel", qStart:"Q4 2026", qEnd:"Q4 2026", status:"todo" },
+  ];
+
 const measures = [
-  { stream:"global", name:"AB testing tool — setup", sub:"Prerequisite for future iterations", q:"Q3 2026", effort:"med", impact:"high", status:"inprogress" },
-  { stream:"global", name:"GA4 cross-domain tracking", sub:"3 sub-domains, exclude referrals & internal", q:"Q3 2026", effort:"med", impact:"vhigh", status:"inprogress" },
-  { stream:"global", name:"Mapping entry points + tracking", sub:"Mapping via channel / product offered", q:"Q3 2026", effort:"vhigh", impact:"high", status:"inprogress" },
+  { stream:"global", name:"AB testing tool — setup", sub:"Prerequisite for future iterations", q:"Q3 2026", effort:"med", impact:"high", status:"inprogress", type:"foundation" },
+  { stream:"global", name:"GA4 cross-domain tracking", sub:"3 sub-domains, exclude referrals & internal", q:"Q3 2026", effort:"med", impact:"vhigh", status:"inprogress", type:"foundation" },
+  { stream:"global", name:"Mapping entry points + tracking", sub:"Mapping via channel / product offered", q:"Q3 2026", effort:"vhigh", impact:"high", status:"inprogress", type:"foundation" },
   { stream:"global", name:"Sleeping accounts - emailing", sub:"emailing campaign to reactivate", q:"Q4 2026", effort:"high", impact:"low", status:"todo" },
   { stream:"global", name:"Sleeping accounts - retargeting", sub:"personalized retargeting campaigns", q:"Q4 2026", effort:"high", impact:"low", status:"todo" },
-  { stream:"global", name:"Email A/B test system", sub:"set up an ab test system for our emails", q:"Q4 2026", effort:"vhigh", impact:"high", status:"todo" },
+  { stream:"global", name:"Email A/B test system", sub:"set up an ab test system for our emails", q:"Q4 2026", effort:"vhigh", impact:"high", status:"todo", type:"foundation" },
 
   { stream:["coach","magazine"], name:"Teaser in confirmation email", sub:"HTML template in progress", q:"Q3 2026", effort:"low", impact:"high", status:"inprogress" },
   { stream:["coach","magazine"], name:"Post registration email teasing", sub:"Teasing pre race with sequencing and different bias", q:"Q3 2026", effort:"low", impact:"high", status:"todo" },
@@ -115,15 +199,16 @@ const measures = [
   { stream:["coach","magazine"], name:"myDS ab tests on teasing", sub:"to be set up after implementation", q:"Q4 2026", effort:"low", impact:"vhigh", status:"todo" },
   { stream:["coach","magazine"], name:"Congratulation's email", sub:"integrate teaser in the congratulation's email", q:"Q4 2026", effort:"low", impact:"high", status:"todo" },
   { stream:["coach","magazine"], name:"Fit for Life Newsletter", sub:"Use Fit for Life Newsletter to promote our products (coach + abo)", q:"Q4 2026", effort:"low", impact:"high", status:"todo" },
-  { stream:"coach", name:"Fit for Life Coach KPIs", sub:"define list of KPIs that are missing", q:"Q3 2026", effort:"high", impact:"high", status:"inprogress" },
-  { stream:"coach", name:"Tracking reporting", sub:"create a global reporting with metabase + analytics", q:"Q4 2026", effort:"high", impact:"high", status:"todo" },
+  { stream:"coach", name:"Fit for Life Coach KPIs", sub:"define list of KPIs that are missing", q:"Q3 2026", effort:"high", impact:"high", status:"inprogress", type:"foundation" },
+  { stream:"coach", name:"Tracking reporting", sub:"create a global reporting with metabase + analytics", q:"Q4 2026", effort:"high", impact:"high", status:"todo", type:"foundation" },
   { stream:"coach", name:"Satisfaction online form", sub:"create an online form to check satisfaction", q:"Q3 2026", effort:"low", impact:"low", status:"done" },
-  { stream:"coach", name:"Online form Executive Reporting", sub:"create the summary exec of feedback on the coach", q:"Q3 2026", effort:"low", impact:"low", status:"inprogress" },
+  { stream:"coach", name:"Online form Executive Reporting", sub:"create the summary exec of feedback on the coach", q:"Q3 2026", effort:"low", impact:"low", status:"inprogress", type:"foundation" },
+  { stream:"coach", name:"FFL Magazine", sub:"Cross-promotion of the coach via the Fit for Life Magazine?", q:"Q4 2026", effort:"high", impact:"low", status:"todo" },
 
-  { stream:"b2b", name:"Custom events GA4", sub:"page_view, reg_start, reg_complete, payment_complete", q:"Q3 2026", effort:"med", impact:"high", status:"inprogress" },
-  { stream:"b2b", name:"Heatmap tool + drop-out session recording", sub:"Define if we already have a tool", q:"Q3 2026", effort:"low", impact:"high", status:"todo" },
-  { stream:"b2b", name:"Event online subscription reporting", sub:"reporting for each event and global overview of events for SSM members", q:"Q3 2026", effort:"med", impact:"med", status:"todo" },
-  { stream:"b2b", name:"Customer Journey analysis — Looker dashboards", sub:"Organizer dashboards", q:"Q3 2026", effort:"high", impact:"high", status:"todo" },
+  { stream:"b2b", name:"Custom events GA4", sub:"page_view, reg_start, reg_complete, payment_complete", q:"Q3 2026", effort:"med", impact:"high", status:"inprogress", type:"foundation" },
+  { stream:"b2b", name:"Heatmap tool + drop-out session recording", sub:"Define if we already have a tool", q:"Q3 2026", effort:"low", impact:"high", status:"todo", type:"foundation" },
+  { stream:"b2b", name:"Event online subscription reporting", sub:"reporting for each event and global overview of events for SSM members", q:"Q3 2026", effort:"med", impact:"med", status:"todo", type:"foundation" },
+  { stream:"b2b", name:"Customer Journey analysis — Looker dashboards", sub:"Organizer dashboards", q:"Q3 2026", effort:"high", impact:"high", status:"todo", type:"foundation" },
   { stream:"b2b", name:"Friction reduction — exit survey", sub:"Survey triggered on drop-out intent", q:"Q4 2026", effort:"low", impact:"med", status:"todo" },
   { stream:"b2b", name:"Friction reduction — pre-filled forms", sub:"Auto-fill known user data at registration", q:"Q4 2026", effort:"med", impact:"med", status:"todo" },
   { stream:"b2b", name:"Friction reduction — progress bar", sub:"Visual progress indicator in registration funnel", q:"Q4 2026", effort:"med", impact:"med", status:"todo" },
@@ -131,19 +216,19 @@ const measures = [
   { stream:"b2b", name:"Lifecycle comms — drop-out mails/SMS", sub:"Automated messages triggered on registration abandonment", q:"Q4 2026", effort:"high", impact:"high", status:"todo" },
   { stream:"b2b", name:"Lifecycle comms — urgency triggers", sub:"Deadline-based messaging (closing soon, spots left...)", q:"Q4 2026", effort:"med", impact:"high", status:"todo" },
   { stream:"b2b", name:"Lifecycle comms — social proof", sub:"Inject participant count, testimonials in comms", q:"Q4 2026", effort:"med", impact:"med", status:"todo" },
-  { stream:"b2b", name:"NPS survey post 48h", sub:"", q:"Q4 2026", effort:"low", impact:"med", status:"todo" },
+  { stream:"b2b", name:"NPS survey post 48h", sub:"", q:"Q4 2026", effort:"low", impact:"med", status:"todo", type:"foundation" },
   { stream:"b2b", name:"Best practices content + activation", sub:"Regular sessions with organizers", q:"Q1 2027", effort:"med", impact:"med", status:"todo" },
-  { stream:"b2b", name:"B2B KPIs", sub:"define list of KPIs that are missing", q:"Q3 2026", effort:"high", impact:"high", status:"todo" },
+  { stream:"b2b", name:"B2B KPIs", sub:"define list of KPIs that are missing", q:"Q3 2026", effort:"high", impact:"high", status:"todo", type:"foundation" },
   { stream:"b2b", name:"Sparta Co-Pilot — AI Marketing Co-pilot", sub:"POC · AI campaign generator per segment × gate × channel, smart athlete segmentation, brand voice upload · Copenhagen Marathon demo", q:"Q3 2026", effort:"vhigh", impact:"vhigh", status:"done" },
   { stream:"b2b", name:"AI Campaign Manager tool", sub:"AI tool to help event organizers to create their campaigns", q:"Q3 2026", effort:"vhigh", impact:"high", status:"todo" },
   { stream:"b2b", name:"AI Assets Creation tool", sub:"AI tool to help event organizers to create their assets", q:"Q3 2026", effort:"vhigh", impact:"high", status:"todo" },
-  { stream:["b2b","coach"], name:"Referal Program", sub:"refer a friend and get an incentive", q:"Q3 2026", effort:"med", impact:"vhigh", status:"todo" },
-  { stream:"b2b", name:"Online conversion tracking for events organizers", sub:"check how to report conversions for our event organizers", q:"Q4 2026", effort:"high", impact:"vhigh", status:"todo" },
+  { stream:["b2b","coach"], name:"Referral Program", sub:"refer a friend and get an incentive", q:"Q3 2026", effort:"high", impact:"vhigh", status:"todo" },
+  { stream:"b2b", name:"Online conversion tracking for events organizers", sub:"check how to report conversions for our event organizers", q:"Q4 2026", effort:"high", impact:"vhigh", status:"todo", type:"foundation" },
   
-  { stream:"b2c", name:"Sleeping accounts — audit + actionable channels", sub:"Emails, notifications, retargeting", q:"Q3 2026", effort:"vhigh", impact:"med", status:"todo" },
+  { stream:"b2c", name:"Sleeping accounts — audit + actionable channels", sub:"Emails, notifications, retargeting", q:"Q3 2026", effort:"vhigh", impact:"med", status:"todo", type:"foundation" },
   { stream:"b2c", name:"Optimization meta data finish date SEO", sub:"update the meta data to show a date even though it's not planned in back end", q:"Q3 2026", effort:"low", impact:"low", status:"inprogress" },
-  { stream:"b2c", name:"Content audit + entry point mapping", sub:"Confirmation email, 4MPR, 2MPR, After Race, Waiting page", q:"Q3 2026", effort:"med", impact:"high", status:"todo" },
-  { stream:"b2c", name:"Product × timing matrix", sub:"CR by touchpoint: FfL coach, magazine, partnerships", q:"Q3 2026", effort:"low", impact:"high", status:"todo" },
+  { stream:"b2c", name:"Content audit + entry point mapping", sub:"Confirmation email, 4MPR, 2MPR, After Race, Waiting page", q:"Q3 2026", effort:"med", impact:"high", status:"todo", type:"foundation" },
+  { stream:"b2c", name:"Product × timing matrix", sub:"CR by touchpoint: FfL coach, magazine, partnerships", q:"Q3 2026", effort:"low", impact:"high", status:"todo", type:"foundation" },
   { stream:"b2c", name:"Performance - Personalized data", sub:"check what personalized data we can bring to athletes", q:"Q4 2026", effort:"high", impact:"med", status:"todo" },
   { stream:"b2c", name:"Performance - Progress tracking", sub:"import information about their trainings to compare with their subscribed athletes", q:"Q4 2026", effort:"high", impact:"high", status:"todo" },
   { stream:"b2c", name:"Performance - Datasport Index", sub:"create a datasport index ranking method", q:"Q4 2026", effort:"vhigh", impact:"high", status:"todo" },
@@ -155,38 +240,38 @@ const measures = [
   { stream:"b2c", name:"Race - Partnerships", sub:"Offer partnerships to cross sell products to athletes", q:"Q4 2026", effort:"vhigh", impact:"vhigh", status:"todo" },
   { stream:"b2c", name:"Gamification - Challenge friends", sub:"create datasport challenges between friends", q:"Q4 2026", effort:"vhigh", impact:"high", status:"todo" },
   { stream:"b2c", name:"Gamification - Badges with exclusive accesses", sub:"access to sales, partnerships etc...", q:"Q4 2026", effort:"vhigh", impact:"vhigh", status:"todo" },
-  { stream:"b2c", name:"Products - define products in scope", sub:"Define all products in our scope to be offered", q:"Q4 2026", effort:"high", impact:"vhigh", status:"todo" },
-  { stream:"b2c", name:"Products - new products", sub:"check if we can have new products to offer to our athletes", q:"Q4 2026", effort:"high", impact:"vhigh", status:"todo" },
-  { stream:"b2c", name:"Persona - Segmentation", sub:"Create a dynamical Segmentation of our athletes", q:"Q4 2026", effort:"high", impact:"vhigh", status:"todo" },
-  { stream:"b2c", name:"Persona - Conversion-based matrix", sub:"define likelihood of conversions x products", q:"Q4 2026", effort:"high", impact:"vhigh", status:"todo" },
-  { stream:"b2c", name:"Persona - Upselling strategy by persona", sub:"Create the persona strategy", q:"Q4 2026", effort:"high", impact:"vhigh", status:"todo" },
-  { stream:"b2c", name:"B2C KPIs", sub:"define list of KPIs that are missing", q:"Q3 2026", effort:"vhigh", impact:"vhigh", status:"todo" },
+  { stream:"b2c", name:"Products - define products in scope", sub:"Define all products in our scope to be offered", q:"Q4 2026", effort:"high", impact:"vhigh", status:"todo", type:"foundation" },
+  { stream:"b2c", name:"Products - new products", sub:"check if we can have new products to offer to our athletes", q:"Q4 2026", effort:"high", impact:"vhigh", status:"todo", type:"foundation" },
+  { stream:"b2c", name:"Persona - Segmentation", sub:"Create a dynamical Segmentation of our athletes", q:"Q4 2026", effort:"high", impact:"vhigh", status:"todo", type:"foundation" },
+  { stream:"b2c", name:"Persona - Conversion-based matrix", sub:"define likelihood of conversions x products", q:"Q4 2026", effort:"high", impact:"vhigh", status:"todo", type:"foundation" },
+  { stream:"b2c", name:"Persona - Upselling strategy by persona", sub:"Create the persona strategy", q:"Q4 2026", effort:"high", impact:"vhigh", status:"todo", type:"foundation" },
+  { stream:"b2c", name:"B2C KPIs", sub:"define list of KPIs that are missing", q:"Q3 2026", effort:"vhigh", impact:"vhigh", status:"todo", type:"foundation" },
   
-  { stream:"data", name:"Athlete Intelligence mapping", sub:"map all information we have on athletes and what we can get", q:"Q3 2026", effort:"high", impact:"high", status:"todo" },
-  { stream:"data", name:"Athlete Intelligence collection strategy", sub:"see what tools we can use (online forms, incentives, discounts etc...)", q:"Q3 2026", effort:"high", impact:"high", status:"todo" },
-  { stream:"data", name:"Athlete Intelligence stake holder alignment", sub:"check with SSM team what could be interesting for the event organizers", q:"Q3 2026", effort:"high", impact:"high", status:"todo" },
-  { stream:"data", name:"Race goal", sub:"1 select at registration — coaching segmentation", q:"Q3 2026", effort:"low", impact:"vhigh", status:"todo" },
-  { stream:"data", name:"Experience level", sub:"Radio button at registration — Beginners → coaching / Confirmed → upsell", q:"Q3 2026", effort:"low", impact:"vhigh", status:"todo" },
-  { stream:"data", name:"Acquisition source", sub:"At registration — ROI by channel, clubs as B2B lever", q:"Q3 2026", effort:"low", impact:"high", status:"todo" },
-  { stream:"data", name:"Next planned event", sub:"3-question survey in diploma email", q:"Q3 2026", effort:"low", impact:"high", status:"todo" },
-  { stream:"data", name:"Gap goal vs result", sub:"Back-end calc → automated coaching email 48h post-event", q:"Q3 2026", effort:"med", impact:"high", status:"todo" },
-  { stream:"data", name:"Multi-event history", sub:"Strava / Garmin integration — loyalty + LTV predictor", q:"Q4 2026", effort:"high", impact:"high", status:"todo" },
-  { stream:"data", name:"Equipment brands", sub:"Optional enriched profile + incentive — partner pitch", q:"Q4 2026", effort:"low", impact:"med", status:"todo" },
-  { stream:"data", name:"Annual running budget", sub:"Enriched profile <500 / 500-1500 / 1500-3000 / 3000+ CHF", q:"Q4 2026", effort:"low", impact:"med", status:"todo" },
-  { stream:"data", name:"Other sports", sub:"Enriched profile to know if they practice others sports", q:"Q4 2026", effort:"low", impact:"med", status:"todo" },
-  { stream:"data", name:"Club Members", sub:"Information on knowing if they belong to sports clubs", q:"Q4 2026", effort:"low", impact:"med", status:"todo" },
+  { stream:"data", name:"Athlete Intelligence mapping", sub:"map all information we have on athletes and what we can get", q:"Q3 2026", effort:"high", impact:"high", status:"todo", type:"foundation" },
+  { stream:"data", name:"Athlete Intelligence collection strategy", sub:"see what tools we can use (online forms, incentives, discounts etc...)", q:"Q3 2026", effort:"high", impact:"high", status:"todo", type:"foundation" },
+  { stream:"data", name:"Athlete Intelligence stake holder alignment", sub:"check with SSM team what could be interesting for the event organizers", q:"Q3 2026", effort:"high", impact:"high", status:"todo", type:"foundation" },
+  { stream:"data", name:"Race goal", sub:"1 select at registration — coaching segmentation", q:"Q3 2026", effort:"low", impact:"vhigh", status:"todo", type:"foundation" },
+  { stream:"data", name:"Experience level", sub:"Radio button at registration — Beginners → coaching / Confirmed → upsell", q:"Q3 2026", effort:"low", impact:"vhigh", status:"todo", type:"foundation" },
+  { stream:"data", name:"Acquisition source", sub:"At registration — ROI by channel, clubs as B2B lever", q:"Q3 2026", effort:"low", impact:"high", status:"todo", type:"foundation" },
+  { stream:"data", name:"Next planned event", sub:"3-question survey in diploma email", q:"Q3 2026", effort:"low", impact:"high", status:"todo", type:"foundation" },
+  { stream:"data", name:"Gap goal vs result", sub:"Back-end calc → automated coaching email 48h post-event", q:"Q3 2026", effort:"med", impact:"high", status:"todo", type:"foundation" },
+  { stream:"data", name:"Multi-event history", sub:"Strava / Garmin integration — loyalty + LTV predictor", q:"Q4 2026", effort:"high", impact:"high", status:"todo", type:"foundation" },
+  { stream:"data", name:"Equipment brands", sub:"Optional enriched profile + incentive — partner pitch", q:"Q4 2026", effort:"low", impact:"med", status:"todo", type:"foundation" },
+  { stream:"data", name:"Annual running budget", sub:"Enriched profile <500 / 500-1500 / 1500-3000 / 3000+ CHF", q:"Q4 2026", effort:"low", impact:"med", status:"todo", type:"foundation" },
+  { stream:"data", name:"Other sports", sub:"Enriched profile to know if they practice others sports", q:"Q4 2026", effort:"low", impact:"med", status:"todo", type:"foundation" },
+  { stream:"data", name:"Club Members", sub:"Information on knowing if they belong to sports clubs", q:"Q4 2026", effort:"low", impact:"med", status:"todo", type:"foundation" },
  
-  { stream:"magazine", name:"Fit for Life magazine — plan", sub:"To discuss with stakeholdes", q:"Q4 2026", effort:"vhigh", impact:"vhigh", status:"inprogress" },
-  { stream:"magazine", name:"Website Home Datasport", sub:"Pre-race touchpoint — magazine presence on the Datasport home page", q:"Q4 2026", effort:"med", impact:"med", status:"todo" },
-  { stream:"magazine", name:"Articles / content pages", sub:"Pre-race touchpoint — magazine integration within articles / content", q:"Q4 2026", effort:"med", impact:"med", status:"todo" },
-  { stream:"magazine", name:"Online registration (OnReg)", sub:"Pre-race touchpoint — magazine offer during online race registration", q:"Q4 2026", effort:"med", impact:"med", status:"todo" },
-  { stream:"magazine", name:"Welcome Mail", sub:"Pre-race touchpoint — magazine teasing in the welcome mail", q:"Q4 2026", effort:"med", impact:"med", status:"todo" },
+  { stream:"magazine", name:"Fit for Life magazine — plan", sub:"To discuss with stakeholdes", q:"Q3 2026", effort:"vhigh", impact:"vhigh", status:"inprogress", type:"foundation" },
+  { stream:"magazine", name:"Website Home Datasport", sub:"Pre-race touchpoint — magazine presence on the Datasport home page", q:"Q3 2026", effort:"med", impact:"med", status:"todo" },
+  { stream:["coach", "magazine"], name:"Articles / content pages", sub:"Pre-race touchpoint — List all articles / content where we could integrate a teaser for a product", q:"Q4 2026", effort:"high", impact:"low", status:"todo", type:"foundation" },
+  { stream:"magazine", name:"Online registration (OnReg)", sub:"Pre-race touchpoint — magazine offer during online race registration", q:"Q3 2026", effort:"med", impact:"vhigh", status:"todo" },
+  { stream:["coach", "magazine"], name:"Welcome Mail", sub:"Pre-race touchpoint — Product teasing in the welcome mail", q:"Q4 2026", effort:"low", impact:"med", status:"todo" },
   { stream:"magazine", name:"Fit for Life Website", sub:"Optimize the website to increase conversions on the magazine via touchpoints", q:"Q4 2026", effort:"med", impact:"med", status:"todo" },
-  { stream:["magazine", "coach"], name:"Start list", sub:"Pre-race touchpoint — magazine presence on the start list", q:"Q4 2026", effort:"med", impact:"med", status:"todo" },
-  { stream:"magazine", name:"Datasport Newsletter", sub:"Pre-race touchpoint — magazine teasing in the Datasport newsletter", q:"Q4 2026", effort:"med", impact:"med", status:"todo" },
+  { stream:["magazine", "coach"], name:"Start list", sub:"Pre-race touchpoint — Product presence on the start list", q:"Q4 2026", effort:"med", impact:"low", status:"todo" },
+  { stream:"magazine", name:"Datasport Newsletter", sub:"Pre-race touchpoint — Product teasing in the Datasport newsletter", q:"Q4 2026", effort:"low", impact:"med", status:"todo" },
   { stream:"magazine", name:"FFL Coach", sub:"Pre-race touchpoint — cross-promotion of the magazine via the Fit for Life Coach", q:"Q4 2026", effort:"med", impact:"med", status:"todo" },
   { stream:"magazine", name:"follow-up emails on sample receivers", sub:"Create a dedicated communication on the receivers of the magazine samples", q:"Q4 2026", effort:"med", impact:"high", status:"todo" },
-  { stream:"magazine", name:"Digital Presence by partners", sub:"Define a strategy for digital acquisition by partners (define best practices and acquisition strategy)", q:"Q4 2026", effort:"vhigh", impact:"high", status:"todo" },
+  { stream:"magazine", name:"Digital Presence by partners", sub:"Define a strategy for digital acquisition by partners (define best practices and acquisition strategy)", q:"Q4 2026", effort:"vhigh", impact:"med", status:"todo", type:"foundation" },
 ];
 
 const streamMeta = {
@@ -203,6 +288,7 @@ const statusLabels = { todo:"To do", inprogress:"In progress", done:"Done" };
 
 let activeStream = "all";
 let activeStatus = "all";
+let activeRoadmapStream = "all";
 
 function renderSummary(data) {
   const total      = data.length;
@@ -221,6 +307,89 @@ function renderSummary(data) {
 
 function inStream(m, s) {
   return Array.isArray(m.stream) ? m.stream.includes(s) : m.stream === s;
+}
+
+const streamOrder = ["global","coach","b2b","b2c","data","magazine"];
+function quarterSort(q) {
+  const [qtr, year] = q.split(" ");
+  return parseInt(year) * 10 + parseInt(qtr.slice(1));
+}
+const quarters = [...new Set(measures.map(m => m.q))].sort((a, b) => quarterSort(a) - quarterSort(b));
+
+function renderRoadmapSummary() {
+  const total      = roadmapItems.length;
+  const done       = roadmapItems.filter(i => i.status === "done").length;
+  const inprogress = roadmapItems.filter(i => i.status === "inprogress").length;
+  const todo       = total - done - inprogress;
+  document.getElementById("roadmap-summary").innerHTML = `
+    <div class="metric"><div class="metric-label">Initiatives</div><div class="metric-value">${total}</div></div>
+    <div class="metric"><div class="metric-label">Done</div><div class="metric-value" style="color:#2d6a4a">${done}</div></div>
+    <div class="metric"><div class="metric-label">In progress</div><div class="metric-value" style="color:#854F0B">${inprogress}</div></div>
+    <div class="metric"><div class="metric-label">To do</div><div class="metric-value">${todo}</div></div>
+  `;
+}
+
+function quarterBounds(q) {
+  const [qtr, year] = q.split(" ");
+  const startMonth = (parseInt(qtr.slice(1), 10) - 1) * 3;
+  const y = parseInt(year, 10);
+  return { start: new Date(y, startMonth, 1), end: new Date(y, startMonth + 3, 1) };
+}
+
+function renderRoadmap() {
+  renderRoadmapSummary();
+  const n = quarters.length;
+  const timelineStart = quarterBounds(quarters[0]).start;
+  const timelineEnd = quarterBounds(quarters[n - 1]).end;
+  const now = new Date();
+  const todayFrac = (now - timelineStart) / (timelineEnd - timelineStart);
+  const showToday = todayFrac >= 0 && todayFrac <= 1;
+  const todayPct = (todayFrac * 100).toFixed(2);
+  const gridBg = `repeating-linear-gradient(to right, rgba(0,0,0,0.09) 0, rgba(0,0,0,0.09) 1px, transparent 1px, transparent calc(100%/${n})), repeating-linear-gradient(to right, rgba(0,0,0,0.035) 0, rgba(0,0,0,0.035) 1px, transparent 1px, transparent calc(100%/${n * 3}))`;
+  const todayLine = showToday ? `<div class="gantt-today" style="left:${todayPct}%"></div>` : "";
+
+  let html = "";
+  const streamsToShow = activeRoadmapStream === "all" ? streamOrder : [activeRoadmapStream];
+  streamsToShow.forEach(s => {
+    const items = roadmapItems.filter(i => inStream(i, s));
+    if (!items.length) return;
+    const meta = streamMeta[s];
+    html += `<div class="stream-section">
+      <div class="stream-label"><span class="dot ${meta.dot}"></span>${meta.label}</div>
+      <div class="gantt-wrap">
+        <div class="gantt-header">
+          <div class="gantt-label"></div>
+          <div class="gantt-header-quarters">
+            ${quarters.map(q => `<div>${q}</div>`).join("")}
+            ${showToday ? `<div class="gantt-today" style="left:${todayPct}%"></div><div class="gantt-today-label" style="left:${todayPct}%">Today</div>` : ""}
+          </div>
+        </div>
+        ${items.map(item => {
+          const startIdx = quarters.indexOf(item.qStart);
+          const endIdx = quarters.indexOf(item.qEnd);
+          const leftPct = startIdx / n * 100;
+          const widthPct = (endIdx - startIdx + 1) / n * 100;
+          return `<div class="gantt-row">
+            <div class="gantt-label">
+              <div class="gantt-label-title">${item.name}${item.foundation ? `<span class="found-dot" title="Travail préalable / structurant"></span>` : ""}</div>
+              ${item.sub ? `<div class="gantt-label-sub">${item.sub}</div>` : ""}
+            </div>
+            <div class="gantt-track" style="background-image:${gridBg}">
+              ${todayLine}
+              <div class="gantt-bar seg-${item.status}" style="left:calc(${leftPct}% + 2px); width:calc(${widthPct}% - 4px)" title="${item.sub || item.name}"></div>
+            </div>
+          </div>`;
+        }).join("")}
+      </div>
+    </div>`;
+  });
+  html += `<div class="roadmap-legend">
+    <span><span class="legend-seg seg-todo"></span>To do</span>
+    <span><span class="legend-seg seg-inprogress"></span>In progress</span>
+    <span><span class="legend-seg seg-done"></span>Done</span>
+    <span><span class="found-dot"></span>Foundational / upstream work</span>
+  </div>`;
+  document.getElementById("roadmap").innerHTML = html;
 }
 
 function renderTable() {
@@ -250,7 +419,7 @@ function renderTable() {
         </div>`;
     rows.forEach(m => {
       html += `<div class="measure-row${m.status === 'done' ? ' is-done' : m.status === 'inprogress' ? ' is-inprogress' : ''}">
-        <div><div class="measure-name">${m.name}</div>${m.sub ? `<div class="measure-sub">${m.sub}</div>` : ""}</div>
+        <div><div class="measure-name">${m.name}${m.type === "foundation" ? `<span class="badge badge-foundation">Foundation</span>` : ""}</div>${m.sub ? `<div class="measure-sub">${m.sub}</div>` : ""}</div>
         <div><span class="badge badge-q">${m.q}</span></div>
         <div><span class="badge effort-${m.effort}">${effortLabels[m.effort]}</span></div>
         <div><span class="badge impact-${m.impact}">${impactLabels[m.impact]}</span></div>
@@ -261,6 +430,14 @@ function renderTable() {
   });
   document.getElementById("table-container").innerHTML = html;
 }
+
+document.getElementById("roadmap-filters").addEventListener("click", e => {
+  const btn = e.target.closest(".filter-btn");
+  if (!btn) return;
+  activeRoadmapStream = btn.dataset.stream;
+  document.querySelectorAll("#roadmap-filters .filter-btn").forEach(b => b.classList.toggle("active", b === btn));
+  renderRoadmap();
+});
 
 document.getElementById("filters").addEventListener("click", e => {
   const btn = e.target.closest(".filter-btn");
@@ -278,6 +455,16 @@ document.getElementById("status-filters").addEventListener("click", e => {
   renderTable();
 });
 
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b === btn));
+    const tab = btn.dataset.tab;
+    document.getElementById("tab-roadmap").style.display = tab === "roadmap" ? "" : "none";
+    document.getElementById("tab-mesures").style.display = tab === "mesures" ? "" : "none";
+  });
+});
+
+renderRoadmap();
 renderTable();
 </script>
 </body>

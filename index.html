@@ -28,6 +28,7 @@
   .dot-b2c { background: #378ADD; }
   .dot-data { background: #7F77DD; }
   .dot-magazine { background: #51cad0; }
+  .dot-offline { background: #B07D46; }
   .tabs { display:flex; gap:24px; margin-bottom:1.5rem; border-bottom:1px solid #e0ddd6; }
   .tab-btn { font-size:14px; font-weight:600; padding:0 0 10px; border:none; background:none; color:#999; cursor:pointer; border-bottom:2px solid transparent; }
   .tab-btn:hover { color:#333; }
@@ -53,7 +54,6 @@
   .seg-todo { background:#d8d5ce; }
   .seg-inprogress { background:repeating-linear-gradient(45deg, #f0b95c 0 6px, #e8ab4c 6px 12px); }
   .seg-done { background:#6aab87; }
-  .found-dot { width:7px; height:7px; border-radius:50%; background:#534AB7; display:inline-block; flex-shrink:0; }
   .roadmap-legend { display:flex; flex-wrap:wrap; gap:16px; margin-top:14px; padding:12px 16px 0; font-size:11.5px; color:#888; }
   .roadmap-legend span { display:flex; align-items:center; gap:6px; }
   .legend-seg { width:10px; height:10px; border-radius:3px; display:inline-block; }
@@ -109,7 +109,7 @@
 <div class="page">
   <div class="top">
     <h1>Planned Measures</h1>
-    <p>6 streams · monthly timeline · Effort / impact view</p>
+    <p>7 streams · monthly timeline · Effort / impact view</p>
   </div>
   <div class="tabs">
     <button class="tab-btn active" data-tab="roadmap">Roadmap</button>
@@ -128,6 +128,7 @@
         <button class="filter-btn" data-stream="b2c"><span class="dot dot-b2c"></span>B2C</button>
         <button class="filter-btn" data-stream="data"><span class="dot dot-data"></span>Data collection</button>
         <button class="filter-btn" data-stream="magazine"><span class="dot dot-magazine"></span>Fit for Life Magazine</button>
+        <button class="filter-btn" data-stream="offline"><span class="dot dot-offline"></span>Offline</button>
       </div>
     </div>
     <div id="roadmap"></div>
@@ -145,6 +146,7 @@
         <button class="filter-btn" data-stream="b2c"><span class="dot dot-b2c"></span>B2C</button>
         <button class="filter-btn" data-stream="data"><span class="dot dot-data"></span>Data collection</button>
         <button class="filter-btn" data-stream="magazine"><span class="dot dot-magazine"></span>Fit for Life Magazine</button>
+        <button class="filter-btn" data-stream="offline"><span class="dot dot-offline"></span>Offline</button>
       </div>
       <div class="filters" id="status-filters">
         <span class="filter-label">Status</span>
@@ -187,10 +189,10 @@ const measures = [
   { stream:"coach", category:"Touchpoints & teasers", name:"FFL Magazine", sub:"Cross-promotion of the coach via the Fit for Life Magazine?", months:["2026-11","2026-12"], effort:"high", impact:"low", status:"todo" },
   { stream:"coach", category:"Testing & optimization", name:"Mail - A/B tests", sub:"Funnel overview + variants based on emails with engagement", months:["2027-01","2027-02"], effort:"med", impact:"med", status:"todo" },
   { stream:["coach","magazine"], category:"Testing & optimization", name:"CTA - A/B tests", sub:"create A/B tests for each teaser with traffic", months:["2026-10","2026-12"], effort:"low", impact:"vhigh", status:"todo" },
-  { stream:"coach", category:"Measurement & voice of customer", name:"Fit for Life Coach KPIs", sub:"define list of KPIs that are missing", months:["2026-07","2026-09"], effort:"high", impact:"high", status:"inprogress", type:"foundation" },
-  { stream:"coach", category:"Measurement & voice of customer", name:"Tracking reporting", sub:"create a global reporting with metabase + analytics", months:["2026-10","2026-12"], effort:"high", impact:"high", status:"todo", type:"foundation" },
-  { stream:"coach", category:"Measurement & voice of customer", name:"Satisfaction online form", sub:"create an online form to check satisfaction", months:["2026-07","2026-09"], effort:"low", impact:"low", status:"done" },
-  { stream:"coach", category:"Measurement & voice of customer", name:"Online form Executive Reporting", sub:"create the summary exec of feedback on the coach", months:["2026-07","2026-09"], effort:"low", impact:"low", status:"inprogress", type:"foundation" },
+  { stream:"coach", category:"Measurement & voice of customer", name:"Fit for Life Coach KPIs", sub:"define list of KPIs that are missing", months:["2026-07","2026-07"], effort:"high", impact:"high", status:"inprogress", type:"foundation" },
+  { stream:"coach", category:"Measurement & voice of customer", name:"Tracking reporting", sub:"create a global reporting with metabase + analytics", months:["2026-08","2026-08"], effort:"high", impact:"high", status:"todo", type:"foundation" },
+  { stream:"coach", category:"Measurement & voice of customer", name:"Satisfaction online form", sub:"create an online form to check satisfaction", months:["2026-07","2026-07"], effort:"low", impact:"med", status:"done" },
+  { stream:"coach", category:"Measurement & voice of customer", name:"Online form Executive Reporting", sub:"create the summary exec of feedback on the coach", months:["2026-07","2026-07"], effort:"low", impact:"med", status:"done", type:"foundation" },
 
   { stream:"b2b", category:"Tracking & reporting foundations", name:"Custom events GA4", sub:"page_view, reg_start, reg_complete, payment_complete", months:["2026-07","2026-09"], effort:"med", impact:"high", status:"inprogress", type:"foundation" },
   { stream:"b2b", category:"Tracking & reporting foundations", name:"Heatmap tool + drop-out session recording", sub:"Define if we already have a tool", months:["2026-07","2026-09"], effort:"low", impact:"high", status:"todo", type:"foundation" },
@@ -255,6 +257,12 @@ const measures = [
   { stream:"magazine", category:"Touchpoints & teasers", name:"CTA - FFL Coach", sub:"Pre-race touchpoint — cross-promotion of the magazine via the Fit for Life Coach", months:["2026-10","2026-12"], effort:"med", impact:"med", status:"todo" },
   { stream:"magazine", category:"Touchpoints & teasers", name:"follow-up emails on sample receivers", sub:"Create a dedicated communication on the receivers of the magazine samples", months:["2026-10","2026-12"], effort:"med", impact:"high", status:"todo" },
   { stream:"magazine", category:"Strategy & foundations", name:"Digital Presence by partners", sub:"Define a strategy for digital acquisition by partners (define best practices and acquisition strategy)", months:["2026-10","2026-12"], effort:"vhigh", impact:"med", status:"todo", type:"foundation" },
+  { stream:"magazine", category:"Strategy & foundations", name:"Free sample issue strategy", sub:"Which target audience gets which issue for free, and when", months:["2026-07","2026-09"], effort:"high", impact:"high", status:"todo" },
+  { stream:["coach","magazine"], category:"Strategy & foundations", name:"Bundle & rewards offer strategy", sub:"Which bundle and reward offers, when and how to offer them", months:["2026-07","2026-09"], effort:"high", impact:"high", status:"todo" },
+  { stream:["coach","magazine","offline"], category:"Touchpoints & teasers", name:"Event presence", sub:"Hand out and sell the magazine at events, and sell Coach", months:["2026-08","2026-09"], effort:"vhigh", impact:"high", status:"todo" },
+  { stream:["magazine","offline"], category:"Touchpoints & teasers", name:"Magazine placement in running shops & physios", sub:"Display copies of the magazine in running shops, physiotherapy practices, fitness centers, etc.", months:["2026-07","2026-08"], effort:"med", impact:"med", status:"todo" },
+  { stream:"magazine", category:"Touchpoints & teasers", name:"Send magazine to finishers", sub:"Send the magazine to event finishers as a “prize” for event participation", months:["2026-09","2026-11"], effort:"vhigh", impact:"high", status:"todo" },
+  { stream:["coach","magazine"], category:"Strategy & foundations", name:"Social media advertising", sub:"Social media strategy for FFL — which content drives sales", months:["2026-07","2026-09"], effort:"high", impact:"med", status:"todo" },
 ];
 
 const streamMeta = {
@@ -264,6 +272,7 @@ const streamMeta = {
   b2c:      { label:"B2C", dot:"dot-b2c" },
   data:     { label:"Data collection", dot:"dot-data" },
   magazine: { label:"Fit for Life Magazine", dot:"dot-magazine" },
+  offline:  { label:"Offline", dot:"dot-offline" },
 };
 const effortLabels = { low:"Low", med:"Medium", high:"High", vhigh:"Very High" };
 const impactLabels = { low:"Low", med:"Medium", high:"High", vhigh:"Very high" };
@@ -338,7 +347,7 @@ function renderSummary(data) {
   `;
 }
 
-const streamOrder = ["global","coach","b2b","b2c","data","magazine"];
+const streamOrder = ["global","coach","b2b","b2c","data","magazine","offline"];
 
 function groupByCategory(stream) {
   const groups = new Map();
@@ -423,7 +432,6 @@ function renderRoadmap() {
           const doneCount = rows.filter(m => m.status === "done").length;
           const inprogressCount = rows.filter(m => m.status === "inprogress").length;
           const todoCount = rows.length - doneCount - inprogressCount;
-          const hasFoundation = rows.some(m => m.type === "foundation");
           const segs = [
             { st: "done", count: doneCount },
             { st: "inprogress", count: inprogressCount },
@@ -434,7 +442,7 @@ function renderRoadmap() {
           const summaryLabel = `${rows.length} measure${rows.length > 1 ? "s" : ""} · ${doneCount} done · ${inprogressCount} in progress · ${todoCount} to do`;
           return `<div class="gantt-row category-row" data-stream="${s}" data-category="${slugify(category)}">
               <div class="gantt-label">
-                <div class="gantt-label-title"><span class="chevron">${isOpen ? "▾" : "▸"}</span>${category}${hasFoundation ? `<span class="found-dot" title="Includes foundational / upstream work"></span>` : ""}</div>
+                <div class="gantt-label-title"><span class="chevron">${isOpen ? "▾" : "▸"}</span>${category}</div>
                 <div class="gantt-label-sub">${summaryLabel}</div>
               </div>
               <div class="gantt-track" style="background-image:${gridBg}">
@@ -451,7 +459,7 @@ function renderRoadmap() {
                 const mWidthPct = (mEndIdxExclusive - mStartIdx) / n * 100;
                 return `<div class="gantt-row measure-subrow">
                   <div class="gantt-label">
-                    <div class="gantt-label-title">${m.name}${m.type === "foundation" ? `<span class="found-dot" title="Foundational / upstream work"></span>` : ""}<span class="badge status-${m.status}">${statusLabels[m.status]}</span></div>
+                    <div class="gantt-label-title">${m.name}<span class="badge status-${m.status}">${statusLabels[m.status]}</span></div>
                     ${m.sub ? `<div class="gantt-label-sub">${m.sub}</div>` : ""}
                   </div>
                   <div class="gantt-track" style="background-image:${gridBg}">
@@ -469,13 +477,12 @@ function renderRoadmap() {
     <span><span class="legend-seg seg-todo"></span>To do</span>
     <span><span class="legend-seg seg-inprogress"></span>In progress</span>
     <span><span class="legend-seg seg-done"></span>Done</span>
-    <span><span class="found-dot"></span>Foundational / upstream work</span>
   </div>`;
   document.getElementById("roadmap").innerHTML = html;
 }
 
 function renderTable() {
-  const streams = activeStream === "all" ? ["global","coach","b2b","b2c","data","magazine"] : [activeStream];
+  const streams = activeStream === "all" ? streamOrder : [activeStream];
   const filtered = measures.filter(m =>
     (activeStream === "all" || inStream(m, activeStream)) &&
     (activeStatus === "all" || m.status === activeStatus)

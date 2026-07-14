@@ -1,386 +1,1953 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Planned Measures — Datasport</title>
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; background: #F7F6F3; color: #1a1a1a; font-size: 14px; line-height: 1.5; padding: 2rem; }
-  .page { max-width: 1100px; margin: 0 auto; }
-  .top { margin-bottom: 2rem; }
-  .top h1 { font-size: 22px; font-weight: 600; color: #111; margin-bottom: 4px; }
-  .top p { font-size: 13px; color: #888; }
-  .summary { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 2rem; }
-  .metric { background: #fff; border: 0.5px solid #e0ddd6; border-radius: 10px; padding: 1rem 1.125rem; }
-  .metric-label { font-size: 12px; color: #888; margin-bottom: 4px; }
-  .metric-value { font-size: 26px; font-weight: 600; color: #111; }
-  .filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; align-items: center; }
-  .filters-group { margin-bottom: 1.5rem; }
-  .filter-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #bbb; margin-right: 2px; white-space: nowrap; }
-  .filter-btn { font-size: 13px; padding: 5px 14px; border-radius: 20px; border: 1px solid #d8d5ce; background: #fff; color: #666; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 6px; }
-  .filter-btn:hover { border-color: #aaa; color: #333; }
-  .filter-btn.active { background: #111; color: #fff; border-color: #111; }
-  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
-  .dot-global { background: #c8c41a; }
-  .dot-coach { background: #E24B4A; }
-  .dot-b2b { background: #1D9E75; }
-  .dot-b2c { background: #378ADD; }
-  .dot-data { background: #7F77DD; }
-  .dot-magazine { background: #51cad0; }
-  .dot-offline { background: #B07D46; }
-  .dot-seo { background: #E8871E; }
-  .tabs { display:flex; gap:24px; margin-bottom:1.5rem; border-bottom:1px solid #e0ddd6; }
-  .tab-btn { font-size:14px; font-weight:600; padding:0 0 10px; border:none; background:none; color:#999; cursor:pointer; border-bottom:2px solid transparent; }
-  .tab-btn:hover { color:#333; }
-  .tab-btn.active { color:#111; border-bottom-color:#111; }
-  .gantt-wrap { --label-w: 230px; background:#fff; }
-  .gantt-header, .gantt-row { display:grid; grid-template-columns:var(--label-w) 1fr; align-items:center; gap:12px; padding:9px 16px; }
-  .gantt-header { background:#F7F6F3; border-bottom:0.5px solid #e0ddd6; position:relative; }
-  .gantt-header-months { display:flex; position:relative; }
-  .gantt-header-months > div { flex:1; font-size:10.5px; font-weight:600; text-transform:uppercase; letter-spacing:0.03em; color:#999; }
-  .gantt-row { border-bottom:0.5px solid #f0ede8; }
-  .gantt-row:last-child { border-bottom:none; }
-  .gantt-row:hover { background:#faf9f7; }
-  .gantt-row.category-row { cursor: pointer; }
-  .chevron { display:inline-block; width:12px; flex-shrink:0; color:#999; font-size:10px; }
-  .gantt-label { font-size:12.5px; font-weight:500; color:#333; display:flex; flex-direction:column; gap:2px; }
-  .gantt-label-title { display:flex; align-items:center; gap:7px; }
-  .gantt-label-sub { font-size:11px; font-weight:400; color:#999; line-height:1.3; }
-  .gantt-track { position:relative; height:22px; }
-  .gantt-bar { position:absolute; top:50%; transform:translateY(-50%); height:20px; border-radius:6px; display:flex; overflow:hidden; box-shadow:0 1px 2px rgba(0,0,0,0.08); }
-  .gantt-seg { height:100%; }
-  .gantt-today { position:absolute; top:-9px; bottom:-9px; width:0; border-left:1.5px dashed #E24B4A; z-index:2; pointer-events:none; }
-  .gantt-today-label { position:absolute; top:-9px; transform:translate(-50%,-100%); font-size:9.5px; font-weight:700; color:#E24B4A; background:#fff; padding:1px 5px; border-radius:4px; white-space:nowrap; z-index:3; }
-  .seg-todo { background:#d8d5ce; }
-  .seg-inprogress { background:repeating-linear-gradient(45deg, #f0b95c 0 6px, #e8ab4c 6px 12px); }
-  .seg-done { background:#6aab87; }
-  .roadmap-legend { display:flex; flex-wrap:wrap; gap:16px; margin-top:14px; padding:12px 16px 0; font-size:11.5px; color:#888; }
-  .roadmap-legend span { display:flex; align-items:center; gap:6px; }
-  .legend-seg { width:10px; height:10px; border-radius:3px; display:inline-block; }
-  .gantt-row.measure-subrow { padding: 7px 16px; }
-  .gantt-row.measure-subrow .gantt-label { padding-left: 24px; }
-  .gantt-row.measure-subrow .gantt-track { height: 16px; }
-  .gantt-row.measure-subrow .gantt-bar { height: 14px; box-shadow: none; }
-  .gantt-row.measure-subrow .gantt-label-title { font-weight: 400; }
-  .gantt-row.measure-subrow .badge { font-size: 10px; padding: 2px 7px; }
-  .stream-section { margin-bottom: 2rem; }
-  .stream-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #888; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px; }
-  .table-wrap { background: #fff; border: 0.5px solid #e0ddd6; border-radius: 10px; overflow: hidden; }
-  .category-detail { background: #FAFAF8; border-bottom: 0.5px solid #f0ede8; padding: 4px 0 8px; }
-  .col-headers { display: grid; grid-template-columns: 1.9fr 0.7fr 0.7fr 0.7fr 0.7fr 0.8fr; padding: 8px 16px; background: #F7F6F3; border-bottom: 0.5px solid #e0ddd6; }
-  .col-header { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #999; }
-  .measure-row { display: grid; grid-template-columns: 1.9fr 0.7fr 0.7fr 0.7fr 0.7fr 0.8fr; padding: 11px 16px; border-bottom: 0.5px solid #f0ede8; align-items: center; transition: background 0.1s; }
-  .measure-row:last-child { border-bottom: none; }
-  .measure-row:hover { background: #faf9f7; }
-  .measure-row.is-done { background: #f2faf5; }
-  .measure-row.is-done:hover { background: #e8f6ed; }
-  .measure-row.is-done .measure-name { color: #2d6a4a; }
-  .measure-row.is-done .measure-sub { color: #6aab87; }
-  .measure-row.is-inprogress { background: #fffbf2; }
-  .measure-row.is-inprogress:hover { background: #fef6e4; }
-  .measure-row.is-inprogress .measure-name { color: #7a4a0a; }
-  .measure-row.is-inprogress .measure-sub { color: #b8894a; }
-  .measure-name { font-size: 13.5px; color: #111; font-weight: 500; line-height: 1.35; }
-  .measure-sub { font-size: 12px; color: #999; margin-top: 2px; font-weight: 400; }
-  .badge { font-size: 11px; padding: 3px 9px; border-radius: 20px; display: inline-block; font-weight: 500; white-space: nowrap; }
-  .badge + .badge { margin-left: 4px; }
-  .badge-q { background: #F0EDE8; color: #666; }
-  .badge-foundation { background: #EEEDFE; color: #534AB7; margin-left: 7px; vertical-align: middle; }
-  .effort-low  { background: #EAF3DE; color: #3B6D11; }
-  .effort-med  { background: #FFF3DC; color: #854F0B; }
-  .effort-high { background: #FDECEC; color: #A32D2D; }
-  .effort-vhigh { background: #EEEDFE; color: #534AB7; }
-  .impact-low   { background: #F0EDE8; color: #888; }
-  .impact-med   { background: #EBF3FD; color: #185FA5; }
-  .impact-high  { background: #EAF3DE; color: #3B6D11; }
-  .impact-vhigh { background: #EEEDFE; color: #534AB7; }
-  .status-todo       { background: #F0EDE8; color: #888; }
-  .status-inprogress { background: #FFF3DC; color: #854F0B; }
-  .status-done       { background: #EAF3DE; color: #3B6D11; }
-  .responsible-raphael { background: #EAF0FB; color: #2E5AA8; }
-  .responsible-katrin  { background: #FBEAF3; color: #A82E6E; }
-  .responsible-other   { background: #F0EDE8; color: #666; }
-  .measure-link { cursor: pointer; }
-  .measure-link:hover { text-decoration: underline; }
-  .modal-overlay { position: fixed; inset: 0; background: rgba(20,18,14,0.45); display: flex; align-items: flex-start; justify-content: center; padding: 6vh 16px; z-index: 100; overflow-y: auto; }
-  .modal-box { background: #fff; border-radius: 12px; max-width: 560px; width: 100%; padding: 1.5rem; box-shadow: 0 12px 40px rgba(0,0,0,0.2); }
-  .modal-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
-  .modal-title { font-size: 16px; font-weight: 600; color: #111; line-height: 1.3; }
-  .modal-meta { font-size: 11.5px; color: #999; margin-top: 8px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-  .modal-category { color: #888; }
-  .modal-close { border: none; background: none; font-size: 22px; line-height: 1; color: #999; cursor: pointer; padding: 0 2px; flex-shrink: 0; }
-  .modal-close:hover { color: #333; }
-  .modal-sub { font-size: 13px; color: #666; margin: 12px 0 0; }
-  .modal-badges { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 0; }
-  .modal-section { margin-top: 16px; padding-top: 14px; border-top: 0.5px solid #f0ede8; }
-  .modal-section-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #999; margin-bottom: 8px; }
-  .modal-kv { display: flex; gap: 8px; font-size: 13px; margin-bottom: 4px; }
-  .modal-k { color: #999; min-width: 50px; flex-shrink: 0; }
-  .modal-v { color: #222; font-weight: 500; }
-  .modal-screenshots { display: flex; flex-wrap: wrap; gap: 8px; }
-  .modal-screenshots img { max-width: 160px; max-height: 120px; border-radius: 6px; border: 0.5px solid #e0ddd6; object-fit: cover; }
-  @media (max-width: 700px) {
-    body { padding: 1rem; }
-    .summary { grid-template-columns: repeat(2, 1fr); }
-    .col-headers, .measure-row { grid-template-columns: 1fr 1fr; }
-    .col-header:not(:first-child):not(:nth-child(3)), .measure-row > *:not(:first-child):not(:nth-child(3)) { display: none; }
-    .gantt-wrap { --label-w: 110px; }
-  }
-</style>
-</head>
-<body>
-<div class="page">
-  <div class="top">
-    <h1>Planned Measures</h1>
-    <p>8 streams · monthly timeline · Effort / impact view</p>
-  </div>
-  <div class="tabs">
-    <button class="tab-btn active" data-tab="roadmap">Roadmap</button>
-    <button class="tab-btn" data-tab="mesures">Detailed measures</button>
-  </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Planned Measures — Datasport</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
+          sans-serif;
+        background: #f7f6f3;
+        color: #1a1a1a;
+        font-size: 14px;
+        line-height: 1.5;
+        padding: 2rem;
+      }
+      .page {
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      .top {
+        margin-bottom: 2rem;
+      }
+      .top h1 {
+        font-size: 22px;
+        font-weight: 600;
+        color: #111;
+        margin-bottom: 4px;
+      }
+      .top p {
+        font-size: 13px;
+        color: #888;
+      }
+      .summary {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 12px;
+        margin-bottom: 2rem;
+      }
+      .metric {
+        background: #fff;
+        border: 0.5px solid #e0ddd6;
+        border-radius: 10px;
+        padding: 1rem 1.125rem;
+      }
+      .metric-label {
+        font-size: 12px;
+        color: #888;
+        margin-bottom: 4px;
+      }
+      .metric-value {
+        font-size: 26px;
+        font-weight: 600;
+        color: #111;
+      }
+      .filters {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 8px;
+        align-items: center;
+      }
+      .filters-group {
+        margin-bottom: 1.5rem;
+      }
+      .filter-label {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #bbb;
+        margin-right: 2px;
+        white-space: nowrap;
+      }
+      .filter-btn {
+        font-size: 13px;
+        padding: 5px 14px;
+        border-radius: 20px;
+        border: 1px solid #d8d5ce;
+        background: #fff;
+        color: #666;
+        cursor: pointer;
+        transition: all 0.15s;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .filter-btn:hover {
+        border-color: #aaa;
+        color: #333;
+      }
+      .filter-btn.active {
+        background: #111;
+        color: #fff;
+        border-color: #111;
+      }
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+        flex-shrink: 0;
+      }
+      .dot-global {
+        background: #c8c41a;
+      }
+      .dot-coach {
+        background: #e24b4a;
+      }
+      .dot-b2b {
+        background: #1d9e75;
+      }
+      .dot-b2c {
+        background: #378add;
+      }
+      .dot-data {
+        background: #7f77dd;
+      }
+      .dot-magazine {
+        background: #51cad0;
+      }
+      .dot-offline {
+        background: #b07d46;
+      }
+      .dot-seo {
+        background: #e8871e;
+      }
+      .tabs {
+        display: flex;
+        gap: 24px;
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid #e0ddd6;
+      }
+      .tab-btn {
+        font-size: 14px;
+        font-weight: 600;
+        padding: 0 0 10px;
+        border: none;
+        background: none;
+        color: #999;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+      }
+      .tab-btn:hover {
+        color: #333;
+      }
+      .tab-btn.active {
+        color: #111;
+        border-bottom-color: #111;
+      }
+      .gantt-wrap {
+        --label-w: 230px;
+        background: #fff;
+      }
+      .gantt-header,
+      .gantt-row {
+        display: grid;
+        grid-template-columns: var(--label-w) 1fr;
+        align-items: center;
+        gap: 12px;
+        padding: 9px 16px;
+      }
+      .gantt-header {
+        background: #f7f6f3;
+        border-bottom: 0.5px solid #e0ddd6;
+        position: relative;
+      }
+      .gantt-header-months {
+        display: flex;
+        position: relative;
+      }
+      .gantt-header-months > div {
+        flex: 1;
+        font-size: 10.5px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        color: #999;
+      }
+      .gantt-row {
+        border-bottom: 0.5px solid #f0ede8;
+      }
+      .gantt-row:last-child {
+        border-bottom: none;
+      }
+      .gantt-row:hover {
+        background: #faf9f7;
+      }
+      .gantt-row.category-row {
+        cursor: pointer;
+      }
+      .chevron {
+        display: inline-block;
+        width: 12px;
+        flex-shrink: 0;
+        color: #999;
+        font-size: 10px;
+      }
+      .gantt-label {
+        font-size: 12.5px;
+        font-weight: 500;
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .gantt-label-title {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .gantt-label-sub {
+        font-size: 11px;
+        font-weight: 400;
+        color: #999;
+        line-height: 1.3;
+      }
+      .gantt-track {
+        position: relative;
+        height: 22px;
+      }
+      .gantt-bar {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        height: 20px;
+        border-radius: 6px;
+        display: flex;
+        overflow: hidden;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+      }
+      .gantt-seg {
+        height: 100%;
+      }
+      .gantt-today {
+        position: absolute;
+        top: -9px;
+        bottom: -9px;
+        width: 0;
+        border-left: 1.5px dashed #e24b4a;
+        z-index: 2;
+        pointer-events: none;
+      }
+      .gantt-today-label {
+        position: absolute;
+        top: -9px;
+        transform: translate(-50%, -100%);
+        font-size: 9.5px;
+        font-weight: 700;
+        color: #e24b4a;
+        background: #fff;
+        padding: 1px 5px;
+        border-radius: 4px;
+        white-space: nowrap;
+        z-index: 3;
+      }
+      .seg-todo {
+        background: #d8d5ce;
+      }
+      .seg-inprogress {
+        background: repeating-linear-gradient(
+          45deg,
+          #f0b95c 0 6px,
+          #e8ab4c 6px 12px
+        );
+      }
+      .seg-done {
+        background: #6aab87;
+      }
+      .roadmap-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-top: 14px;
+        padding: 12px 16px 0;
+        font-size: 11.5px;
+        color: #888;
+      }
+      .roadmap-legend span {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .legend-seg {
+        width: 10px;
+        height: 10px;
+        border-radius: 3px;
+        display: inline-block;
+      }
+      .gantt-row.measure-subrow {
+        padding: 7px 16px;
+      }
+      .gantt-row.measure-subrow .gantt-label {
+        padding-left: 24px;
+      }
+      .gantt-row.measure-subrow .gantt-track {
+        height: 16px;
+      }
+      .gantt-row.measure-subrow .gantt-bar {
+        height: 14px;
+        box-shadow: none;
+      }
+      .gantt-row.measure-subrow .gantt-label-title {
+        font-weight: 400;
+      }
+      .gantt-row.measure-subrow .badge {
+        font-size: 10px;
+        padding: 2px 7px;
+      }
+      .stream-section {
+        margin-bottom: 2rem;
+      }
+      .stream-label {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #888;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .table-wrap {
+        background: #fff;
+        border: 0.5px solid #e0ddd6;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .category-detail {
+        background: #fafaf8;
+        border-bottom: 0.5px solid #f0ede8;
+        padding: 4px 0 8px;
+      }
+      .col-headers {
+        display: grid;
+        grid-template-columns: 1.9fr 0.7fr 0.7fr 0.7fr 0.7fr 0.8fr;
+        padding: 8px 16px;
+        background: #f7f6f3;
+        border-bottom: 0.5px solid #e0ddd6;
+      }
+      .col-header {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #999;
+      }
+      .measure-row {
+        display: grid;
+        grid-template-columns: 1.9fr 0.7fr 0.7fr 0.7fr 0.7fr 0.8fr;
+        padding: 11px 16px;
+        border-bottom: 0.5px solid #f0ede8;
+        align-items: center;
+        transition: background 0.1s;
+      }
+      .measure-row:last-child {
+        border-bottom: none;
+      }
+      .measure-row:hover {
+        background: #faf9f7;
+      }
+      .measure-row.is-done {
+        background: #f2faf5;
+      }
+      .measure-row.is-done:hover {
+        background: #e8f6ed;
+      }
+      .measure-row.is-done .measure-name {
+        color: #2d6a4a;
+      }
+      .measure-row.is-done .measure-sub {
+        color: #6aab87;
+      }
+      .measure-row.is-inprogress {
+        background: #fffbf2;
+      }
+      .measure-row.is-inprogress:hover {
+        background: #fef6e4;
+      }
+      .measure-row.is-inprogress .measure-name {
+        color: #7a4a0a;
+      }
+      .measure-row.is-inprogress .measure-sub {
+        color: #b8894a;
+      }
+      .measure-name {
+        font-size: 13.5px;
+        color: #111;
+        font-weight: 500;
+        line-height: 1.35;
+      }
+      .measure-sub {
+        font-size: 12px;
+        color: #999;
+        margin-top: 2px;
+        font-weight: 400;
+      }
+      .badge {
+        font-size: 11px;
+        padding: 3px 9px;
+        border-radius: 20px;
+        display: inline-block;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+      .badge + .badge {
+        margin-left: 4px;
+      }
+      .badge-q {
+        background: #f0ede8;
+        color: #666;
+      }
+      .badge-foundation {
+        background: #eeedfe;
+        color: #534ab7;
+        margin-left: 7px;
+        vertical-align: middle;
+      }
+      .effort-low {
+        background: #eaf3de;
+        color: #3b6d11;
+      }
+      .effort-med {
+        background: #fff3dc;
+        color: #854f0b;
+      }
+      .effort-high {
+        background: #fdecec;
+        color: #a32d2d;
+      }
+      .effort-vhigh {
+        background: #eeedfe;
+        color: #534ab7;
+      }
+      .impact-low {
+        background: #f0ede8;
+        color: #888;
+      }
+      .impact-med {
+        background: #ebf3fd;
+        color: #185fa5;
+      }
+      .impact-high {
+        background: #eaf3de;
+        color: #3b6d11;
+      }
+      .impact-vhigh {
+        background: #eeedfe;
+        color: #534ab7;
+      }
+      .status-todo {
+        background: #f0ede8;
+        color: #888;
+      }
+      .status-inprogress {
+        background: #fff3dc;
+        color: #854f0b;
+      }
+      .status-done {
+        background: #eaf3de;
+        color: #3b6d11;
+      }
+      .responsible-raphael {
+        background: #eaf0fb;
+        color: #2e5aa8;
+      }
+      .responsible-katrin {
+        background: #fbeaf3;
+        color: #a82e6e;
+      }
+      .responsible-other {
+        background: #f0ede8;
+        color: #666;
+      }
+      .measure-link {
+        cursor: pointer;
+      }
+      .measure-link:hover {
+        text-decoration: underline;
+      }
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(20, 18, 14, 0.45);
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 6vh 16px;
+        z-index: 100;
+        overflow-y: auto;
+      }
+      .modal-box {
+        background: #fff;
+        border-radius: 12px;
+        max-width: 560px;
+        width: 100%;
+        padding: 1.5rem;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+      }
+      .modal-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .modal-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #111;
+        line-height: 1.3;
+      }
+      .modal-meta {
+        font-size: 11.5px;
+        color: #999;
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .modal-category {
+        color: #888;
+      }
+      .modal-close {
+        border: none;
+        background: none;
+        font-size: 22px;
+        line-height: 1;
+        color: #999;
+        cursor: pointer;
+        padding: 0 2px;
+        flex-shrink: 0;
+      }
+      .modal-close:hover {
+        color: #333;
+      }
+      .modal-sub {
+        font-size: 13px;
+        color: #666;
+        margin: 12px 0 0;
+      }
+      .modal-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin: 14px 0 0;
+      }
+      .modal-section {
+        margin-top: 16px;
+        padding-top: 14px;
+        border-top: 0.5px solid #f0ede8;
+      }
+      .modal-section-title {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #999;
+        margin-bottom: 8px;
+      }
+      .modal-kv {
+        display: flex;
+        gap: 8px;
+        font-size: 13px;
+        margin-bottom: 4px;
+      }
+      .modal-k {
+        color: #999;
+        min-width: 50px;
+        flex-shrink: 0;
+      }
+      .modal-v {
+        color: #222;
+        font-weight: 500;
+      }
+      .modal-screenshots {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .modal-screenshots img {
+        max-width: 160px;
+        max-height: 120px;
+        border-radius: 6px;
+        border: 0.5px solid #e0ddd6;
+        object-fit: cover;
+      }
+      @media (max-width: 700px) {
+        body {
+          padding: 1rem;
+        }
+        .summary {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .col-headers,
+        .measure-row {
+          grid-template-columns: 1fr 1fr;
+        }
+        .col-header:not(:first-child):not(:nth-child(3)),
+        .measure-row > *:not(:first-child):not(:nth-child(3)) {
+          display: none;
+        }
+        .gantt-wrap {
+          --label-w: 110px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="top">
+        <h1>Planned Measures</h1>
+        <p>8 streams · monthly timeline · Effort / impact view</p>
+      </div>
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="roadmap">Roadmap</button>
+        <button class="tab-btn" data-tab="mesures">Detailed measures</button>
+      </div>
 
-  <div class="tab-panel" id="tab-roadmap">
-    <div class="summary" id="roadmap-summary"></div>
-    <div class="filters-group">
-      <div class="filters" id="roadmap-filters">
-        <span class="filter-label">Stream</span>
-        <button class="filter-btn active" data-stream="all">All</button>
-        <button class="filter-btn" data-stream="global"><span class="dot dot-global"></span>Global</button>
-        <button class="filter-btn" data-stream="coach"><span class="dot dot-coach"></span>Coach</button>
-        <button class="filter-btn" data-stream="b2b"><span class="dot dot-b2b"></span>B2B</button>
-        <button class="filter-btn" data-stream="b2c"><span class="dot dot-b2c"></span>B2C</button>
-        <button class="filter-btn" data-stream="data"><span class="dot dot-data"></span>Data collection</button>
-        <button class="filter-btn" data-stream="magazine"><span class="dot dot-magazine"></span>Fit for Life Magazine</button>
-        <button class="filter-btn" data-stream="offline"><span class="dot dot-offline"></span>Offline</button>
-        <button class="filter-btn" data-stream="seo"><span class="dot dot-seo"></span>SEO</button>
+      <div class="tab-panel" id="tab-roadmap">
+        <div class="summary" id="roadmap-summary"></div>
+        <div class="filters-group">
+          <div class="filters" id="roadmap-filters">
+            <span class="filter-label">Stream</span>
+            <button class="filter-btn active" data-stream="all">All</button>
+            <button class="filter-btn" data-stream="global">
+              <span class="dot dot-global"></span>Global
+            </button>
+            <button class="filter-btn" data-stream="coach">
+              <span class="dot dot-coach"></span>Coach
+            </button>
+            <button class="filter-btn" data-stream="b2b">
+              <span class="dot dot-b2b"></span>B2B
+            </button>
+            <button class="filter-btn" data-stream="b2c">
+              <span class="dot dot-b2c"></span>B2C
+            </button>
+            <button class="filter-btn" data-stream="data">
+              <span class="dot dot-data"></span>Data collection
+            </button>
+            <button class="filter-btn" data-stream="magazine">
+              <span class="dot dot-magazine"></span>Fit for Life Magazine
+            </button>
+            <button class="filter-btn" data-stream="offline">
+              <span class="dot dot-offline"></span>Offline
+            </button>
+            <button class="filter-btn" data-stream="seo">
+              <span class="dot dot-seo"></span>SEO
+            </button>
+          </div>
+        </div>
+        <div id="roadmap"></div>
+      </div>
+
+      <div class="tab-panel" id="tab-mesures" style="display: none">
+        <div class="summary" id="summary"></div>
+        <div class="filters-group">
+          <div class="filters" id="filters">
+            <span class="filter-label">Stream</span>
+            <button class="filter-btn active" data-stream="all">All</button>
+            <button class="filter-btn" data-stream="global">
+              <span class="dot dot-global"></span>Global
+            </button>
+            <button class="filter-btn" data-stream="coach">
+              <span class="dot dot-coach"></span>Coach
+            </button>
+            <button class="filter-btn" data-stream="b2b">
+              <span class="dot dot-b2b"></span>B2B
+            </button>
+            <button class="filter-btn" data-stream="b2c">
+              <span class="dot dot-b2c"></span>B2C
+            </button>
+            <button class="filter-btn" data-stream="data">
+              <span class="dot dot-data"></span>Data collection
+            </button>
+            <button class="filter-btn" data-stream="magazine">
+              <span class="dot dot-magazine"></span>Fit for Life Magazine
+            </button>
+            <button class="filter-btn" data-stream="offline">
+              <span class="dot dot-offline"></span>Offline
+            </button>
+            <button class="filter-btn" data-stream="seo">
+              <span class="dot dot-seo"></span>SEO
+            </button>
+          </div>
+          <div class="filters" id="status-filters">
+            <span class="filter-label">Status</span>
+            <button class="filter-btn active" data-status="all">All</button>
+            <button class="filter-btn" data-status="todo">To do</button>
+            <button class="filter-btn" data-status="inprogress">
+              In progress
+            </button>
+            <button class="filter-btn" data-status="done">Done</button>
+          </div>
+        </div>
+        <div id="table-container"></div>
       </div>
     </div>
-    <div id="roadmap"></div>
-  </div>
 
-  <div class="tab-panel" id="tab-mesures" style="display:none">
-    <div class="summary" id="summary"></div>
-    <div class="filters-group">
-      <div class="filters" id="filters">
-        <span class="filter-label">Stream</span>
-        <button class="filter-btn active" data-stream="all">All</button>
-        <button class="filter-btn" data-stream="global"><span class="dot dot-global"></span>Global</button>
-        <button class="filter-btn" data-stream="coach"><span class="dot dot-coach"></span>Coach</button>
-        <button class="filter-btn" data-stream="b2b"><span class="dot dot-b2b"></span>B2B</button>
-        <button class="filter-btn" data-stream="b2c"><span class="dot dot-b2c"></span>B2C</button>
-        <button class="filter-btn" data-stream="data"><span class="dot dot-data"></span>Data collection</button>
-        <button class="filter-btn" data-stream="magazine"><span class="dot dot-magazine"></span>Fit for Life Magazine</button>
-        <button class="filter-btn" data-stream="offline"><span class="dot dot-offline"></span>Offline</button>
-        <button class="filter-btn" data-stream="seo"><span class="dot dot-seo"></span>SEO</button>
-      </div>
-      <div class="filters" id="status-filters">
-        <span class="filter-label">Status</span>
-        <button class="filter-btn active" data-status="all">All</button>
-        <button class="filter-btn" data-status="todo">To do</button>
-        <button class="filter-btn" data-status="inprogress">In progress</button>
-        <button class="filter-btn" data-status="done">Done</button>
-      </div>
+    <div class="modal-overlay" id="measure-modal" style="display: none">
+      <div class="modal-box" id="modal-body"></div>
     </div>
-    <div id="table-container"></div>
-  </div>
-</div>
 
-<div class="modal-overlay" id="measure-modal" style="display:none">
-  <div class="modal-box" id="modal-body"></div>
-</div>
+    <script>
+      const monthNames = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
 
-<script>
-const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+      // months: array of "YYYY-MM" strings — a single entry for a one-month task,
+      // or [firstMonth, lastMonth] to span a range (e.g. ["2026-07","2026-09"] = Jul-Sep 2026 inclusive).
+      // Optional per-measure fields, shown in the detail modal when present:
+      //   goal: "5000 clicks/month" — the target to hit
+      //   result: "3200 clicks/month (as of Aug)" — plain-text outcome, OR an object with any of
+      //     { emailsSent: 12500, ctr: "3.4%", onboardingsStarted: 210 } for a per-field breakdown
+      //   screenshots: ["screenshots/foo.png"] — relative paths to images to display
+      const measures = [
+        {
+          stream: "global",
+          category: "Tracking & testing infrastructure",
+          name: "Mapping entry points + tracking",
+          sub: "Mapping via channel / product offered",
+          months: ["2026-07", "2026-09"],
+          effort: "vhigh",
+          impact: "high",
+          status: "inprogress",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "global",
+          category: "Tracking & testing infrastructure",
+          name: "Web AB testing tool — setup",
+          sub: "Prerequisite for future iterations",
+          months: ["2026-07", "2026-09"],
+          effort: "med",
+          impact: "high",
+          status: "inprogress",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "global",
+          category: "Tracking & testing infrastructure",
+          name: "GA4 cross-domain tracking",
+          sub: "3 sub-domains, exclude referrals & internal",
+          months: ["2026-08", "2026-09"],
+          effort: "med",
+          impact: "vhigh",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "global",
+          category: "Sleeping accounts reactivation",
+          name: "Strategy approach",
+          sub: "Define the campaigns to reactivate (emailing / retargeting) per product / channel",
+          months: ["2026-09", "2026-12"],
+          effort: "high",
+          impact: "low",
+          status: "todo",
+          responsible: ["Raphael", "Katrin"],
+        },
+        {
+          stream: "global",
+          category: "Sleeping accounts reactivation",
+          name: "communication channels activables?",
+          sub: "define the channels potentially activable (retargeting / emailing)",
+          months: ["2026-09", "2026-09"],
+          effort: "high",
+          impact: "low",
+          status: "todo",
+          responsible: "Raphael",
+        },
+        {
+          stream: "global",
+          category: "Tracking & testing infrastructure",
+          name: "Mail AB testing tool — setup",
+          sub: "set up an ab test system for our emails",
+          months: ["2026-10", "2026-12"],
+          effort: "vhigh",
+          impact: "high",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "global",
+          category: "Communication matrix & AI",
+          name: "Create a communication matrix",
+          sub: "Touchpoint × timing matrix — decide Coach vs Magazine per moment, incl. post-race",
+          months: ["2026-07", "2026-12"],
+          effort: "low",
+          impact: "vhigh",
+          status: "inprogress",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "global",
+          category: "Communication matrix & AI",
+          name: "Connect the communication matrix to AI",
+          sub: "Signal engine to score and personalize product & content per athlete profile",
+          months: ["2027-01", "2027-03"],
+          effort: "vhigh",
+          impact: "vhigh",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
 
-// months: array of "YYYY-MM" strings — a single entry for a one-month task,
-// or [firstMonth, lastMonth] to span a range (e.g. ["2026-07","2026-09"] = Jul-Sep 2026 inclusive).
-// Optional per-measure fields, shown in the detail modal when present:
-//   goal: "5000 clicks/month" — the target to hit
-//   result: "3200 clicks/month (as of Aug)" — plain-text outcome, OR an object with any of
-//     { emailsSent: 12500, ctr: "3.4%", onboardingsStarted: 210 } for a per-field breakdown
-//   screenshots: ["screenshots/foo.png"] — relative paths to images to display
-const measures = [
-  { stream:"global", category:"Tracking & testing infrastructure", name:"Mapping entry points + tracking", sub:"Mapping via channel / product offered", months:["2026-07","2026-09"], effort:"vhigh", impact:"high", status:"inprogress", type:"foundation", responsible:"Raphael" },
-  { stream:"global", category:"Tracking & testing infrastructure", name:"Web AB testing tool — setup", sub:"Prerequisite for future iterations", months:["2026-07","2026-09"], effort:"med", impact:"high", status:"inprogress", type:"foundation", responsible:"Raphael" },
-  { stream:"global", category:"Tracking & testing infrastructure", name:"GA4 cross-domain tracking", sub:"3 sub-domains, exclude referrals & internal", months:["2026-08","2026-09"], effort:"med", impact:"vhigh", status:"todo", type:"foundation", responsible:"Raphael" },
-  { stream:"global", category:"Sleeping accounts reactivation", name:"Strategy approach", sub:"Define the campaigns to reactivate (emailing / retargeting) per product / channel", months:["2026-09","2026-12"], effort:"high", impact:"low", status:"todo", responsible:["Raphael","Katrin"] },
-  { stream:"global", category:"Sleeping accounts reactivation", name:"communication channels activables?", sub:"define the channels potentially activable (retargeting / emailing)", months:["2026-09","2026-09"], effort:"high", impact:"low", status:"todo", responsible:"Raphael" },
-  { stream:"global", category:"Tracking & testing infrastructure", name:"Mail AB testing tool — setup", sub:"set up an ab test system for our emails", months:["2026-10","2026-12"], effort:"vhigh", impact:"high", status:"todo", type:"foundation", responsible:"Raphael" },
-  { stream:"global", category:"Communication matrix & AI", name:"Create a communication matrix", sub:"Touchpoint × timing matrix — decide Coach vs Magazine per moment, incl. post-race", months:["2026-07","2026-12"], effort:"low", impact:"vhigh", status:"inprogress", type:"foundation", responsible:"Raphael" },
-  { stream:"global", category:"Communication matrix & AI", name:"Connect the communication matrix to AI", sub:"Signal engine to score and personalize product & content per athlete profile", months:["2027-01","2027-03"], effort:"vhigh", impact:"vhigh", status:"todo", type:"foundation", responsible:"Raphael" },
+        {
+          stream: ["coach", "magazine"],
+          category: "Touchpoints & teasers",
+          name: "CTA - Dashboard page",
+          sub: "Design to be defined",
+          months: ["2026-08", "2026-09"],
+          effort: "low",
+          impact: "vhigh",
+          status: "todo",
+          responsible: "Raphael",
+          goal: "CTR ≥ 2%",
+        },
+        {
+          stream: ["coach", "magazine"],
+          category: "Touchpoints & teasers",
+          name: "CTA - Results page",
+          sub: "Design to be defined",
+          months: ["2026-08", "2026-09"],
+          effort: "low",
+          impact: "vhigh",
+          status: "todo",
+          responsible: "Raphael",
+          goal: "CTR ≥ 2%",
+        },
+        {
+          stream: ["coach", "magazine"],
+          category: "Touchpoints & teasers",
+          name: "CTA - Athlete search page",
+          sub: "teasing for the coach on athletes' search page?",
+          months: ["2026-08", "2026-09"],
+          effort: "low",
+          impact: "low",
+          status: "todo",
+          responsible: "Raphael",
+          goal: "CTR ≥ 0.3%",
+        },
+        {
+          stream: ["coach", "magazine"],
+          category: "Touchpoints & teasers",
+          name: "CTA - Start list",
+          sub: "Product presence on the start list",
+          months: ["2026-08", "2026-09"],
+          effort: "med",
+          impact: "low",
+          status: "todo",
+          responsible: "Raphael",
+          goal: "CTR ≥ 0.3%",
+        },
+        {
+          stream: ["coach", "magazine"],
+          category: "Touchpoints & teasers",
+          name: "Mail - Teaser in confirmation email",
+          sub: "Create a HTML to be integrated in the confirmation emails",
+          months: ["2026-07"],
+          effort: "low",
+          impact: "high",
+          status: "inprogress",
+          responsible: "Raphael",
+          goal: "CTR ≥ 1.5%",
+        },
+        {
+          stream: ["coach", "magazine"],
+          category: "Touchpoints & teasers",
+          name: "Mail - Post registration teasing",
+          sub: "Teasing pre race with sequencing and different bias",
+          months: ["2026-10", "2026-11"],
+          effort: "low",
+          impact: "high",
+          status: "todo",
+          responsible: "Raphael",
+          goal: "CTR ≥ 3%",
+        },
+        {
+          stream: ["coach", "magazine"],
+          category: "Touchpoints & teasers",
+          name: "Mail - Post race teasing",
+          sub: "Post race subscription teasing with a sequencing J+1 → J+21",
+          months: ["2026-10", "2026-11"],
+          effort: "low",
+          impact: "med",
+          status: "todo",
+          responsible: "Raphael",
+          goal: "CTR ≥ 4%",
+        },
+        {
+          stream: ["coach", "magazine"],
+          category: "Touchpoints & teasers",
+          name: "Mail - Congratulation's email",
+          sub: "integrate teaser in the congratulation's email",
+          months: ["2026-10", "2026-11"],
+          effort: "low",
+          impact: "high",
+          status: "todo",
+          responsible: "Raphael",
+          goal: "CTR ≥ 2.5%",
+        },
+        {
+          stream: ["coach", "magazine"],
+          category: "Touchpoints & teasers",
+          name: "Mail - FFL Newsletter",
+          sub: "Use Fit for Life Newsletter to promote our products (coach + abo)",
+          months: ["2026-10", "2026-11"],
+          effort: "low",
+          impact: "high",
+          status: "todo",
+          responsible: "Raphael",
+          goal: "CTR ≥ 0.5%",
+        },
+        {
+          stream: ["coach", "magazine"],
+          category: "Touchpoints & teasers",
+          name: "Mail - Welcome Mail",
+          sub: "Pre-race touchpoint — Product teasing in the welcome mail",
+          months: ["2026-10", "2026-11"],
+          effort: "low",
+          impact: "med",
+          status: "todo",
+          responsible: "Raphael",
+          goal: "CTR ≥ 5.5%",
+        },
+        {
+          stream: ["coach", "magazine"],
+          category: "Touchpoints & teasers",
+          name: "Articles / content pages",
+          sub: "List all articles / content where we could integrate a teaser for a product",
+          months: ["2026-11", "2026-12"],
+          effort: "high",
+          impact: "low",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "coach",
+          category: "Touchpoints & teasers",
+          name: "FFL Magazine",
+          sub: "Cross-promotion of the coach via the Fit for Life Magazine?",
+          months: ["2026-11", "2026-12"],
+          effort: "high",
+          impact: "low",
+          status: "todo",
+          responsible: ["Raphael", "Katrin"],
+        },
+        {
+          stream: "coach",
+          category: "Testing & optimization",
+          name: "Mail - A/B tests",
+          sub: "Funnel overview + variants based on emails with engagement",
+          months: ["2027-01", "2027-02"],
+          effort: "med",
+          impact: "med",
+          status: "todo",
+          responsible: "Raphael",
+        },
+        {
+          stream: ["coach", "magazine"],
+          category: "Testing & optimization",
+          name: "CTA - A/B tests",
+          sub: "create A/B tests for each teaser with traffic",
+          months: ["2026-10", "2026-12"],
+          effort: "low",
+          impact: "vhigh",
+          status: "todo",
+          responsible: "Raphael",
+        },
+        {
+          stream: "coach",
+          category: "Measurement & voice of customer",
+          name: "Fit for Life Coach KPIs",
+          sub: "define list of KPIs that are missing",
+          months: ["2026-07", "2026-07"],
+          effort: "high",
+          impact: "high",
+          status: "done",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "coach",
+          category: "Measurement & voice of customer",
+          name: "Tracking reporting",
+          sub: "create a global reporting with metabase + analytics",
+          months: ["2026-08", "2026-08"],
+          effort: "high",
+          impact: "high",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "coach",
+          category: "Measurement & voice of customer",
+          name: "Satisfaction online form",
+          sub: "create an online form to check satisfaction",
+          months: ["2026-07", "2026-07"],
+          effort: "low",
+          impact: "med",
+          status: "done",
+          responsible: "Raphael",
+        },
+        {
+          stream: "coach",
+          category: "Measurement & voice of customer",
+          name: "Online form Executive Reporting",
+          sub: "create the summary exec of feedback on the coach",
+          months: ["2026-07", "2026-07"],
+          effort: "low",
+          impact: "med",
+          status: "done",
+          type: "foundation",
+          responsible: "Raphael",
+        },
 
-  { stream:["coach","magazine"], category:"Touchpoints & teasers", name:"CTA - Dashboard page", sub:"Design to be defined", months:["2026-08","2026-09"], effort:"low", impact:"vhigh", status:"todo", responsible:"Raphael", goal:"CTR ≥ 2%" },
-  { stream:["coach","magazine"], category:"Touchpoints & teasers", name:"CTA - Results page", sub:"Design to be defined", months:["2026-08","2026-09"], effort:"low", impact:"vhigh", status:"todo", responsible:"Raphael", goal:"CTR ≥ 2%" },
-  { stream:["coach","magazine"], category:"Touchpoints & teasers", name:"CTA - Athlete search page", sub:"teasing for the coach on athletes' search page?", months:["2026-08","2026-09"], effort:"low", impact:"low", status:"todo", responsible:"Raphael", goal:"CTR ≥ 0.3%" },
-  { stream:["coach","magazine"], category:"Touchpoints & teasers", name:"CTA - Start list", sub:"Product presence on the start list", months:["2026-08","2026-09"], effort:"med", impact:"low", status:"todo", responsible:"Raphael", goal:"CTR ≥ 0.3%" },
-  { stream:["coach","magazine"], category:"Touchpoints & teasers", name:"Mail - Teaser in confirmation email", sub:"Create a HTML to be integrated in the confirmation emails", months:["2026-07"], effort:"low", impact:"high", status:"inprogress", responsible:"Raphael", goal:"CTR ≥ 1.5%" },
-  { stream:["coach","magazine"], category:"Touchpoints & teasers", name:"Mail - Post registration teasing", sub:"Teasing pre race with sequencing and different bias", months:["2026-10","2026-11"], effort:"low", impact:"high", status:"todo", responsible:"Raphael", goal:"CTR ≥ 3%" },
-  { stream:["coach","magazine"], category:"Touchpoints & teasers", name:"Mail - Post race teasing", sub:"Post race subscription teasing with a sequencing J+1 → J+21", months:["2026-10","2026-11"], effort:"low", impact:"med", status:"todo", responsible:"Raphael", goal:"CTR ≥ 4%" },
-  { stream:["coach","magazine"], category:"Touchpoints & teasers", name:"Mail - Congratulation's email", sub:"integrate teaser in the congratulation's email", months:["2026-10","2026-11"], effort:"low", impact:"high", status:"todo", responsible:"Raphael", goal:"CTR ≥ 2.5%" },
-  { stream:["coach","magazine"], category:"Touchpoints & teasers", name:"Mail - FFL Newsletter", sub:"Use Fit for Life Newsletter to promote our products (coach + abo)", months:["2026-10","2026-11"], effort:"low", impact:"high", status:"todo", responsible:"Raphael", goal:"CTR ≥ 0.5%" },
-  { stream:["coach","magazine"], category:"Touchpoints & teasers", name:"Mail - Welcome Mail", sub:"Pre-race touchpoint — Product teasing in the welcome mail", months:["2026-10","2026-11"], effort:"low", impact:"med", status:"todo", responsible:"Raphael", goal:"CTR ≥ 5.5%" },
-  { stream:["coach","magazine"], category:"Touchpoints & teasers", name:"Articles / content pages", sub:"List all articles / content where we could integrate a teaser for a product", months:["2026-11","2026-12"], effort:"high", impact:"low", status:"todo", type:"foundation", responsible:"Raphael" },
-  { stream:"coach", category:"Touchpoints & teasers", name:"FFL Magazine", sub:"Cross-promotion of the coach via the Fit for Life Magazine?", months:["2026-11","2026-12"], effort:"high", impact:"low", status:"todo", responsible:["Raphael","Katrin"] },
-  { stream:"coach", category:"Testing & optimization", name:"Mail - A/B tests", sub:"Funnel overview + variants based on emails with engagement", months:["2027-01","2027-02"], effort:"med", impact:"med", status:"todo", responsible:"Raphael" },
-  { stream:["coach","magazine"], category:"Testing & optimization", name:"CTA - A/B tests", sub:"create A/B tests for each teaser with traffic", months:["2026-10","2026-12"], effort:"low", impact:"vhigh", status:"todo", responsible:"Raphael" },
-  { stream:"coach", category:"Measurement & voice of customer", name:"Fit for Life Coach KPIs", sub:"define list of KPIs that are missing", months:["2026-07","2026-07"], effort:"high", impact:"high", status:"inprogress", type:"foundation", responsible:"Raphael" },
-  { stream:"coach", category:"Measurement & voice of customer", name:"Tracking reporting", sub:"create a global reporting with metabase + analytics", months:["2026-08","2026-08"], effort:"high", impact:"high", status:"todo", type:"foundation", responsible:"Raphael" },
-  { stream:"coach", category:"Measurement & voice of customer", name:"Satisfaction online form", sub:"create an online form to check satisfaction", months:["2026-07","2026-07"], effort:"low", impact:"med", status:"done", responsible:"Raphael" },
-  { stream:"coach", category:"Measurement & voice of customer", name:"Online form Executive Reporting", sub:"create the summary exec of feedback on the coach", months:["2026-07","2026-07"], effort:"low", impact:"med", status:"done", type:"foundation", responsible:"Raphael" },
+        {
+          stream: "b2b",
+          category: "Tracking & reporting foundations",
+          name: "Custom events GA4",
+          sub: "page_view, reg_start, reg_complete, payment_complete",
+          months: ["2026-07", "2026-09"],
+          effort: "med",
+          impact: "high",
+          status: "inprogress",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2b",
+          category: "Tracking & reporting foundations",
+          name: "Heatmap tool + drop-out session recording",
+          sub: "Define if we already have a tool",
+          months: ["2026-07", "2026-09"],
+          effort: "low",
+          impact: "high",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2b",
+          category: "Tracking & reporting foundations",
+          name: "Event online subscription reporting",
+          sub: "reporting for each event and global overview of events for SSM members",
+          months: ["2026-07", "2026-09"],
+          effort: "med",
+          impact: "med",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2b",
+          category: "Tracking & reporting foundations",
+          name: "Customer Journey analysis — Looker dashboards",
+          sub: "Organizer dashboards",
+          months: ["2026-07", "2026-09"],
+          effort: "high",
+          impact: "high",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2b",
+          category: "Friction reduction",
+          name: "Friction reduction — exit survey",
+          sub: "Survey triggered on drop-out intent",
+          months: ["2026-10", "2026-12"],
+          effort: "low",
+          impact: "med",
+          status: "todo",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2b",
+          category: "Friction reduction",
+          name: "Friction reduction — pre-filled forms",
+          sub: "Auto-fill known user data at registration",
+          months: ["2026-10", "2026-12"],
+          effort: "med",
+          impact: "med",
+          status: "todo",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2b",
+          category: "Friction reduction",
+          name: "Friction reduction — progress bar",
+          sub: "Visual progress indicator in registration funnel",
+          months: ["2026-10", "2026-12"],
+          effort: "med",
+          impact: "med",
+          status: "todo",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2b",
+          category: "Friction reduction",
+          name: "Friction reduction — auto-save",
+          sub: "Save form state to reduce drop-out on interruption",
+          months: ["2026-10", "2026-12"],
+          effort: "high",
+          impact: "high",
+          status: "todo",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2b",
+          category: "Lifecycle communications",
+          name: "Lifecycle comms — drop-out mails/SMS",
+          sub: "Automated messages triggered on registration abandonment",
+          months: ["2026-10", "2026-12"],
+          effort: "high",
+          impact: "high",
+          status: "todo",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2b",
+          category: "Lifecycle communications",
+          name: "Lifecycle comms — urgency triggers",
+          sub: "Deadline-based messaging (closing soon, spots left...)",
+          months: ["2026-10", "2026-12"],
+          effort: "med",
+          impact: "high",
+          status: "todo",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2b",
+          category: "Lifecycle communications",
+          name: "Lifecycle comms — social proof",
+          sub: "Inject participant count, testimonials in comms",
+          months: ["2026-10", "2026-12"],
+          effort: "med",
+          impact: "med",
+          status: "todo",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2b",
+          category: "Lifecycle communications",
+          name: "NPS survey post 48h",
+          sub: "",
+          months: ["2026-10", "2026-12"],
+          effort: "low",
+          impact: "med",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2b",
+          category: "Organizer growth & partnerships",
+          name: "Best practices content + activation",
+          sub: "Regular sessions with organizers",
+          months: ["2027-01", "2027-03"],
+          effort: "med",
+          impact: "med",
+          status: "todo",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2b",
+          category: "Tracking & reporting foundations",
+          name: "B2B KPIs",
+          sub: "define list of KPIs that are missing",
+          months: ["2026-07", "2026-09"],
+          effort: "high",
+          impact: "high",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2b",
+          category: "AI campaign tools",
+          name: "Sparta Co-Pilot — AI Marketing Co-pilot",
+          sub: "POC · AI campaign generator per segment × gate × channel, smart athlete segmentation, brand voice upload · Copenhagen Marathon demo",
+          months: ["2026-07", "2026-09"],
+          effort: "vhigh",
+          impact: "vhigh",
+          status: "done",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2b",
+          category: "AI campaign tools",
+          name: "AI Campaign Manager tool",
+          sub: "AI tool to help event organizers to create their campaigns",
+          months: ["2026-07", "2026-09"],
+          effort: "vhigh",
+          impact: "high",
+          status: "todo",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2b",
+          category: "AI campaign tools",
+          name: "AI Assets Creation tool",
+          sub: "AI tool to help event organizers to create their assets",
+          months: ["2026-07", "2026-09"],
+          effort: "vhigh",
+          impact: "high",
+          status: "todo",
+          responsible: "Raphael",
+        },
+        {
+          stream: ["b2b", "coach"],
+          category: "Organizer growth & partnerships",
+          name: "Referral Program",
+          sub: "refer a friend and get an incentive",
+          months: ["2026-07", "2026-09"],
+          effort: "high",
+          impact: "vhigh",
+          status: "todo",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2b",
+          category: "Tracking & reporting foundations",
+          name: "Online conversion tracking for events organizers",
+          sub: "check how to report conversions for our event organizers",
+          months: ["2026-10", "2026-12"],
+          effort: "high",
+          impact: "vhigh",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
 
-  { stream:"b2b", category:"Tracking & reporting foundations", name:"Custom events GA4", sub:"page_view, reg_start, reg_complete, payment_complete", months:["2026-07","2026-09"], effort:"med", impact:"high", status:"inprogress", type:"foundation", responsible:"Raphael" },
-  { stream:"b2b", category:"Tracking & reporting foundations", name:"Heatmap tool + drop-out session recording", sub:"Define if we already have a tool", months:["2026-07","2026-09"], effort:"low", impact:"high", status:"todo", type:"foundation", responsible:"Raphael" },
-  { stream:"b2b", category:"Tracking & reporting foundations", name:"Event online subscription reporting", sub:"reporting for each event and global overview of events for SSM members", months:["2026-07","2026-09"], effort:"med", impact:"med", status:"todo", type:"foundation", responsible:"Raphael" },
-  { stream:"b2b", category:"Tracking & reporting foundations", name:"Customer Journey analysis — Looker dashboards", sub:"Organizer dashboards", months:["2026-07","2026-09"], effort:"high", impact:"high", status:"todo", type:"foundation", responsible:"Raphael" },
-  { stream:"b2b", category:"Friction reduction", name:"Friction reduction — exit survey", sub:"Survey triggered on drop-out intent", months:["2026-10","2026-12"], effort:"low", impact:"med", status:"todo", responsible:"Raphael" },
-  { stream:"b2b", category:"Friction reduction", name:"Friction reduction — pre-filled forms", sub:"Auto-fill known user data at registration", months:["2026-10","2026-12"], effort:"med", impact:"med", status:"todo", responsible:"Raphael" },
-  { stream:"b2b", category:"Friction reduction", name:"Friction reduction — progress bar", sub:"Visual progress indicator in registration funnel", months:["2026-10","2026-12"], effort:"med", impact:"med", status:"todo", responsible:"Raphael" },
-  { stream:"b2b", category:"Friction reduction", name:"Friction reduction — auto-save", sub:"Save form state to reduce drop-out on interruption", months:["2026-10","2026-12"], effort:"high", impact:"high", status:"todo", responsible:"Raphael" },
-  { stream:"b2b", category:"Lifecycle communications", name:"Lifecycle comms — drop-out mails/SMS", sub:"Automated messages triggered on registration abandonment", months:["2026-10","2026-12"], effort:"high", impact:"high", status:"todo", responsible:"Raphael" },
-  { stream:"b2b", category:"Lifecycle communications", name:"Lifecycle comms — urgency triggers", sub:"Deadline-based messaging (closing soon, spots left...)", months:["2026-10","2026-12"], effort:"med", impact:"high", status:"todo", responsible:"Raphael" },
-  { stream:"b2b", category:"Lifecycle communications", name:"Lifecycle comms — social proof", sub:"Inject participant count, testimonials in comms", months:["2026-10","2026-12"], effort:"med", impact:"med", status:"todo", responsible:"Raphael" },
-  { stream:"b2b", category:"Lifecycle communications", name:"NPS survey post 48h", sub:"", months:["2026-10","2026-12"], effort:"low", impact:"med", status:"todo", type:"foundation", responsible:"Raphael" },
-  { stream:"b2b", category:"Organizer growth & partnerships", name:"Best practices content + activation", sub:"Regular sessions with organizers", months:["2027-01","2027-03"], effort:"med", impact:"med", status:"todo", responsible:"Raphael" },
-  { stream:"b2b", category:"Tracking & reporting foundations", name:"B2B KPIs", sub:"define list of KPIs that are missing", months:["2026-07","2026-09"], effort:"high", impact:"high", status:"todo", type:"foundation", responsible:"Raphael" },
-  { stream:"b2b", category:"AI campaign tools", name:"Sparta Co-Pilot — AI Marketing Co-pilot", sub:"POC · AI campaign generator per segment × gate × channel, smart athlete segmentation, brand voice upload · Copenhagen Marathon demo", months:["2026-07","2026-09"], effort:"vhigh", impact:"vhigh", status:"done", responsible:"Raphael" },
-  { stream:"b2b", category:"AI campaign tools", name:"AI Campaign Manager tool", sub:"AI tool to help event organizers to create their campaigns", months:["2026-07","2026-09"], effort:"vhigh", impact:"high", status:"todo", responsible:"Raphael" },
-  { stream:"b2b", category:"AI campaign tools", name:"AI Assets Creation tool", sub:"AI tool to help event organizers to create their assets", months:["2026-07","2026-09"], effort:"vhigh", impact:"high", status:"todo", responsible:"Raphael" },
-  { stream:["b2b","coach"], category:"Organizer growth & partnerships", name:"Referral Program", sub:"refer a friend and get an incentive", months:["2026-07","2026-09"], effort:"high", impact:"vhigh", status:"todo", responsible:"Raphael" },
-  { stream:"b2b", category:"Tracking & reporting foundations", name:"Online conversion tracking for events organizers", sub:"check how to report conversions for our event organizers", months:["2026-10","2026-12"], effort:"high", impact:"vhigh", status:"todo", type:"foundation", responsible:"Raphael" },
+        {
+          stream: "b2c",
+          category: "Audit & foundations",
+          name: "Sleeping accounts — audit + actionable channels",
+          sub: "Emails, notifications, retargeting",
+          months: ["2026-07", "2026-09"],
+          effort: "vhigh",
+          impact: "med",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2c",
+          category: "Audit & foundations",
+          name: "Optimization meta data finish date SEO",
+          sub: "update the meta data to show a date even though it's not planned in back end",
+          months: ["2026-07", "2026-09"],
+          effort: "low",
+          impact: "low",
+          status: "inprogress",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2c",
+          category: "Audit & foundations",
+          name: "Content audit + entry point mapping",
+          sub: "Confirmation email, 4MPR, 2MPR, After Race, Waiting page",
+          months: ["2026-07", "2026-09"],
+          effort: "med",
+          impact: "high",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2c",
+          category: "Performance features",
+          name: "Performance - Personalized data",
+          sub: "check what personalized data we can bring to athletes",
+          months: ["2026-10", "2026-12"],
+          effort: "high",
+          impact: "med",
+          status: "todo",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2c",
+          category: "Performance features",
+          name: "Performance - Progress tracking",
+          sub: "import information about their trainings to compare with their subscribed athletes",
+          months: ["2026-10", "2026-12"],
+          effort: "high",
+          impact: "high",
+          status: "todo",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2c",
+          category: "Performance features",
+          name: "Performance - Datasport Index",
+          sub: "create a datasport index ranking method",
+          months: ["2026-10", "2026-12"],
+          effort: "vhigh",
+          impact: "high",
+          status: "todo",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2c",
+          category: "Performance features",
+          name: "Performance - Pofile-based content",
+          sub: "map the type of athletes and provide related content (beg / advanced)",
+          months: ["2026-10", "2026-12"],
+          effort: "vhigh",
+          impact: "high",
+          status: "todo",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2c",
+          category: "Performance features",
+          name: "Performance - Training tracks near you",
+          sub: "Offer training possibilities around them",
+          months: ["2026-10", "2026-12"],
+          effort: "vhigh",
+          impact: "high",
+          status: "todo",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2c",
+          category: "Race features",
+          name: "Race - Prediction tool",
+          sub: "create a tool to predict their performance on the subscribed race",
+          months: ["2026-10", "2026-12"],
+          effort: "vhigh",
+          impact: "high",
+          status: "todo",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2c",
+          category: "Race features",
+          name: "Race - Race recommendsation",
+          sub: "create a tool to have personalized recommendations of races to athletes",
+          months: ["2026-10", "2026-12"],
+          effort: "vhigh",
+          impact: "high",
+          status: "todo",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2c",
+          category: "Race features",
+          name: "Race - Application",
+          sub: "Could we create an app where event organizers can push content for athletes?",
+          months: ["2026-10", "2026-12"],
+          effort: "vhigh",
+          impact: "vhigh",
+          status: "todo",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2c",
+          category: "Race features",
+          name: "Race - Partnerships",
+          sub: "Offer partnerships to cross sell products to athletes",
+          months: ["2026-10", "2026-12"],
+          effort: "vhigh",
+          impact: "vhigh",
+          status: "todo",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2c",
+          category: "Gamification",
+          name: "Gamification - Challenge friends",
+          sub: "create datasport challenges between friends",
+          months: ["2026-10", "2026-12"],
+          effort: "vhigh",
+          impact: "high",
+          status: "todo",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2c",
+          category: "Gamification",
+          name: "Gamification - Badges with exclusive accesses",
+          sub: "access to sales, partnerships etc...",
+          months: ["2026-10", "2026-12"],
+          effort: "vhigh",
+          impact: "vhigh",
+          status: "todo",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2c",
+          category: "Product portfolio",
+          name: "Products - define products in scope",
+          sub: "Define all products in our scope to be offered",
+          months: ["2026-10", "2026-12"],
+          effort: "high",
+          impact: "vhigh",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2c",
+          category: "Product portfolio",
+          name: "Products - new products",
+          sub: "check if we can have new products to offer to our athletes",
+          months: ["2026-10", "2026-12"],
+          effort: "high",
+          impact: "vhigh",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2c",
+          category: "Persona & segmentation",
+          name: "Persona - Segmentation",
+          sub: "Create a dynamical Segmentation of our athletes",
+          months: ["2026-10", "2026-12"],
+          effort: "high",
+          impact: "vhigh",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2c",
+          category: "Persona & segmentation",
+          name: "Persona - Conversion-based matrix",
+          sub: "define likelihood of conversions x products",
+          months: ["2026-10", "2026-12"],
+          effort: "high",
+          impact: "vhigh",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2c",
+          category: "Persona & segmentation",
+          name: "Persona - Upselling strategy by persona",
+          sub: "Create the persona strategy",
+          months: ["2026-10", "2026-12"],
+          effort: "high",
+          impact: "vhigh",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2c",
+          category: "Audit & foundations",
+          name: "B2C KPIs",
+          sub: "define list of KPIs that are missing",
+          months: ["2026-07", "2026-09"],
+          effort: "vhigh",
+          impact: "vhigh",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
 
-  { stream:"b2c", category:"Audit & foundations", name:"Sleeping accounts — audit + actionable channels", sub:"Emails, notifications, retargeting", months:["2026-07","2026-09"], effort:"vhigh", impact:"med", status:"todo", type:"foundation", responsible:"Raphael" },
-  { stream:"b2c", category:"Audit & foundations", name:"Optimization meta data finish date SEO", sub:"update the meta data to show a date even though it's not planned in back end", months:["2026-07","2026-09"], effort:"low", impact:"low", status:"inprogress", responsible:"Raphael" },
-  { stream:"b2c", category:"Audit & foundations", name:"Content audit + entry point mapping", sub:"Confirmation email, 4MPR, 2MPR, After Race, Waiting page", months:["2026-07","2026-09"], effort:"med", impact:"high", status:"todo", type:"foundation", responsible:"Raphael" },
-  { stream:"b2c", category:"Performance features", name:"Performance - Personalized data", sub:"check what personalized data we can bring to athletes", months:["2026-10","2026-12"], effort:"high", impact:"med", status:"todo", responsible:"Raphael" },
-  { stream:"b2c", category:"Performance features", name:"Performance - Progress tracking", sub:"import information about their trainings to compare with their subscribed athletes", months:["2026-10","2026-12"], effort:"high", impact:"high", status:"todo", responsible:"Raphael" },
-  { stream:"b2c", category:"Performance features", name:"Performance - Datasport Index", sub:"create a datasport index ranking method", months:["2026-10","2026-12"], effort:"vhigh", impact:"high", status:"todo", responsible:"Raphael" },
-  { stream:"b2c", category:"Performance features", name:"Performance - Pofile-based content", sub:"map the type of athletes and provide related content (beg / advanced)", months:["2026-10","2026-12"], effort:"vhigh", impact:"high", status:"todo", responsible:"Raphael" },
-  { stream:"b2c", category:"Performance features", name:"Performance - Training tracks near you", sub:"Offer training possibilities around them", months:["2026-10","2026-12"], effort:"vhigh", impact:"high", status:"todo", responsible:"Raphael" },
-  { stream:"b2c", category:"Race features", name:"Race - Prediction tool", sub:"create a tool to predict their performance on the subscribed race", months:["2026-10","2026-12"], effort:"vhigh", impact:"high", status:"todo", responsible:"Raphael" },
-  { stream:"b2c", category:"Race features", name:"Race - Race recommendation", sub:"create a tool to have personalized recommendations of races to athletes", months:["2026-10","2026-12"], effort:"vhigh", impact:"high", status:"todo", responsible:"Raphael" },
-  { stream:"b2c", category:"Race features", name:"Race - Application", sub:"Could we create an app where event organizers can push content for athletes?", months:["2026-10","2026-12"], effort:"vhigh", impact:"vhigh", status:"todo", responsible:"Raphael" },
-  { stream:"b2c", category:"Race features", name:"Race - Partnerships", sub:"Offer partnerships to cross sell products to athletes", months:["2026-10","2026-12"], effort:"vhigh", impact:"vhigh", status:"todo", responsible:"Raphael" },
-  { stream:"b2c", category:"Gamification", name:"Gamification - Challenge friends", sub:"create datasport challenges between friends", months:["2026-10","2026-12"], effort:"vhigh", impact:"high", status:"todo", responsible:"Raphael" },
-  { stream:"b2c", category:"Gamification", name:"Gamification - Badges with exclusive accesses", sub:"access to sales, partnerships etc...", months:["2026-10","2026-12"], effort:"vhigh", impact:"vhigh", status:"todo", responsible:"Raphael" },
-  { stream:"b2c", category:"Product portfolio", name:"Products - define products in scope", sub:"Define all products in our scope to be offered", months:["2026-10","2026-12"], effort:"high", impact:"vhigh", status:"todo", type:"foundation", responsible:"Raphael" },
-  { stream:"b2c", category:"Product portfolio", name:"Products - new products", sub:"check if we can have new products to offer to our athletes", months:["2026-10","2026-12"], effort:"high", impact:"vhigh", status:"todo", type:"foundation", responsible:"Raphael" },
-  { stream:"b2c", category:"Persona & segmentation", name:"Persona - Segmentation", sub:"Create a dynamical Segmentation of our athletes", months:["2026-10","2026-12"], effort:"high", impact:"vhigh", status:"todo", type:"foundation", responsible:"Raphael" },
-  { stream:"b2c", category:"Persona & segmentation", name:"Persona - Conversion-based matrix", sub:"define likelihood of conversions x products", months:["2026-10","2026-12"], effort:"high", impact:"vhigh", status:"todo", type:"foundation", responsible:"Raphael" },
-  { stream:"b2c", category:"Persona & segmentation", name:"Persona - Upselling strategy by persona", sub:"Create the persona strategy", months:["2026-10","2026-12"], effort:"high", impact:"vhigh", status:"todo", type:"foundation", responsible:"Raphael" },
-  { stream:"b2c", category:"Audit & foundations", name:"B2C KPIs", sub:"define list of KPIs that are missing", months:["2026-07","2026-09"], effort:"vhigh", impact:"vhigh", status:"todo", type:"foundation", responsible:"Raphael" },
+        {
+          stream: "data",
+          category: "Strategy & alignment",
+          name: "Athlete Intelligence mapping",
+          sub: "map all information we have on athletes and what we can get",
+          months: ["2026-07", "2026-09"],
+          effort: "high",
+          impact: "high",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "data",
+          category: "Strategy & alignment",
+          name: "Athlete Intelligence collection strategy",
+          sub: "see what tools we can use (online forms, incentives, discounts etc...)",
+          months: ["2026-07", "2026-09"],
+          effort: "high",
+          impact: "high",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "data",
+          category: "Strategy & alignment",
+          name: "Athlete Intelligence stake holder alignment",
+          sub: "check with SSM team what could be interesting for the event organizers",
+          months: ["2026-07", "2026-09"],
+          effort: "high",
+          impact: "high",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "data",
+          category: "Registration-time profile fields",
+          name: "Race goal",
+          sub: "1 select at registration — coaching segmentation",
+          months: ["2026-07", "2026-09"],
+          effort: "low",
+          impact: "vhigh",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "data",
+          category: "Registration-time profile fields",
+          name: "Experience level",
+          sub: "Radio button at registration — Beginners → coaching / Confirmed → upsell",
+          months: ["2026-07", "2026-09"],
+          effort: "low",
+          impact: "vhigh",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "data",
+          category: "Registration-time profile fields",
+          name: "Acquisition source",
+          sub: "At registration — ROI by channel, clubs as B2B lever",
+          months: ["2026-07", "2026-09"],
+          effort: "low",
+          impact: "high",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "data",
+          category: "Post-race profile enrichment",
+          name: "Next planned event",
+          sub: "3-question survey in diploma email",
+          months: ["2026-07", "2026-09"],
+          effort: "low",
+          impact: "high",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "data",
+          category: "Post-race profile enrichment",
+          name: "Gap goal vs result",
+          sub: "Back-end calc → automated coaching email 48h post-event",
+          months: ["2026-07", "2026-09"],
+          effort: "med",
+          impact: "high",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "data",
+          category: "Post-race profile enrichment",
+          name: "Multi-event history",
+          sub: "Strava / Garmin integration — loyalty + LTV predictor",
+          months: ["2026-10", "2026-12"],
+          effort: "high",
+          impact: "high",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "data",
+          category: "Post-race profile enrichment",
+          name: "Equipment brands",
+          sub: "Optional enriched profile + incentive — partner pitch",
+          months: ["2026-10", "2026-12"],
+          effort: "low",
+          impact: "med",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "data",
+          category: "Post-race profile enrichment",
+          name: "Annual running budget",
+          sub: "Enriched profile <500 / 500-1500 / 1500-3000 / 3000+ CHF",
+          months: ["2026-10", "2026-12"],
+          effort: "low",
+          impact: "med",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "data",
+          category: "Post-race profile enrichment",
+          name: "Other sports",
+          sub: "Enriched profile to know if they practice others sports",
+          months: ["2026-10", "2026-12"],
+          effort: "low",
+          impact: "med",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "data",
+          category: "Post-race profile enrichment",
+          name: "Club Members",
+          sub: "Information on knowing if they belong to sports clubs",
+          months: ["2026-10", "2026-12"],
+          effort: "low",
+          impact: "med",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
 
-  { stream:"data", category:"Strategy & alignment", name:"Athlete Intelligence mapping", sub:"map all information we have on athletes and what we can get", months:["2026-07","2026-09"], effort:"high", impact:"high", status:"todo", type:"foundation", responsible:"Raphael" },
-  { stream:"data", category:"Strategy & alignment", name:"Athlete Intelligence collection strategy", sub:"see what tools we can use (online forms, incentives, discounts etc...)", months:["2026-07","2026-09"], effort:"high", impact:"high", status:"todo", type:"foundation", responsible:"Raphael" },
-  { stream:"data", category:"Strategy & alignment", name:"Athlete Intelligence stake holder alignment", sub:"check with SSM team what could be interesting for the event organizers", months:["2026-07","2026-09"], effort:"high", impact:"high", status:"todo", type:"foundation", responsible:"Raphael" },
-  { stream:"data", category:"Registration-time profile fields", name:"Race goal", sub:"1 select at registration — coaching segmentation", months:["2026-07","2026-09"], effort:"low", impact:"vhigh", status:"todo", type:"foundation", responsible:"Raphael" },
-  { stream:"data", category:"Registration-time profile fields", name:"Experience level", sub:"Radio button at registration — Beginners → coaching / Confirmed → upsell", months:["2026-07","2026-09"], effort:"low", impact:"vhigh", status:"todo", type:"foundation", responsible:"Raphael" },
-  { stream:"data", category:"Registration-time profile fields", name:"Acquisition source", sub:"At registration — ROI by channel, clubs as B2B lever", months:["2026-07","2026-09"], effort:"low", impact:"high", status:"todo", type:"foundation", responsible:"Raphael" },
-  { stream:"data", category:"Post-race profile enrichment", name:"Next planned event", sub:"3-question survey in diploma email", months:["2026-07","2026-09"], effort:"low", impact:"high", status:"todo", type:"foundation", responsible:"Raphael" },
-  { stream:"data", category:"Post-race profile enrichment", name:"Gap goal vs result", sub:"Back-end calc → automated coaching email 48h post-event", months:["2026-07","2026-09"], effort:"med", impact:"high", status:"todo", type:"foundation", responsible:"Raphael" },
-  { stream:"data", category:"Post-race profile enrichment", name:"Multi-event history", sub:"Strava / Garmin integration — loyalty + LTV predictor", months:["2026-10","2026-12"], effort:"high", impact:"high", status:"todo", type:"foundation", responsible:"Raphael" },
-  { stream:"data", category:"Post-race profile enrichment", name:"Equipment brands", sub:"Optional enriched profile + incentive — partner pitch", months:["2026-10","2026-12"], effort:"low", impact:"med", status:"todo", type:"foundation", responsible:"Raphael" },
-  { stream:"data", category:"Post-race profile enrichment", name:"Annual running budget", sub:"Enriched profile <500 / 500-1500 / 1500-3000 / 3000+ CHF", months:["2026-10","2026-12"], effort:"low", impact:"med", status:"todo", type:"foundation", responsible:"Raphael" },
-  { stream:"data", category:"Post-race profile enrichment", name:"Other sports", sub:"Enriched profile to know if they practice others sports", months:["2026-10","2026-12"], effort:"low", impact:"med", status:"todo", type:"foundation", responsible:"Raphael" },
-  { stream:"data", category:"Post-race profile enrichment", name:"Club Members", sub:"Information on knowing if they belong to sports clubs", months:["2026-10","2026-12"], effort:"low", impact:"med", status:"todo", type:"foundation", responsible:"Raphael" },
+        {
+          stream: "magazine",
+          category: "Strategy & foundations",
+          name: "Fit for Life magazine — plan",
+          sub: "To discuss with stakeholders",
+          months: ["2026-07", "2026-09"],
+          effort: "vhigh",
+          impact: "vhigh",
+          status: "inprogress",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "magazine",
+          category: "Touchpoints & teasers",
+          name: "Website Home Datasport",
+          sub: "Pre-race touchpoint — magazine presence on the Datasport home page",
+          months: ["2026-07", "2026-09"],
+          effort: "med",
+          impact: "med",
+          status: "todo",
+          responsible: "Raphael",
+        },
+        {
+          stream: "magazine",
+          category: "Touchpoints & teasers",
+          name: "Online registration (OnReg)",
+          sub: "Pre-race touchpoint — magazine offer during online race registration",
+          months: ["2026-07", "2026-09"],
+          effort: "med",
+          impact: "vhigh",
+          status: "todo",
+          responsible: "Raphael",
+        },
+        {
+          stream: "magazine",
+          category: "Strategy & foundations",
+          name: "Fit for Life Website",
+          sub: "Optimize the website to increase conversions on the magazine via touchpoints",
+          months: ["2026-10", "2026-12"],
+          effort: "med",
+          impact: "med",
+          status: "todo",
+          responsible: "Raphael",
+        },
+        {
+          stream: "magazine",
+          category: "Touchpoints & teasers",
+          name: "Mail - Datasport Newsletter",
+          sub: "Pre-race touchpoint — Product teasing in the Datasport newsletter",
+          months: ["2026-10", "2026-12"],
+          effort: "low",
+          impact: "med",
+          status: "todo",
+          responsible: "Raphael",
+          goal: "CTR ≥ 0.5%",
+        },
+        {
+          stream: "magazine",
+          category: "Touchpoints & teasers",
+          name: "CTA - FFL Coach",
+          sub: "Pre-race touchpoint — cross-promotion of the magazine via the Fit for Life Coach",
+          months: ["2026-10", "2026-12"],
+          effort: "med",
+          impact: "med",
+          status: "todo",
+          responsible: "Raphael",
+          goal: "CTR ≥ 1%",
+        },
+        {
+          stream: "magazine",
+          category: "Touchpoints & teasers",
+          name: "follow-up emails on sample receivers",
+          sub: "Create a dedicated communication on the receivers of the magazine samples",
+          months: ["2026-10", "2026-12"],
+          effort: "med",
+          impact: "high",
+          status: "todo",
+          responsible: "Raphael",
+        },
+        {
+          stream: "magazine",
+          category: "Touchpoints & teasers",
+          name: "Partnerships optimizations",
+          sub: "analyze partnerships that are pushed on datasport.com to increase traffic on the pages",
+          months: ["2026-07", "2026-07"],
+          effort: "high",
+          impact: "low",
+          status: "todo",
+          responsible: "Raphael",
+          goal: "from 3 clicks to 100 clicks minimum",
+        },
+        {
+          stream: "magazine",
+          category: "Strategy & foundations",
+          name: "Digital Presence by partners",
+          sub: "Define a strategy for digital acquisition by partners (define best practices and acquisition strategy)",
+          months: ["2026-10", "2026-12"],
+          effort: "vhigh",
+          impact: "med",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "magazine",
+          category: "Strategy & foundations",
+          name: "Free sample issue strategy",
+          sub: "Which target audience gets which issue for free, and when",
+          months: ["2026-07", "2026-09"],
+          effort: "high",
+          impact: "high",
+          status: "todo",
+          responsible: "Katrin",
+        },
+        {
+          stream: ["coach", "magazine"],
+          category: "Strategy & foundations",
+          name: "Bundle & rewards offer strategy",
+          sub: "Which bundle and reward offers, when and how to offer them",
+          months: ["2026-07", "2026-09"],
+          effort: "high",
+          impact: "high",
+          status: "todo",
+          responsible: "Katrin",
+        },
+        {
+          stream: ["coach", "magazine", "offline"],
+          category: "Touchpoints & teasers",
+          name: "Event presence",
+          sub: "Hand out and sell the magazine at events, and sell Coach",
+          months: ["2026-08", "2026-09"],
+          effort: "vhigh",
+          impact: "high",
+          status: "todo",
+          responsible: ["Raphael", "Katrin"],
+        },
+        {
+          stream: ["magazine", "offline"],
+          category: "Touchpoints & teasers",
+          name: "Magazine placement in running shops & physios",
+          sub: "Display copies of the magazine in running shops, physiotherapy practices, fitness centers, etc.",
+          months: ["2026-07", "2026-08"],
+          effort: "med",
+          impact: "med",
+          status: "todo",
+          responsible: "Katrin",
+        },
+        {
+          stream: "magazine",
+          category: "Touchpoints & teasers",
+          name: "Send magazine to finishers",
+          sub: "Send the magazine to event finishers as a “prize” for event participation",
+          months: ["2026-09", "2026-11"],
+          effort: "vhigh",
+          impact: "high",
+          status: "todo",
+          responsible: "Raphael",
+        },
+        {
+          stream: ["coach", "magazine"],
+          category: "Strategy & foundations",
+          name: "Social media advertising",
+          sub: "Social media strategy for FFL — which content drives sales",
+          months: ["2026-07", "2026-09"],
+          effort: "high",
+          impact: "med",
+          status: "todo",
+          responsible: "Katrin",
+        },
 
-  { stream:"magazine", category:"Strategy & foundations", name:"Fit for Life magazine — plan", sub:"To discuss with stakeholders", months:["2026-07","2026-09"], effort:"vhigh", impact:"vhigh", status:"inprogress", type:"foundation", responsible:"Raphael" },
-  { stream:"magazine", category:"Touchpoints & teasers", name:"Website Home Datasport", sub:"Pre-race touchpoint — magazine presence on the Datasport home page", months:["2026-07","2026-09"], effort:"med", impact:"med", status:"todo", responsible:"Raphael" },
-  { stream:"magazine", category:"Touchpoints & teasers", name:"Online registration (OnReg)", sub:"Pre-race touchpoint — magazine offer during online race registration", months:["2026-07","2026-09"], effort:"med", impact:"vhigh", status:"todo", responsible:"Raphael" },
-  { stream:"magazine", category:"Strategy & foundations", name:"Fit for Life Website", sub:"Optimize the website to increase conversions on the magazine via touchpoints", months:["2026-10","2026-12"], effort:"med", impact:"med", status:"todo", responsible:"Raphael" },
-  { stream:"magazine", category:"Touchpoints & teasers", name:"Mail - Datasport Newsletter", sub:"Pre-race touchpoint — Product teasing in the Datasport newsletter", months:["2026-10","2026-12"], effort:"low", impact:"med", status:"todo", responsible:"Raphael", goal:"CTR ≥ 0.5%" },
-  { stream:"magazine", category:"Touchpoints & teasers", name:"CTA - FFL Coach", sub:"Pre-race touchpoint — cross-promotion of the magazine via the Fit for Life Coach", months:["2026-10","2026-12"], effort:"med", impact:"med", status:"todo", responsible:"Raphael", goal:"CTR ≥ 1%" },
-  { stream:"magazine", category:"Touchpoints & teasers", name:"follow-up emails on sample receivers", sub:"Create a dedicated communication on the receivers of the magazine samples", months:["2026-10","2026-12"], effort:"med", impact:"high", status:"todo", responsible:"Raphael" },
-  { stream:"magazine", category:"Strategy & foundations", name:"Digital Presence by partners", sub:"Define a strategy for digital acquisition by partners (define best practices and acquisition strategy)", months:["2026-10","2026-12"], effort:"vhigh", impact:"med", status:"todo", type:"foundation", responsible:"Raphael" },
-  { stream:"magazine", category:"Strategy & foundations", name:"Free sample issue strategy", sub:"Which target audience gets which issue for free, and when", months:["2026-07","2026-09"], effort:"high", impact:"high", status:"todo", responsible:"Katrin" },
-  { stream:["coach","magazine"], category:"Strategy & foundations", name:"Bundle & rewards offer strategy", sub:"Which bundle and reward offers, when and how to offer them", months:["2026-07","2026-09"], effort:"high", impact:"high", status:"todo", responsible:"Katrin" },
-  { stream:["coach","magazine","offline"], category:"Touchpoints & teasers", name:"Event presence", sub:"Hand out and sell the magazine at events, and sell Coach", months:["2026-08","2026-09"], effort:"vhigh", impact:"high", status:"todo", responsible:["Raphael","Katrin"] },
-  { stream:["magazine","offline"], category:"Touchpoints & teasers", name:"Magazine placement in running shops & physios", sub:"Display copies of the magazine in running shops, physiotherapy practices, fitness centers, etc.", months:["2026-07","2026-08"], effort:"med", impact:"med", status:"todo", responsible:"Katrin" },
-  { stream:"magazine", category:"Touchpoints & teasers", name:"Send magazine to finishers", sub:"Send the magazine to event finishers as a “prize” for event participation", months:["2026-09","2026-11"], effort:"vhigh", impact:"high", status:"todo", responsible:"Raphael" },
-  { stream:["coach","magazine"], category:"Strategy & foundations", name:"Social media advertising", sub:"Social media strategy for FFL — which content drives sales", months:["2026-07","2026-09"], effort:"high", impact:"med", status:"todo", responsible:"Katrin" },
+        {
+          stream: "seo",
+          category: "Indexation & technical SEO",
+          name: "Removal of athletes pages",
+          sub: "Discuss with Pavlo to see if we can directly noindex the athletes' pages without having to open a ticket",
+          months: ["2026-07"],
+          effort: "low",
+          impact: "low",
+          status: "inprogress",
+          responsible: "Raphael",
+        },
+        {
+          stream: "seo",
+          category: "Indexation & technical SEO",
+          name: "Duplicate of athletes pages",
+          sub: "See what to do with the duplicate of athletes' pages on results.datasport.com + datasport.com",
+          months: ["2026-09", "2026-10"],
+          effort: "med",
+          impact: "med",
+          status: "todo",
+          responsible: "Raphael",
+        },
+      ];
 
-  { stream:"seo", category:"Indexation & technical SEO", name:"Removal of athletes pages", sub:"Discuss with Pavlo to see if we can directly noindex the athletes' pages without having to open a ticket", months:["2026-07"], effort:"low", impact:"low", status:"inprogress", responsible:"Raphael" },
-  { stream:"seo", category:"Indexation & technical SEO", name:"Duplicate of athletes pages", sub:"See what to do with the duplicate of athletes' pages on results.datasport.com + datasport.com", months:["2026-09","2026-10"], effort:"med", impact:"med", status:"todo", responsible:"Raphael" },
-];
+      // Stable per-measure id used for the shareable "#m-<id>" deep link into the detail modal.
+      {
+        const idCounts = {};
+        measures.forEach((m) => {
+          const primaryStream = Array.isArray(m.stream)
+            ? m.stream[0]
+            : m.stream;
+          const base = slugify(`${primaryStream}-${m.name}`);
+          idCounts[base] = (idCounts[base] || 0) + 1;
+          m.id = idCounts[base] === 1 ? base : `${base}-${idCounts[base]}`;
+        });
+      }
 
-// Stable per-measure id used for the shareable "#m-<id>" deep link into the detail modal.
-{
-  const idCounts = {};
-  measures.forEach(m => {
-    const primaryStream = Array.isArray(m.stream) ? m.stream[0] : m.stream;
-    const base = slugify(`${primaryStream}-${m.name}`);
-    idCounts[base] = (idCounts[base] || 0) + 1;
-    m.id = idCounts[base] === 1 ? base : `${base}-${idCounts[base]}`;
-  });
-}
+      const streamMeta = {
+        global: { label: "Global", dot: "dot-global" },
+        coach: { label: "Coach", dot: "dot-coach" },
+        b2b: { label: "B2B", dot: "dot-b2b" },
+        b2c: { label: "B2C", dot: "dot-b2c" },
+        data: { label: "Data collection", dot: "dot-data" },
+        magazine: { label: "Fit for Life Magazine", dot: "dot-magazine" },
+        offline: { label: "Offline", dot: "dot-offline" },
+        seo: { label: "SEO", dot: "dot-seo" },
+      };
+      const effortLabels = {
+        low: "Low",
+        med: "Medium",
+        high: "High",
+        vhigh: "Very High",
+      };
+      const impactLabels = {
+        low: "Low",
+        med: "Medium",
+        high: "High",
+        vhigh: "Very high",
+      };
+      const statusLabels = {
+        todo: "To do",
+        inprogress: "In progress",
+        done: "Done",
+      };
 
-const streamMeta = {
-  global:   { label:"Global", dot:"dot-global" },
-  coach:    { label:"Coach", dot:"dot-coach" },
-  b2b:      { label:"B2B", dot:"dot-b2b" },
-  b2c:      { label:"B2C", dot:"dot-b2c" },
-  data:     { label:"Data collection", dot:"dot-data" },
-  magazine: { label:"Fit for Life Magazine", dot:"dot-magazine" },
-  offline:  { label:"Offline", dot:"dot-offline" },
-  seo:      { label:"SEO", dot:"dot-seo" },
-};
-const effortLabels = { low:"Low", med:"Medium", high:"High", vhigh:"Very High" };
-const impactLabels = { low:"Low", med:"Medium", high:"High", vhigh:"Very high" };
-const statusLabels = { todo:"To do", inprogress:"In progress", done:"Done" };
+      let activeStream = "all";
+      let activeStatus = "all";
+      let activeRoadmapStream = "all";
+      const expandedCategories = new Set();
 
-let activeStream = "all";
-let activeStatus = "all";
-let activeRoadmapStream = "all";
-const expandedCategories = new Set();
+      function inStream(m, s) {
+        return Array.isArray(m.stream) ? m.stream.includes(s) : m.stream === s;
+      }
 
-function inStream(m, s) {
-  return Array.isArray(m.stream) ? m.stream.includes(s) : m.stream === s;
-}
+      function slugify(str) {
+        return str
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/(^-|-$)/g, "");
+      }
 
-function slugify(str) {
-  return str.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-}
+      function responsibleBadgeHtml(m) {
+        const names = Array.isArray(m.responsible)
+          ? m.responsible
+          : [m.responsible];
+        return names
+          .map((name) => {
+            const cls = ["raphael", "katrin"].includes(slugify(name))
+              ? slugify(name)
+              : "other";
+            return `<span class="badge responsible-${cls}">${name}</span>`;
+          })
+          .join("");
+      }
 
-function responsibleBadgeHtml(m) {
-  const names = Array.isArray(m.responsible) ? m.responsible : [m.responsible];
-  return names.map(name => {
-    const cls = ["raphael", "katrin"].includes(slugify(name)) ? slugify(name) : "other";
-    return `<span class="badge responsible-${cls}">${name}</span>`;
-  }).join("");
-}
+      function monthKeySort(key) {
+        const [y, mo] = key.split("-").map(Number);
+        return y * 12 + mo;
+      }
+      function monthKeyToDate(key) {
+        const [y, mo] = key.split("-").map(Number);
+        return new Date(y, mo - 1, 1);
+      }
+      function monthKeyLabel(key) {
+        const [y, mo] = key.split("-").map(Number);
+        return `${monthNames[mo - 1]} '${String(y).slice(2)}`;
+      }
+      // Normalizes a measure's `months` (1 entry = single month, 2 entries = start/end range)
+      // into concrete date bounds. `end` is exclusive (first day of the month after the last covered month).
+      function measureMonthBounds(m) {
+        const sorted = [...m.months].sort(
+          (a, b) => monthKeySort(a) - monthKeySort(b),
+        );
+        const startKey = sorted[0];
+        const endKey = sorted[sorted.length - 1];
+        const lastDate = monthKeyToDate(endKey);
+        return {
+          startKey,
+          endKey,
+          start: monthKeyToDate(startKey),
+          end: new Date(lastDate.getFullYear(), lastDate.getMonth() + 1, 1),
+        };
+      }
+      function measureMonthLabel(m) {
+        const { startKey, endKey } = measureMonthBounds(m);
+        return startKey === endKey
+          ? monthKeyLabel(startKey)
+          : `${monthKeyLabel(startKey)} – ${monthKeyLabel(endKey)}`;
+      }
 
-function monthKeySort(key) {
-  const [y, mo] = key.split("-").map(Number);
-  return y * 12 + mo;
-}
-function monthKeyToDate(key) {
-  const [y, mo] = key.split("-").map(Number);
-  return new Date(y, mo - 1, 1);
-}
-function monthKeyLabel(key) {
-  const [y, mo] = key.split("-").map(Number);
-  return `${monthNames[mo - 1]} '${String(y).slice(2)}`;
-}
-// Normalizes a measure's `months` (1 entry = single month, 2 entries = start/end range)
-// into concrete date bounds. `end` is exclusive (first day of the month after the last covered month).
-function measureMonthBounds(m) {
-  const sorted = [...m.months].sort((a, b) => monthKeySort(a) - monthKeySort(b));
-  const startKey = sorted[0];
-  const endKey = sorted[sorted.length - 1];
-  const lastDate = monthKeyToDate(endKey);
-  return {
-    startKey, endKey,
-    start: monthKeyToDate(startKey),
-    end: new Date(lastDate.getFullYear(), lastDate.getMonth() + 1, 1),
-  };
-}
-function measureMonthLabel(m) {
-  const { startKey, endKey } = measureMonthBounds(m);
-  return startKey === endKey ? monthKeyLabel(startKey) : `${monthKeyLabel(startKey)} – ${monthKeyLabel(endKey)}`;
-}
-
-function measureRowHtml(m) {
-  return `<div class="measure-row${m.status === 'done' ? ' is-done' : m.status === 'inprogress' ? ' is-inprogress' : ''}">
+      function measureRowHtml(m) {
+        return `<div class="measure-row${m.status === "done" ? " is-done" : m.status === "inprogress" ? " is-inprogress" : ""}">
     <div><div class="measure-name"><span class="measure-link" data-id="${m.id}">${m.name}</span>${m.type === "foundation" ? `<span class="badge badge-foundation">Foundation</span>` : ""}</div>${m.sub ? `<div class="measure-sub">${m.sub}</div>` : ""}</div>
     <div><span class="badge badge-q">${measureMonthLabel(m)}</span></div>
     <div><span class="badge effort-${m.effort}">${effortLabels[m.effort]}</span></div>
@@ -388,118 +1955,169 @@ function measureRowHtml(m) {
     <div><span class="badge status-${m.status}">${statusLabels[m.status]}</span></div>
     <div>${responsibleBadgeHtml(m)}</div>
   </div>`;
-}
+      }
 
-function renderSummary(data) {
-  const total      = data.length;
-  const done       = data.filter(m => m.status === "done").length;
-  const inprogress = data.filter(m => m.status === "inprogress").length;
-  const quickWins  = data.filter(m => m.effort === "low" && (m.impact === "high" || m.impact === "vhigh")).length;
-  const q3Months   = new Set(["2026-07","2026-08","2026-09"]);
-  const q3         = data.filter(m => q3Months.has(measureMonthBounds(m).startKey)).length;
-  document.getElementById("summary").innerHTML = `
+      function renderSummary(data) {
+        const total = data.length;
+        const done = data.filter((m) => m.status === "done").length;
+        const inprogress = data.filter((m) => m.status === "inprogress").length;
+        const quickWins = data.filter(
+          (m) =>
+            m.effort === "low" && (m.impact === "high" || m.impact === "vhigh"),
+        ).length;
+        const q3Months = new Set(["2026-07", "2026-08", "2026-09"]);
+        const q3 = data.filter((m) =>
+          q3Months.has(measureMonthBounds(m).startKey),
+        ).length;
+        document.getElementById("summary").innerHTML = `
     <div class="metric"><div class="metric-label">Total measures</div><div class="metric-value">${total}</div></div>
     <div class="metric"><div class="metric-label">Done</div><div class="metric-value" style="color:#2d6a4a">${done}</div></div>
     <div class="metric"><div class="metric-label">In progress</div><div class="metric-value" style="color:#854F0B">${inprogress}</div></div>
     <div class="metric"><div class="metric-label">Quick wins</div><div class="metric-value">${quickWins}</div></div>
     <div class="metric"><div class="metric-label">To deliver Q3 2026</div><div class="metric-value">${q3}</div></div>
   `;
-}
+      }
 
-const streamOrder = ["global","coach","b2b","b2c","data","magazine","offline","seo"];
+      const streamOrder = [
+        "global",
+        "coach",
+        "b2b",
+        "b2c",
+        "data",
+        "magazine",
+        "offline",
+        "seo",
+      ];
 
-function groupByCategory(stream) {
-  const groups = new Map();
-  measures.filter(m => inStream(m, stream)).forEach(m => {
-    const key = m.category || "Other";
-    if (!groups.has(key)) groups.set(key, []);
-    groups.get(key).push(m);
-  });
-  return groups;
-}
+      function groupByCategory(stream) {
+        const groups = new Map();
+        measures
+          .filter((m) => inStream(m, stream))
+          .forEach((m) => {
+            const key = m.category || "Other";
+            if (!groups.has(key)) groups.set(key, []);
+            groups.get(key).push(m);
+          });
+        return groups;
+      }
 
-function renderRoadmapSummary() {
-  const streams = activeRoadmapStream === "all" ? streamOrder : [activeRoadmapStream];
-  const rows = measures.filter(m => streams.some(s => inStream(m, s)));
-  const total      = rows.length;
-  const done       = rows.filter(m => m.status === "done").length;
-  const inprogress = rows.filter(m => m.status === "inprogress").length;
-  const todo       = total - done - inprogress;
-  const categoryKeys = new Set();
-  streams.forEach(s => groupByCategory(s).forEach((_, category) => categoryKeys.add(`${s}::${category}`)));
-  document.getElementById("roadmap-summary").innerHTML = `
+      function renderRoadmapSummary() {
+        const streams =
+          activeRoadmapStream === "all" ? streamOrder : [activeRoadmapStream];
+        const rows = measures.filter((m) =>
+          streams.some((s) => inStream(m, s)),
+        );
+        const total = rows.length;
+        const done = rows.filter((m) => m.status === "done").length;
+        const inprogress = rows.filter((m) => m.status === "inprogress").length;
+        const todo = total - done - inprogress;
+        const categoryKeys = new Set();
+        streams.forEach((s) =>
+          groupByCategory(s).forEach((_, category) =>
+            categoryKeys.add(`${s}::${category}`),
+          ),
+        );
+        document.getElementById("roadmap-summary").innerHTML = `
     <div class="metric"><div class="metric-label">Categories</div><div class="metric-value">${categoryKeys.size}</div></div>
     <div class="metric"><div class="metric-label">Measures</div><div class="metric-value">${total}</div></div>
     <div class="metric"><div class="metric-label">Done</div><div class="metric-value" style="color:#2d6a4a">${done}</div></div>
     <div class="metric"><div class="metric-label">In progress</div><div class="metric-value" style="color:#854F0B">${inprogress}</div></div>
     <div class="metric"><div class="metric-label">To do</div><div class="metric-value">${todo}</div></div>
   `;
-}
+      }
 
-const allMonthKeys = [...new Set(measures.flatMap(m => m.months))].sort((a, b) => monthKeySort(a) - monthKeySort(b));
-const timelineStart = monthKeyToDate(allMonthKeys[0]);
-const timelineEndExclusive = measureMonthBounds({ months: [allMonthKeys[allMonthKeys.length - 1]] }).end;
-const timelineMonths = [];
-for (let d = new Date(timelineStart); d < timelineEndExclusive; d.setMonth(d.getMonth() + 1)) {
-  timelineMonths.push(new Date(d));
-}
-function monthIndexFromStart(date) {
-  return (date.getFullYear() - timelineStart.getFullYear()) * 12 + (date.getMonth() - timelineStart.getMonth());
-}
-function monthHeaderLabel(date) {
-  const showYear = date.getMonth() === 0 || monthIndexFromStart(date) === 0;
-  return showYear ? `${monthNames[date.getMonth()]} '${String(date.getFullYear()).slice(2)}` : monthNames[date.getMonth()];
-}
+      const allMonthKeys = [...new Set(measures.flatMap((m) => m.months))].sort(
+        (a, b) => monthKeySort(a) - monthKeySort(b),
+      );
+      const timelineStart = monthKeyToDate(allMonthKeys[0]);
+      const timelineEndExclusive = measureMonthBounds({
+        months: [allMonthKeys[allMonthKeys.length - 1]],
+      }).end;
+      const timelineMonths = [];
+      for (
+        let d = new Date(timelineStart);
+        d < timelineEndExclusive;
+        d.setMonth(d.getMonth() + 1)
+      ) {
+        timelineMonths.push(new Date(d));
+      }
+      function monthIndexFromStart(date) {
+        return (
+          (date.getFullYear() - timelineStart.getFullYear()) * 12 +
+          (date.getMonth() - timelineStart.getMonth())
+        );
+      }
+      function monthHeaderLabel(date) {
+        const showYear =
+          date.getMonth() === 0 || monthIndexFromStart(date) === 0;
+        return showYear
+          ? `${monthNames[date.getMonth()]} '${String(date.getFullYear()).slice(2)}`
+          : monthNames[date.getMonth()];
+      }
 
-function renderRoadmap() {
-  renderRoadmapSummary();
-  const n = timelineMonths.length;
-  const timelineEnd = timelineEndExclusive;
-  const now = new Date();
-  const todayFrac = (now - timelineStart) / (timelineEnd - timelineStart);
-  const showToday = todayFrac >= 0 && todayFrac <= 1;
-  const todayPct = (todayFrac * 100).toFixed(2);
-  const gridBg = `repeating-linear-gradient(to right, rgba(0,0,0,0.09) 0, rgba(0,0,0,0.09) 1px, transparent 1px, transparent calc(100%/${n / 3})), repeating-linear-gradient(to right, rgba(0,0,0,0.035) 0, rgba(0,0,0,0.035) 1px, transparent 1px, transparent calc(100%/${n}))`;
-  const todayLine = showToday ? `<div class="gantt-today" style="left:${todayPct}%"></div>` : "";
+      function renderRoadmap() {
+        renderRoadmapSummary();
+        const n = timelineMonths.length;
+        const timelineEnd = timelineEndExclusive;
+        const now = new Date();
+        const todayFrac = (now - timelineStart) / (timelineEnd - timelineStart);
+        const showToday = todayFrac >= 0 && todayFrac <= 1;
+        const todayPct = (todayFrac * 100).toFixed(2);
+        const gridBg = `repeating-linear-gradient(to right, rgba(0,0,0,0.09) 0, rgba(0,0,0,0.09) 1px, transparent 1px, transparent calc(100%/${n / 3})), repeating-linear-gradient(to right, rgba(0,0,0,0.035) 0, rgba(0,0,0,0.035) 1px, transparent 1px, transparent calc(100%/${n}))`;
+        const todayLine = showToday
+          ? `<div class="gantt-today" style="left:${todayPct}%"></div>`
+          : "";
 
-  let html = "";
-  const streamsToShow = activeRoadmapStream === "all" ? streamOrder : [activeRoadmapStream];
-  streamsToShow.forEach(s => {
-    const groups = groupByCategory(s);
-    if (!groups.size) return;
-    const meta = streamMeta[s];
-    html += `<div class="stream-section">
+        let html = "";
+        const streamsToShow =
+          activeRoadmapStream === "all" ? streamOrder : [activeRoadmapStream];
+        streamsToShow.forEach((s) => {
+          const groups = groupByCategory(s);
+          if (!groups.size) return;
+          const meta = streamMeta[s];
+          html += `<div class="stream-section">
       <div class="stream-label"><span class="dot ${meta.dot}"></span>${meta.label}</div>
       <div class="gantt-wrap">
         <div class="gantt-header">
           <div class="gantt-label"></div>
           <div class="gantt-header-months">
-            ${timelineMonths.map(d => `<div>${monthHeaderLabel(d)}</div>`).join("")}
+            ${timelineMonths.map((d) => `<div>${monthHeaderLabel(d)}</div>`).join("")}
             ${showToday ? `<div class="gantt-today" style="left:${todayPct}%"></div><div class="gantt-today-label" style="left:${todayPct}%">Today</div>` : ""}
           </div>
         </div>
-        ${[...groups.entries()].map(([category, rows]) => {
-          const key = `${s}::${slugify(category)}`;
-          const isOpen = expandedCategories.has(key);
-          const rowBounds = rows.map(measureMonthBounds);
-          const catStart = new Date(Math.min(...rowBounds.map(b => b.start.getTime())));
-          const catEnd = new Date(Math.max(...rowBounds.map(b => b.end.getTime())));
-          const startIdx = monthIndexFromStart(catStart);
-          const endIdxExclusive = monthIndexFromStart(catEnd);
-          const leftPct = startIdx / n * 100;
-          const widthPct = (endIdxExclusive - startIdx) / n * 100;
-          const doneCount = rows.filter(m => m.status === "done").length;
-          const inprogressCount = rows.filter(m => m.status === "inprogress").length;
-          const todoCount = rows.length - doneCount - inprogressCount;
-          const segs = [
-            { st: "done", count: doneCount },
-            { st: "inprogress", count: inprogressCount },
-            { st: "todo", count: todoCount },
-          ].filter(seg => seg.count > 0)
-           .map(seg => `<div class="gantt-seg seg-${seg.st}" style="width:${(seg.count / rows.length * 100).toFixed(2)}%"></div>`)
-           .join("");
-          const summaryLabel = `${rows.length} measure${rows.length > 1 ? "s" : ""} · ${doneCount} done · ${inprogressCount} in progress · ${todoCount} to do`;
-          return `<div class="gantt-row category-row" data-stream="${s}" data-category="${slugify(category)}">
+        ${[...groups.entries()]
+          .map(([category, rows]) => {
+            const key = `${s}::${slugify(category)}`;
+            const isOpen = expandedCategories.has(key);
+            const rowBounds = rows.map(measureMonthBounds);
+            const catStart = new Date(
+              Math.min(...rowBounds.map((b) => b.start.getTime())),
+            );
+            const catEnd = new Date(
+              Math.max(...rowBounds.map((b) => b.end.getTime())),
+            );
+            const startIdx = monthIndexFromStart(catStart);
+            const endIdxExclusive = monthIndexFromStart(catEnd);
+            const leftPct = (startIdx / n) * 100;
+            const widthPct = ((endIdxExclusive - startIdx) / n) * 100;
+            const doneCount = rows.filter((m) => m.status === "done").length;
+            const inprogressCount = rows.filter(
+              (m) => m.status === "inprogress",
+            ).length;
+            const todoCount = rows.length - doneCount - inprogressCount;
+            const segs = [
+              { st: "done", count: doneCount },
+              { st: "inprogress", count: inprogressCount },
+              { st: "todo", count: todoCount },
+            ]
+              .filter((seg) => seg.count > 0)
+              .map(
+                (seg) =>
+                  `<div class="gantt-seg seg-${seg.st}" style="width:${((seg.count / rows.length) * 100).toFixed(2)}%"></div>`,
+              )
+              .join("");
+            const summaryLabel = `${rows.length} measure${rows.length > 1 ? "s" : ""} · ${doneCount} done · ${inprogressCount} in progress · ${todoCount} to do`;
+            return `<div class="gantt-row category-row" data-stream="${s}" data-category="${slugify(category)}">
               <div class="gantt-label">
                 <div class="gantt-label-title"><span class="chevron">${isOpen ? "▾" : "▸"}</span>${category}</div>
                 <div class="gantt-label-sub">${summaryLabel}</div>
@@ -509,14 +2127,17 @@ function renderRoadmap() {
                 <div class="gantt-bar" style="left:calc(${leftPct}% + 2px); width:calc(${widthPct}% - 4px)" title="${category} — ${summaryLabel}">${segs}</div>
               </div>
             </div>
-            ${isOpen ? `<div class="category-detail">
-              ${rows.map(m => {
-                const { start, end } = measureMonthBounds(m);
-                const mStartIdx = monthIndexFromStart(start);
-                const mEndIdxExclusive = monthIndexFromStart(end);
-                const mLeftPct = mStartIdx / n * 100;
-                const mWidthPct = (mEndIdxExclusive - mStartIdx) / n * 100;
-                return `<div class="gantt-row measure-subrow">
+            ${
+              isOpen
+                ? `<div class="category-detail">
+              ${rows
+                .map((m) => {
+                  const { start, end } = measureMonthBounds(m);
+                  const mStartIdx = monthIndexFromStart(start);
+                  const mEndIdxExclusive = monthIndexFromStart(end);
+                  const mLeftPct = (mStartIdx / n) * 100;
+                  const mWidthPct = ((mEndIdxExclusive - mStartIdx) / n) * 100;
+                  return `<div class="gantt-row measure-subrow">
                   <div class="gantt-label">
                     <div class="gantt-label-title"><span class="measure-link" data-id="${m.id}">${m.name}</span><span class="badge status-${m.status}">${statusLabels[m.status]}</span>${responsibleBadgeHtml(m)}</div>
                     ${m.sub ? `<div class="gantt-label-sub">${m.sub}</div>` : ""}
@@ -526,36 +2147,42 @@ function renderRoadmap() {
                     <div class="gantt-bar seg-${m.status}" style="left:calc(${mLeftPct}% + 2px); width:calc(${mWidthPct}% - 4px)" title="${m.name} — ${measureMonthLabel(m)}"></div>
                   </div>
                 </div>`;
-              }).join("")}
-            </div>` : ""}`;
-        }).join("")}
+                })
+                .join("")}
+            </div>`
+                : ""
+            }`;
+          })
+          .join("")}
       </div>
     </div>`;
-  });
-  html += `<div class="roadmap-legend">
+        });
+        html += `<div class="roadmap-legend">
     <span><span class="legend-seg seg-todo"></span>To do</span>
     <span><span class="legend-seg seg-inprogress"></span>In progress</span>
     <span><span class="legend-seg seg-done"></span>Done</span>
   </div>`;
-  document.getElementById("roadmap").innerHTML = html;
-}
+        document.getElementById("roadmap").innerHTML = html;
+      }
 
-function renderTable() {
-  const streams = activeStream === "all" ? streamOrder : [activeStream];
-  const filtered = measures.filter(m =>
-    (activeStream === "all" || inStream(m, activeStream)) &&
-    (activeStatus === "all" || m.status === activeStatus)
-  );
-  renderSummary(filtered);
-  let html = "";
-  streams.forEach(s => {
-    const rows = measures.filter(m =>
-      inStream(m, s) &&
-      (activeStatus === "all" || m.status === activeStatus)
-    );
-    if (!rows.length) return;
-    const meta = streamMeta[s];
-    html += `<div class="stream-section">
+      function renderTable() {
+        const streams = activeStream === "all" ? streamOrder : [activeStream];
+        const filtered = measures.filter(
+          (m) =>
+            (activeStream === "all" || inStream(m, activeStream)) &&
+            (activeStatus === "all" || m.status === activeStatus),
+        );
+        renderSummary(filtered);
+        let html = "";
+        streams.forEach((s) => {
+          const rows = measures.filter(
+            (m) =>
+              inStream(m, s) &&
+              (activeStatus === "all" || m.status === activeStatus),
+          );
+          if (!rows.length) return;
+          const meta = streamMeta[s];
+          html += `<div class="stream-section">
       <div class="stream-label"><span class="dot ${meta.dot}"></span>${meta.label}</div>
       <div class="table-wrap">
         <div class="col-headers">
@@ -569,71 +2196,97 @@ function renderTable() {
         ${rows.map(measureRowHtml).join("")}
       </div>
     </div>`;
-  });
-  document.getElementById("table-container").innerHTML = html;
-}
+        });
+        document.getElementById("table-container").innerHTML = html;
+      }
 
-document.getElementById("roadmap-filters").addEventListener("click", e => {
-  const btn = e.target.closest(".filter-btn");
-  if (!btn) return;
-  activeRoadmapStream = btn.dataset.stream;
-  document.querySelectorAll("#roadmap-filters .filter-btn").forEach(b => b.classList.toggle("active", b === btn));
-  renderRoadmap();
-});
+      document
+        .getElementById("roadmap-filters")
+        .addEventListener("click", (e) => {
+          const btn = e.target.closest(".filter-btn");
+          if (!btn) return;
+          activeRoadmapStream = btn.dataset.stream;
+          document
+            .querySelectorAll("#roadmap-filters .filter-btn")
+            .forEach((b) => b.classList.toggle("active", b === btn));
+          renderRoadmap();
+        });
 
-document.getElementById("roadmap").addEventListener("click", e => {
-  const row = e.target.closest(".category-row");
-  if (!row) return;
-  const key = `${row.dataset.stream}::${row.dataset.category}`;
-  if (expandedCategories.has(key)) expandedCategories.delete(key);
-  else expandedCategories.add(key);
-  renderRoadmap();
-});
+      document.getElementById("roadmap").addEventListener("click", (e) => {
+        const row = e.target.closest(".category-row");
+        if (!row) return;
+        const key = `${row.dataset.stream}::${row.dataset.category}`;
+        if (expandedCategories.has(key)) expandedCategories.delete(key);
+        else expandedCategories.add(key);
+        renderRoadmap();
+      });
 
-document.getElementById("filters").addEventListener("click", e => {
-  const btn = e.target.closest(".filter-btn");
-  if (!btn) return;
-  activeStream = btn.dataset.stream;
-  document.querySelectorAll("#filters .filter-btn").forEach(b => b.classList.toggle("active", b === btn));
-  renderTable();
-});
+      document.getElementById("filters").addEventListener("click", (e) => {
+        const btn = e.target.closest(".filter-btn");
+        if (!btn) return;
+        activeStream = btn.dataset.stream;
+        document
+          .querySelectorAll("#filters .filter-btn")
+          .forEach((b) => b.classList.toggle("active", b === btn));
+        renderTable();
+      });
 
-document.getElementById("status-filters").addEventListener("click", e => {
-  const btn = e.target.closest(".filter-btn");
-  if (!btn) return;
-  activeStatus = btn.dataset.status;
-  document.querySelectorAll("#status-filters .filter-btn").forEach(b => b.classList.toggle("active", b === btn));
-  renderTable();
-});
+      document
+        .getElementById("status-filters")
+        .addEventListener("click", (e) => {
+          const btn = e.target.closest(".filter-btn");
+          if (!btn) return;
+          activeStatus = btn.dataset.status;
+          document
+            .querySelectorAll("#status-filters .filter-btn")
+            .forEach((b) => b.classList.toggle("active", b === btn));
+          renderTable();
+        });
 
-document.querySelectorAll(".tab-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b === btn));
-    const tab = btn.dataset.tab;
-    document.getElementById("tab-roadmap").style.display = tab === "roadmap" ? "" : "none";
-    document.getElementById("tab-mesures").style.display = tab === "mesures" ? "" : "none";
-  });
-});
+      document.querySelectorAll(".tab-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document
+            .querySelectorAll(".tab-btn")
+            .forEach((b) => b.classList.toggle("active", b === btn));
+          const tab = btn.dataset.tab;
+          document.getElementById("tab-roadmap").style.display =
+            tab === "roadmap" ? "" : "none";
+          document.getElementById("tab-mesures").style.display =
+            tab === "mesures" ? "" : "none";
+        });
+      });
 
-const resultFieldLabels = { emailsSent: "Emails sent", ctr: "CTR", onboardingsStarted: "Coach onboardings started" };
+      const resultFieldLabels = {
+        emailsSent: "Emails sent",
+        ctr: "CTR",
+        onboardingsStarted: "Coach onboardings started",
+      };
 
-function resultRowsHtml(result) {
-  if (!result) return "";
-  if (typeof result === "string") {
-    return `<div class="modal-kv"><span class="modal-k">Result</span><span class="modal-v">${result}</span></div>`;
-  }
-  return Object.entries(result).map(([key, value]) =>
-    `<div class="modal-kv"><span class="modal-k">${resultFieldLabels[key] || key}</span><span class="modal-v">${value}</span></div>`
-  ).join("");
-}
+      function resultRowsHtml(result) {
+        if (!result) return "";
+        if (typeof result === "string") {
+          return `<div class="modal-kv"><span class="modal-k">Result</span><span class="modal-v">${result}</span></div>`;
+        }
+        return Object.entries(result)
+          .map(
+            ([key, value]) =>
+              `<div class="modal-kv"><span class="modal-k">${resultFieldLabels[key] || key}</span><span class="modal-v">${value}</span></div>`,
+          )
+          .join("");
+      }
 
-function measureStreamBadges(m) {
-  const list = Array.isArray(m.stream) ? m.stream : [m.stream];
-  return list.map(s => `<span><span class="dot ${streamMeta[s].dot}"></span>${streamMeta[s].label}</span>`).join("");
-}
+      function measureStreamBadges(m) {
+        const list = Array.isArray(m.stream) ? m.stream : [m.stream];
+        return list
+          .map(
+            (s) =>
+              `<span><span class="dot ${streamMeta[s].dot}"></span>${streamMeta[s].label}</span>`,
+          )
+          .join("");
+      }
 
-function measureModalHtml(m) {
-  return `
+      function measureModalHtml(m) {
+        return `
     <div class="modal-header">
       <div>
         <div class="modal-title">${m.name}${m.type === "foundation" ? `<span class="badge badge-foundation">Foundation</span>` : ""}</div>
@@ -649,55 +2302,73 @@ function measureModalHtml(m) {
       <span class="badge status-${m.status}">${statusLabels[m.status]}</span>
       ${responsibleBadgeHtml(m)}
     </div>
-    ${(m.goal || m.result) ? `<div class="modal-section">
+    ${
+      m.goal || m.result
+        ? `<div class="modal-section">
       <div class="modal-section-title">Objective &amp; result</div>
       ${m.goal ? `<div class="modal-kv"><span class="modal-k">Goal</span><span class="modal-v">${m.goal}</span></div>` : ""}
       ${resultRowsHtml(m.result)}
-    </div>` : ""}
-    ${(m.screenshots && m.screenshots.length) ? `<div class="modal-section">
+    </div>`
+        : ""
+    }
+    ${
+      m.screenshots && m.screenshots.length
+        ? `<div class="modal-section">
       <div class="modal-section-title">Screenshots</div>
       <div class="modal-screenshots">
-        ${m.screenshots.map(src => `<a href="${src}" target="_blank" rel="noopener"><img src="${src}" alt="Screenshot"></a>`).join("")}
+        ${m.screenshots.map((src) => `<a href="${src}" target="_blank" rel="noopener"><img src="${src}" alt="Screenshot"></a>`).join("")}
       </div>
-    </div>` : ""}
+    </div>`
+        : ""
+    }
   `;
-}
+      }
 
-function openMeasureModal(id, opts = {}) {
-  const m = measures.find(x => x.id === id);
-  if (!m) return;
-  document.getElementById("modal-body").innerHTML = measureModalHtml(m);
-  document.getElementById("measure-modal").style.display = "flex";
-  if (!opts.skipHash) history.pushState(null, "", `#m-${id}`);
-}
+      function openMeasureModal(id, opts = {}) {
+        const m = measures.find((x) => x.id === id);
+        if (!m) return;
+        document.getElementById("modal-body").innerHTML = measureModalHtml(m);
+        document.getElementById("measure-modal").style.display = "flex";
+        if (!opts.skipHash) history.pushState(null, "", `#m-${id}`);
+      }
 
-function closeMeasureModal() {
-  document.getElementById("measure-modal").style.display = "none";
-  if (location.hash) history.pushState(null, "", location.pathname + location.search);
-}
+      function closeMeasureModal() {
+        document.getElementById("measure-modal").style.display = "none";
+        if (location.hash)
+          history.pushState(null, "", location.pathname + location.search);
+      }
 
-document.addEventListener("click", e => {
-  const link = e.target.closest(".measure-link");
-  if (link) { openMeasureModal(link.dataset.id); return; }
-  if (e.target.closest("#modal-close-btn")) { closeMeasureModal(); return; }
-  if (e.target.id === "measure-modal") { closeMeasureModal(); return; }
-});
+      document.addEventListener("click", (e) => {
+        const link = e.target.closest(".measure-link");
+        if (link) {
+          openMeasureModal(link.dataset.id);
+          return;
+        }
+        if (e.target.closest("#modal-close-btn")) {
+          closeMeasureModal();
+          return;
+        }
+        if (e.target.id === "measure-modal") {
+          closeMeasureModal();
+          return;
+        }
+      });
 
-document.addEventListener("keydown", e => {
-  if (e.key === "Escape") closeMeasureModal();
-});
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeMeasureModal();
+      });
 
-window.addEventListener("popstate", () => {
-  const match = location.hash.match(/^#m-(.+)$/);
-  if (match) openMeasureModal(match[1], { skipHash: true });
-  else closeMeasureModal();
-});
+      window.addEventListener("popstate", () => {
+        const match = location.hash.match(/^#m-(.+)$/);
+        if (match) openMeasureModal(match[1], { skipHash: true });
+        else closeMeasureModal();
+      });
 
-renderRoadmap();
-renderTable();
+      renderRoadmap();
+      renderTable();
 
-const initialMatch = location.hash.match(/^#m-(.+)$/);
-if (initialMatch) openMeasureModal(initialMatch[1], { skipHash: true });
-</script>
-</body>
+      const initialMatch = location.hash.match(/^#m-(.+)$/);
+      if (initialMatch) openMeasureModal(initialMatch[1], { skipHash: true });
+    </script>
+  </body>
 </html>

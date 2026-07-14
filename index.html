@@ -29,6 +29,7 @@
   .dot-data { background: #7F77DD; }
   .dot-magazine { background: #51cad0; }
   .dot-offline { background: #B07D46; }
+  .dot-seo { background: #E8871E; }
   .tabs { display:flex; gap:24px; margin-bottom:1.5rem; border-bottom:1px solid #e0ddd6; }
   .tab-btn { font-size:14px; font-weight:600; padding:0 0 10px; border:none; background:none; color:#999; cursor:pointer; border-bottom:2px solid transparent; }
   .tab-btn:hover { color:#333; }
@@ -100,6 +101,25 @@
   .responsible-raphael { background: #EAF0FB; color: #2E5AA8; }
   .responsible-katrin  { background: #FBEAF3; color: #A82E6E; }
   .responsible-other   { background: #F0EDE8; color: #666; }
+  .measure-link { cursor: pointer; }
+  .measure-link:hover { text-decoration: underline; }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(20,18,14,0.45); display: flex; align-items: flex-start; justify-content: center; padding: 6vh 16px; z-index: 100; overflow-y: auto; }
+  .modal-box { background: #fff; border-radius: 12px; max-width: 560px; width: 100%; padding: 1.5rem; box-shadow: 0 12px 40px rgba(0,0,0,0.2); }
+  .modal-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .modal-title { font-size: 16px; font-weight: 600; color: #111; line-height: 1.3; }
+  .modal-meta { font-size: 11.5px; color: #999; margin-top: 8px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .modal-category { color: #888; }
+  .modal-close { border: none; background: none; font-size: 22px; line-height: 1; color: #999; cursor: pointer; padding: 0 2px; flex-shrink: 0; }
+  .modal-close:hover { color: #333; }
+  .modal-sub { font-size: 13px; color: #666; margin: 12px 0 0; }
+  .modal-badges { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 0; }
+  .modal-section { margin-top: 16px; padding-top: 14px; border-top: 0.5px solid #f0ede8; }
+  .modal-section-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #999; margin-bottom: 8px; }
+  .modal-kv { display: flex; gap: 8px; font-size: 13px; margin-bottom: 4px; }
+  .modal-k { color: #999; min-width: 50px; flex-shrink: 0; }
+  .modal-v { color: #222; font-weight: 500; }
+  .modal-screenshots { display: flex; flex-wrap: wrap; gap: 8px; }
+  .modal-screenshots img { max-width: 160px; max-height: 120px; border-radius: 6px; border: 0.5px solid #e0ddd6; object-fit: cover; }
   @media (max-width: 700px) {
     body { padding: 1rem; }
     .summary { grid-template-columns: repeat(2, 1fr); }
@@ -113,7 +133,7 @@
 <div class="page">
   <div class="top">
     <h1>Planned Measures</h1>
-    <p>7 streams · monthly timeline · Effort / impact view</p>
+    <p>8 streams · monthly timeline · Effort / impact view</p>
   </div>
   <div class="tabs">
     <button class="tab-btn active" data-tab="roadmap">Roadmap</button>
@@ -133,6 +153,7 @@
         <button class="filter-btn" data-stream="data"><span class="dot dot-data"></span>Data collection</button>
         <button class="filter-btn" data-stream="magazine"><span class="dot dot-magazine"></span>Fit for Life Magazine</button>
         <button class="filter-btn" data-stream="offline"><span class="dot dot-offline"></span>Offline</button>
+        <button class="filter-btn" data-stream="seo"><span class="dot dot-seo"></span>SEO</button>
       </div>
     </div>
     <div id="roadmap"></div>
@@ -151,6 +172,7 @@
         <button class="filter-btn" data-stream="data"><span class="dot dot-data"></span>Data collection</button>
         <button class="filter-btn" data-stream="magazine"><span class="dot dot-magazine"></span>Fit for Life Magazine</button>
         <button class="filter-btn" data-stream="offline"><span class="dot dot-offline"></span>Offline</button>
+        <button class="filter-btn" data-stream="seo"><span class="dot dot-seo"></span>SEO</button>
       </div>
       <div class="filters" id="status-filters">
         <span class="filter-label">Status</span>
@@ -164,11 +186,20 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="measure-modal" style="display:none">
+  <div class="modal-box" id="modal-body"></div>
+</div>
+
 <script>
 const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
 // months: array of "YYYY-MM" strings — a single entry for a one-month task,
 // or [firstMonth, lastMonth] to span a range (e.g. ["2026-07","2026-09"] = Jul-Sep 2026 inclusive).
+// Optional per-measure fields, shown in the detail modal when present:
+//   goal: "5000 clicks/month" — the target to hit
+//   result: "3200 clicks/month (as of Aug)" — plain-text outcome, OR an object with any of
+//     { emailsSent: 12500, ctr: "3.4%", onboardingsStarted: 210 } for a per-field breakdown
+//   screenshots: ["screenshots/foo.png"] — relative paths to images to display
 const measures = [
   { stream:"global", category:"Tracking & testing infrastructure", name:"Mapping entry points + tracking", sub:"Mapping via channel / product offered", months:["2026-07","2026-09"], effort:"vhigh", impact:"high", status:"inprogress", type:"foundation", responsible:"Raphael" },
   { stream:"global", category:"Tracking & testing infrastructure", name:"Web AB testing tool — setup", sub:"Prerequisite for future iterations", months:["2026-07","2026-09"], effort:"med", impact:"high", status:"inprogress", type:"foundation", responsible:"Raphael" },
@@ -179,16 +210,16 @@ const measures = [
   { stream:"global", category:"Communication matrix & AI", name:"Create a communication matrix", sub:"Touchpoint × timing matrix — decide Coach vs Magazine per moment, incl. post-race", months:["2026-07","2026-12"], effort:"low", impact:"vhigh", status:"inprogress", type:"foundation", responsible:"Raphael" },
   { stream:"global", category:"Communication matrix & AI", name:"Connect the communication matrix to AI", sub:"Signal engine to score and personalize product & content per athlete profile", months:["2027-01","2027-03"], effort:"vhigh", impact:"vhigh", status:"todo", type:"foundation", responsible:"Raphael" },
 
-  { stream:["coach","magazine"], category:"Touchpoints & teasers", name:"CTA - Dashboard page", sub:"Design to be defined", months:["2026-08","2026-09"], effort:"low", impact:"vhigh", status:"todo", responsible:"Raphael" },
-  { stream:["coach","magazine"], category:"Touchpoints & teasers", name:"CTA - Results page", sub:"Design to be defined", months:["2026-08","2026-09"], effort:"low", impact:"vhigh", status:"todo", responsible:"Raphael" },
-  { stream:["coach","magazine"], category:"Touchpoints & teasers", name:"CTA - Athlete search page", sub:"teasing for the coach on athletes' search page?", months:["2026-08","2026-09"], effort:"low", impact:"low", status:"todo", responsible:"Raphael" },
-  { stream:["coach","magazine"], category:"Touchpoints & teasers", name:"CTA - Start list", sub:"Product presence on the start list", months:["2026-08","2026-09"], effort:"med", impact:"low", status:"todo", responsible:"Raphael" },
-  { stream:["coach","magazine"], category:"Touchpoints & teasers", name:"Mail - Teaser in confirmation email", sub:"Create a HTML to be integrated in the confirmation emails", months:["2026-07"], effort:"low", impact:"high", status:"inprogress", responsible:"Raphael" },
-  { stream:["coach","magazine"], category:"Touchpoints & teasers", name:"Mail - Post registration teasing", sub:"Teasing pre race with sequencing and different bias", months:["2026-10","2026-11"], effort:"low", impact:"high", status:"todo", responsible:"Raphael" },
-  { stream:["coach","magazine"], category:"Touchpoints & teasers", name:"Mail - Post race teasing", sub:"Post race subscription teasing with a sequencing J+1 → J+21", months:["2026-10","2026-11"], effort:"low", impact:"med", status:"todo", responsible:"Raphael" },
-  { stream:["coach","magazine"], category:"Touchpoints & teasers", name:"Mail - Congratulation's email", sub:"integrate teaser in the congratulation's email", months:["2026-10","2026-11"], effort:"low", impact:"high", status:"todo", responsible:"Raphael" },
-  { stream:["coach","magazine"], category:"Touchpoints & teasers", name:"Mail - FFL Newsletter", sub:"Use Fit for Life Newsletter to promote our products (coach + abo)", months:["2026-10","2026-11"], effort:"low", impact:"high", status:"todo", responsible:"Raphael" },
-  { stream:["coach","magazine"], category:"Touchpoints & teasers", name:"Mail - Welcome Mail", sub:"Pre-race touchpoint — Product teasing in the welcome mail", months:["2026-10","2026-11"], effort:"low", impact:"med", status:"todo", responsible:"Raphael" },
+  { stream:["coach","magazine"], category:"Touchpoints & teasers", name:"CTA - Dashboard page", sub:"Design to be defined", months:["2026-08","2026-09"], effort:"low", impact:"vhigh", status:"todo", responsible:"Raphael", goal:"CTR ≥ 2%" },
+  { stream:["coach","magazine"], category:"Touchpoints & teasers", name:"CTA - Results page", sub:"Design to be defined", months:["2026-08","2026-09"], effort:"low", impact:"vhigh", status:"todo", responsible:"Raphael", goal:"CTR ≥ 2%" },
+  { stream:["coach","magazine"], category:"Touchpoints & teasers", name:"CTA - Athlete search page", sub:"teasing for the coach on athletes' search page?", months:["2026-08","2026-09"], effort:"low", impact:"low", status:"todo", responsible:"Raphael", goal:"CTR ≥ 0.3%" },
+  { stream:["coach","magazine"], category:"Touchpoints & teasers", name:"CTA - Start list", sub:"Product presence on the start list", months:["2026-08","2026-09"], effort:"med", impact:"low", status:"todo", responsible:"Raphael", goal:"CTR ≥ 0.3%" },
+  { stream:["coach","magazine"], category:"Touchpoints & teasers", name:"Mail - Teaser in confirmation email", sub:"Create a HTML to be integrated in the confirmation emails", months:["2026-07"], effort:"low", impact:"high", status:"inprogress", responsible:"Raphael", goal:"CTR ≥ 1.5%" },
+  { stream:["coach","magazine"], category:"Touchpoints & teasers", name:"Mail - Post registration teasing", sub:"Teasing pre race with sequencing and different bias", months:["2026-10","2026-11"], effort:"low", impact:"high", status:"todo", responsible:"Raphael", goal:"CTR ≥ 3%" },
+  { stream:["coach","magazine"], category:"Touchpoints & teasers", name:"Mail - Post race teasing", sub:"Post race subscription teasing with a sequencing J+1 → J+21", months:["2026-10","2026-11"], effort:"low", impact:"med", status:"todo", responsible:"Raphael", goal:"CTR ≥ 4%" },
+  { stream:["coach","magazine"], category:"Touchpoints & teasers", name:"Mail - Congratulation's email", sub:"integrate teaser in the congratulation's email", months:["2026-10","2026-11"], effort:"low", impact:"high", status:"todo", responsible:"Raphael", goal:"CTR ≥ 2.5%" },
+  { stream:["coach","magazine"], category:"Touchpoints & teasers", name:"Mail - FFL Newsletter", sub:"Use Fit for Life Newsletter to promote our products (coach + abo)", months:["2026-10","2026-11"], effort:"low", impact:"high", status:"todo", responsible:"Raphael", goal:"CTR ≥ 0.5%" },
+  { stream:["coach","magazine"], category:"Touchpoints & teasers", name:"Mail - Welcome Mail", sub:"Pre-race touchpoint — Product teasing in the welcome mail", months:["2026-10","2026-11"], effort:"low", impact:"med", status:"todo", responsible:"Raphael", goal:"CTR ≥ 5.5%" },
   { stream:["coach","magazine"], category:"Touchpoints & teasers", name:"Articles / content pages", sub:"List all articles / content where we could integrate a teaser for a product", months:["2026-11","2026-12"], effort:"high", impact:"low", status:"todo", type:"foundation", responsible:"Raphael" },
   { stream:"coach", category:"Touchpoints & teasers", name:"FFL Magazine", sub:"Cross-promotion of the coach via the Fit for Life Magazine?", months:["2026-11","2026-12"], effort:"high", impact:"low", status:"todo", responsible:["Raphael","Katrin"] },
   { stream:"coach", category:"Testing & optimization", name:"Mail - A/B tests", sub:"Funnel overview + variants based on emails with engagement", months:["2027-01","2027-02"], effort:"med", impact:"med", status:"todo", responsible:"Raphael" },
@@ -257,8 +288,8 @@ const measures = [
   { stream:"magazine", category:"Touchpoints & teasers", name:"Website Home Datasport", sub:"Pre-race touchpoint — magazine presence on the Datasport home page", months:["2026-07","2026-09"], effort:"med", impact:"med", status:"todo", responsible:"Raphael" },
   { stream:"magazine", category:"Touchpoints & teasers", name:"Online registration (OnReg)", sub:"Pre-race touchpoint — magazine offer during online race registration", months:["2026-07","2026-09"], effort:"med", impact:"vhigh", status:"todo", responsible:"Raphael" },
   { stream:"magazine", category:"Strategy & foundations", name:"Fit for Life Website", sub:"Optimize the website to increase conversions on the magazine via touchpoints", months:["2026-10","2026-12"], effort:"med", impact:"med", status:"todo", responsible:"Raphael" },
-  { stream:"magazine", category:"Touchpoints & teasers", name:"Mail - Datasport Newsletter", sub:"Pre-race touchpoint — Product teasing in the Datasport newsletter", months:["2026-10","2026-12"], effort:"low", impact:"med", status:"todo", responsible:"Raphael" },
-  { stream:"magazine", category:"Touchpoints & teasers", name:"CTA - FFL Coach", sub:"Pre-race touchpoint — cross-promotion of the magazine via the Fit for Life Coach", months:["2026-10","2026-12"], effort:"med", impact:"med", status:"todo", responsible:"Raphael" },
+  { stream:"magazine", category:"Touchpoints & teasers", name:"Mail - Datasport Newsletter", sub:"Pre-race touchpoint — Product teasing in the Datasport newsletter", months:["2026-10","2026-12"], effort:"low", impact:"med", status:"todo", responsible:"Raphael", goal:"CTR ≥ 0.5%" },
+  { stream:"magazine", category:"Touchpoints & teasers", name:"CTA - FFL Coach", sub:"Pre-race touchpoint — cross-promotion of the magazine via the Fit for Life Coach", months:["2026-10","2026-12"], effort:"med", impact:"med", status:"todo", responsible:"Raphael", goal:"CTR ≥ 1%" },
   { stream:"magazine", category:"Touchpoints & teasers", name:"follow-up emails on sample receivers", sub:"Create a dedicated communication on the receivers of the magazine samples", months:["2026-10","2026-12"], effort:"med", impact:"high", status:"todo", responsible:"Raphael" },
   { stream:"magazine", category:"Strategy & foundations", name:"Digital Presence by partners", sub:"Define a strategy for digital acquisition by partners (define best practices and acquisition strategy)", months:["2026-10","2026-12"], effort:"vhigh", impact:"med", status:"todo", type:"foundation", responsible:"Raphael" },
   { stream:"magazine", category:"Strategy & foundations", name:"Free sample issue strategy", sub:"Which target audience gets which issue for free, and when", months:["2026-07","2026-09"], effort:"high", impact:"high", status:"todo", responsible:"Katrin" },
@@ -267,7 +298,21 @@ const measures = [
   { stream:["magazine","offline"], category:"Touchpoints & teasers", name:"Magazine placement in running shops & physios", sub:"Display copies of the magazine in running shops, physiotherapy practices, fitness centers, etc.", months:["2026-07","2026-08"], effort:"med", impact:"med", status:"todo", responsible:"Katrin" },
   { stream:"magazine", category:"Touchpoints & teasers", name:"Send magazine to finishers", sub:"Send the magazine to event finishers as a “prize” for event participation", months:["2026-09","2026-11"], effort:"vhigh", impact:"high", status:"todo", responsible:"Raphael" },
   { stream:["coach","magazine"], category:"Strategy & foundations", name:"Social media advertising", sub:"Social media strategy for FFL — which content drives sales", months:["2026-07","2026-09"], effort:"high", impact:"med", status:"todo", responsible:"Katrin" },
+
+  { stream:"seo", category:"Indexation & technical SEO", name:"Removal of athletes pages", sub:"Discuss with Pavlo to see if we can directly noindex the athletes' pages without having to open a ticket", months:["2026-07"], effort:"low", impact:"low", status:"inprogress", responsible:"Raphael" },
+  { stream:"seo", category:"Indexation & technical SEO", name:"Duplicate of athletes pages", sub:"See what to do with the duplicate of athletes' pages on results.datasport.com + datasport.com", months:["2026-09","2026-10"], effort:"med", impact:"med", status:"todo", responsible:"Raphael" },
 ];
+
+// Stable per-measure id used for the shareable "#m-<id>" deep link into the detail modal.
+{
+  const idCounts = {};
+  measures.forEach(m => {
+    const primaryStream = Array.isArray(m.stream) ? m.stream[0] : m.stream;
+    const base = slugify(`${primaryStream}-${m.name}`);
+    idCounts[base] = (idCounts[base] || 0) + 1;
+    m.id = idCounts[base] === 1 ? base : `${base}-${idCounts[base]}`;
+  });
+}
 
 const streamMeta = {
   global:   { label:"Global", dot:"dot-global" },
@@ -277,6 +322,7 @@ const streamMeta = {
   data:     { label:"Data collection", dot:"dot-data" },
   magazine: { label:"Fit for Life Magazine", dot:"dot-magazine" },
   offline:  { label:"Offline", dot:"dot-offline" },
+  seo:      { label:"SEO", dot:"dot-seo" },
 };
 const effortLabels = { low:"Low", med:"Medium", high:"High", vhigh:"Very High" };
 const impactLabels = { low:"Low", med:"Medium", high:"High", vhigh:"Very high" };
@@ -335,7 +381,7 @@ function measureMonthLabel(m) {
 
 function measureRowHtml(m) {
   return `<div class="measure-row${m.status === 'done' ? ' is-done' : m.status === 'inprogress' ? ' is-inprogress' : ''}">
-    <div><div class="measure-name">${m.name}${m.type === "foundation" ? `<span class="badge badge-foundation">Foundation</span>` : ""}</div>${m.sub ? `<div class="measure-sub">${m.sub}</div>` : ""}</div>
+    <div><div class="measure-name"><span class="measure-link" data-id="${m.id}">${m.name}</span>${m.type === "foundation" ? `<span class="badge badge-foundation">Foundation</span>` : ""}</div>${m.sub ? `<div class="measure-sub">${m.sub}</div>` : ""}</div>
     <div><span class="badge badge-q">${measureMonthLabel(m)}</span></div>
     <div><span class="badge effort-${m.effort}">${effortLabels[m.effort]}</span></div>
     <div><span class="badge impact-${m.impact}">${impactLabels[m.impact]}</span></div>
@@ -360,7 +406,7 @@ function renderSummary(data) {
   `;
 }
 
-const streamOrder = ["global","coach","b2b","b2c","data","magazine","offline"];
+const streamOrder = ["global","coach","b2b","b2c","data","magazine","offline","seo"];
 
 function groupByCategory(stream) {
   const groups = new Map();
@@ -472,7 +518,7 @@ function renderRoadmap() {
                 const mWidthPct = (mEndIdxExclusive - mStartIdx) / n * 100;
                 return `<div class="gantt-row measure-subrow">
                   <div class="gantt-label">
-                    <div class="gantt-label-title">${m.name}<span class="badge status-${m.status}">${statusLabels[m.status]}</span>${responsibleBadgeHtml(m)}</div>
+                    <div class="gantt-label-title"><span class="measure-link" data-id="${m.id}">${m.name}</span><span class="badge status-${m.status}">${statusLabels[m.status]}</span>${responsibleBadgeHtml(m)}</div>
                     ${m.sub ? `<div class="gantt-label-sub">${m.sub}</div>` : ""}
                   </div>
                   <div class="gantt-track" style="background-image:${gridBg}">
@@ -569,8 +615,89 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
   });
 });
 
+const resultFieldLabels = { emailsSent: "Emails sent", ctr: "CTR", onboardingsStarted: "Coach onboardings started" };
+
+function resultRowsHtml(result) {
+  if (!result) return "";
+  if (typeof result === "string") {
+    return `<div class="modal-kv"><span class="modal-k">Result</span><span class="modal-v">${result}</span></div>`;
+  }
+  return Object.entries(result).map(([key, value]) =>
+    `<div class="modal-kv"><span class="modal-k">${resultFieldLabels[key] || key}</span><span class="modal-v">${value}</span></div>`
+  ).join("");
+}
+
+function measureStreamBadges(m) {
+  const list = Array.isArray(m.stream) ? m.stream : [m.stream];
+  return list.map(s => `<span><span class="dot ${streamMeta[s].dot}"></span>${streamMeta[s].label}</span>`).join("");
+}
+
+function measureModalHtml(m) {
+  return `
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">${m.name}${m.type === "foundation" ? `<span class="badge badge-foundation">Foundation</span>` : ""}</div>
+        <div class="modal-meta">${measureStreamBadges(m)}<span class="modal-category">${m.category || ""}</span></div>
+      </div>
+      <button class="modal-close" id="modal-close-btn" aria-label="Close">&times;</button>
+    </div>
+    ${m.sub ? `<p class="modal-sub">${m.sub}</p>` : ""}
+    <div class="modal-badges">
+      <span class="badge badge-q">${measureMonthLabel(m)}</span>
+      <span class="badge effort-${m.effort}">Effort: ${effortLabels[m.effort]}</span>
+      <span class="badge impact-${m.impact}">Impact: ${impactLabels[m.impact]}</span>
+      <span class="badge status-${m.status}">${statusLabels[m.status]}</span>
+      ${responsibleBadgeHtml(m)}
+    </div>
+    ${(m.goal || m.result) ? `<div class="modal-section">
+      <div class="modal-section-title">Objective &amp; result</div>
+      ${m.goal ? `<div class="modal-kv"><span class="modal-k">Goal</span><span class="modal-v">${m.goal}</span></div>` : ""}
+      ${resultRowsHtml(m.result)}
+    </div>` : ""}
+    ${(m.screenshots && m.screenshots.length) ? `<div class="modal-section">
+      <div class="modal-section-title">Screenshots</div>
+      <div class="modal-screenshots">
+        ${m.screenshots.map(src => `<a href="${src}" target="_blank" rel="noopener"><img src="${src}" alt="Screenshot"></a>`).join("")}
+      </div>
+    </div>` : ""}
+  `;
+}
+
+function openMeasureModal(id, opts = {}) {
+  const m = measures.find(x => x.id === id);
+  if (!m) return;
+  document.getElementById("modal-body").innerHTML = measureModalHtml(m);
+  document.getElementById("measure-modal").style.display = "flex";
+  if (!opts.skipHash) history.pushState(null, "", `#m-${id}`);
+}
+
+function closeMeasureModal() {
+  document.getElementById("measure-modal").style.display = "none";
+  if (location.hash) history.pushState(null, "", location.pathname + location.search);
+}
+
+document.addEventListener("click", e => {
+  const link = e.target.closest(".measure-link");
+  if (link) { openMeasureModal(link.dataset.id); return; }
+  if (e.target.closest("#modal-close-btn")) { closeMeasureModal(); return; }
+  if (e.target.id === "measure-modal") { closeMeasureModal(); return; }
+});
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") closeMeasureModal();
+});
+
+window.addEventListener("popstate", () => {
+  const match = location.hash.match(/^#m-(.+)$/);
+  if (match) openMeasureModal(match[1], { skipHash: true });
+  else closeMeasureModal();
+});
+
 renderRoadmap();
 renderTable();
+
+const initialMatch = location.hash.match(/^#m-(.+)$/);
+if (initialMatch) openMeasureModal(initialMatch[1], { skipHash: true });
 </script>
 </body>
 </html>

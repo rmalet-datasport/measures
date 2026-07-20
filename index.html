@@ -701,6 +701,16 @@
             </button>
             <button class="filter-btn" data-status="done">Done</button>
           </div>
+          <div class="filters" id="responsible-filters">
+            <span class="filter-label">Responsible</span>
+            <button class="filter-btn active" data-responsible="all">
+              All
+            </button>
+            <button class="filter-btn" data-responsible="Raphael">
+              Raphael
+            </button>
+            <button class="filter-btn" data-responsible="Katrin">Katrin</button>
+          </div>
         </div>
         <div id="table-container"></div>
       </div>
@@ -730,6 +740,7 @@
       // or [firstMonth, lastMonth] to span a range (e.g. ["2026-07","2026-09"] = Jul-Sep 2026 inclusive).
       // Optional per-measure fields, shown in the detail modal when present:
       //   goal: "5000 clicks/month" — the target to hit
+      //   deadline: "2026-09-30" — date by which the goal should be reached
       //   result: "3200 clicks/month (as of Aug)" — plain-text outcome, OR an object with any of
       //     { emailsSent: 12500, ctr: "3.4%", onboardingsStarted: 210 } for a per-field breakdown
       //   screenshots: ["screenshots/foo.png"] — relative paths to images to display
@@ -1705,6 +1716,19 @@
         {
           stream: "magazine",
           category: "Touchpoints & teasers",
+          name: "Newsletter CTA tracking — utm_source",
+          sub: "setting up of tracking of CTAs on our newsletters by implementing utm_source",
+          months: ["2026-07", "2026-09"],
+          effort: "low",
+          impact: "low",
+          status: "todo",
+          type: "foundation",
+          responsible: ["Raphael", "Katrin"],
+          goal: "offer tracking possibility",
+        },
+        {
+          stream: "magazine",
+          category: "Touchpoints & teasers",
           name: "CTA - FFL Coach",
           sub: "Pre-race touchpoint — cross-promotion of the magazine via the Fit for Life Coach",
           months: ["2026-10", "2026-12"],
@@ -1733,9 +1757,9 @@
           months: ["2026-07", "2026-07"],
           effort: "high",
           impact: "low",
-          status: "todo",
+          status: "inprogress",
           responsible: "Raphael",
-          goal: "from 3 clicks to 100 clicks minimum",
+          goal: "Mise en place d'un tracking, audit des measures qu'on peut avancer",
         },
         {
           stream: "magazine",
@@ -1883,11 +1907,18 @@
 
       let activeStream = "all";
       let activeStatus = "all";
+      let activeResponsible = "all";
       let activeRoadmapStream = "all";
       const expandedCategories = new Set();
 
       function inStream(m, s) {
         return Array.isArray(m.stream) ? m.stream.includes(s) : m.stream === s;
+      }
+
+      function hasResponsible(m, name) {
+        return Array.isArray(m.responsible)
+          ? m.responsible.includes(name)
+          : m.responsible === name;
       }
 
       function slugify(str) {
@@ -2170,7 +2201,9 @@
         const filtered = measures.filter(
           (m) =>
             (activeStream === "all" || inStream(m, activeStream)) &&
-            (activeStatus === "all" || m.status === activeStatus),
+            (activeStatus === "all" || m.status === activeStatus) &&
+            (activeResponsible === "all" ||
+              hasResponsible(m, activeResponsible)),
         );
         renderSummary(filtered);
         let html = "";
@@ -2178,7 +2211,9 @@
           const rows = measures.filter(
             (m) =>
               inStream(m, s) &&
-              (activeStatus === "all" || m.status === activeStatus),
+              (activeStatus === "all" || m.status === activeStatus) &&
+              (activeResponsible === "all" ||
+                hasResponsible(m, activeResponsible)),
           );
           if (!rows.length) return;
           const meta = streamMeta[s];
@@ -2243,6 +2278,18 @@
           renderTable();
         });
 
+      document
+        .getElementById("responsible-filters")
+        .addEventListener("click", (e) => {
+          const btn = e.target.closest(".filter-btn");
+          if (!btn) return;
+          activeResponsible = btn.dataset.responsible;
+          document
+            .querySelectorAll("#responsible-filters .filter-btn")
+            .forEach((b) => b.classList.toggle("active", b === btn));
+          renderTable();
+        });
+
       document.querySelectorAll(".tab-btn").forEach((btn) => {
         btn.addEventListener("click", () => {
           document
@@ -2303,10 +2350,11 @@
       ${responsibleBadgeHtml(m)}
     </div>
     ${
-      m.goal || m.result
+      m.goal || m.deadline || m.result
         ? `<div class="modal-section">
       <div class="modal-section-title">Objective &amp; result</div>
       ${m.goal ? `<div class="modal-kv"><span class="modal-k">Goal</span><span class="modal-v">${m.goal}</span></div>` : ""}
+      ${m.deadline ? `<div class="modal-kv"><span class="modal-k">Deadline</span><span class="modal-v">${m.deadline}</span></div>` : ""}
       ${resultRowsHtml(m.result)}
     </div>`
         : ""

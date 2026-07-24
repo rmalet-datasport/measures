@@ -744,6 +744,8 @@
       //   result: "3200 clicks/month (as of Aug)" — plain-text outcome, OR an object with any of
       //     { emailsSent: 12500, ctr: "3.4%", onboardingsStarted: 210 } for a per-field breakdown
       //   screenshots: ["screenshots/foo.png"] — relative paths to images to display
+      //   link: "https://datasport.atlassian.net/browse/DNG-1234" — related ticket/doc URL
+      //   linkLabel: "DNG-1234" — text shown for the link (defaults to the raw URL)
       const measures = [
         {
           stream: "global",
@@ -780,6 +782,21 @@
           status: "todo",
           type: "foundation",
           responsible: "Raphael",
+        },
+        {
+          stream: "global",
+          category: "Tracking & testing infrastructure",
+          name: "Fix GA4 page_view — missing UTM/query string (DNG-7929)",
+          sub: "page_location currently sends path only (e.g. /en/fitforlifecoach), dropping all query params before they reach GA4 — no campaign/source ever gets attributed. Fix: push full URL (window.location.href) to dataLayer instead of the manually built path.",
+          months: ["2026-07", "2026-08"],
+          effort: "med",
+          impact: "med",
+          status: "inprogress",
+          type: "foundation",
+          responsible: "Raphael",
+          goal: "be able to track acquisition sources / traffic (UTM parameters) reliably in GA4",
+          link: "https://datasport.atlassian.net/browse/DNG-7929",
+          linkLabel: "DNG-7929",
         },
         {
           stream: "global",
@@ -838,6 +855,17 @@
           status: "todo",
           type: "foundation",
           responsible: "Raphael",
+        },
+        {
+          stream: "global",
+          category: "Tooling & access",
+          name: "Claude Code access for the website",
+          sub: "Katrin needs to provide the access",
+          months: ["2026-07"],
+          effort: "low",
+          impact: "high",
+          status: "todo",
+          responsible: "Katrin",
         },
 
         {
@@ -1717,8 +1745,8 @@
           stream: "magazine",
           category: "Touchpoints & teasers",
           name: "Newsletter CTA tracking — utm_source",
-          sub: "setting up of tracking of CTAs on our newsletters by implementing utm_source",
-          months: ["2026-07", "2026-09"],
+          sub: "setting up of tracking of CTAs to our website only on our newsletters by implementing utm_source=newsletter",
+          months: ["2026-07", "2026-07"],
           effort: "low",
           impact: "low",
           status: "todo",
@@ -2355,6 +2383,7 @@
       <div class="modal-section-title">Objective &amp; result</div>
       ${m.goal ? `<div class="modal-kv"><span class="modal-k">Goal</span><span class="modal-v">${m.goal}</span></div>` : ""}
       ${m.deadline ? `<div class="modal-kv"><span class="modal-k">Deadline</span><span class="modal-v">${m.deadline}</span></div>` : ""}
+      ${m.link ? `<div class="modal-kv"><span class="modal-k">Ticket</span><span class="modal-v"><a href="${m.link}" target="_blank" rel="noopener">${m.linkLabel || m.link}</a></span></div>` : ""}
       ${resultRowsHtml(m.result)}
     </div>`
         : ""

@@ -594,6 +594,12 @@
         border: 0.5px solid #e0ddd6;
         object-fit: cover;
       }
+      .modal-description {
+        font-size: 13px;
+        color: #333;
+        line-height: 1.5;
+        white-space: pre-line;
+      }
       @media (max-width: 700px) {
         body {
           padding: 1rem;
@@ -746,6 +752,7 @@
       //   screenshots: ["screenshots/foo.png"] — relative paths to images to display
       //   link: "https://datasport.atlassian.net/browse/DNG-1234" — related ticket/doc URL
       //   linkLabel: "DNG-1234" — text shown for the link (defaults to the raw URL)
+      //   description: "longer free text — next steps, notes, who does what" — shown in its own modal section
       const measures = [
         {
           stream: "global",
@@ -869,11 +876,11 @@
         },
 
         {
-          stream: ["coach", "magazine"],
+          stream: "coach",
           category: "Touchpoints & teasers",
-          name: "CTA - Dashboard page",
+          name: "CTA - Dashboard page (Coach)",
           sub: "Design to be defined",
-          months: ["2026-08", "2026-09"],
+          months: ["2026-08"],
           effort: "low",
           impact: "vhigh",
           status: "todo",
@@ -881,11 +888,11 @@
           goal: "CTR ≥ 2%",
         },
         {
-          stream: ["coach", "magazine"],
+          stream: "magazine",
           category: "Touchpoints & teasers",
-          name: "CTA - Results page",
-          sub: "Design to be defined",
-          months: ["2026-08", "2026-09"],
+          name: "CTA - Dashboard page (Magazine)",
+          sub: "Design to be defined — tested via A/B test",
+          months: ["2026-09"],
           effort: "low",
           impact: "vhigh",
           status: "todo",
@@ -893,11 +900,35 @@
           goal: "CTR ≥ 2%",
         },
         {
-          stream: ["coach", "magazine"],
+          stream: "coach",
           category: "Touchpoints & teasers",
-          name: "CTA - Athlete search page",
+          name: "CTA - Results page (Coach)",
+          sub: "Design to be defined",
+          months: ["2026-08"],
+          effort: "low",
+          impact: "vhigh",
+          status: "todo",
+          responsible: "Raphael",
+          goal: "CTR ≥ 2%",
+        },
+        {
+          stream: "magazine",
+          category: "Touchpoints & teasers",
+          name: "CTA - Results page (Magazine)",
+          sub: "Design to be defined — tested via A/B test",
+          months: ["2026-09"],
+          effort: "low",
+          impact: "vhigh",
+          status: "todo",
+          responsible: "Raphael",
+          goal: "CTR ≥ 2%",
+        },
+        {
+          stream: "coach",
+          category: "Touchpoints & teasers",
+          name: "CTA - Athlete search page (Coach)",
           sub: "teasing for the coach on athletes' search page?",
-          months: ["2026-08", "2026-09"],
+          months: ["2026-08"],
           effort: "low",
           impact: "low",
           status: "todo",
@@ -905,11 +936,35 @@
           goal: "CTR ≥ 0.3%",
         },
         {
-          stream: ["coach", "magazine"],
+          stream: "magazine",
           category: "Touchpoints & teasers",
-          name: "CTA - Start list",
+          name: "CTA - Athlete search page (Magazine)",
+          sub: "teasing for the magazine on athletes' search page? — tested via A/B test",
+          months: ["2026-09"],
+          effort: "low",
+          impact: "low",
+          status: "todo",
+          responsible: "Raphael",
+          goal: "CTR ≥ 0.3%",
+        },
+        {
+          stream: "coach",
+          category: "Touchpoints & teasers",
+          name: "CTA - Start list (Coach)",
           sub: "Product presence on the start list",
-          months: ["2026-08", "2026-09"],
+          months: ["2026-08"],
+          effort: "med",
+          impact: "low",
+          status: "todo",
+          responsible: "Raphael",
+          goal: "CTR ≥ 0.3%",
+        },
+        {
+          stream: "magazine",
+          category: "Touchpoints & teasers",
+          name: "CTA - Start list (Magazine)",
+          sub: "Product presence on the start list — tested via A/B test",
+          months: ["2026-09"],
           effort: "med",
           impact: "low",
           status: "todo",
@@ -921,12 +976,13 @@
           category: "Touchpoints & teasers",
           name: "Mail - Teaser in confirmation email",
           sub: "Create a HTML to be integrated in the confirmation emails",
-          months: ["2026-07"],
+          months: ["2026-07", "2026-08"],
           effort: "low",
           impact: "high",
           status: "inprogress",
           responsible: "Raphael",
           goal: "CTR ≥ 1.5%",
+          description: "Prochaines étapes : Katrin doit choisir une dizaine d'events pour lesquels on peut le faire, contacter les SSM pour avoir leur confirmation, et m'envoyer la traduction du teaser qu'elle veut utiliser.",
         },
         {
           stream: ["coach", "magazine"],
@@ -993,12 +1049,13 @@
           category: "Touchpoints & teasers",
           name: "Articles / content pages",
           sub: "List all articles / content where we could integrate a teaser for a product",
-          months: ["2026-11", "2026-12"],
+          months: ["2026-08"],
           effort: "high",
           impact: "low",
           status: "todo",
           type: "foundation",
           responsible: "Raphael",
+          description: "Raphael fournit la liste des 100 articles les plus lus sur le site ; Katrin vérifie lesquels justifieraient un CTA vers le Fit for Life Magazine ; puis Raphael implémente.",
         },
         {
           stream: "coach",
@@ -1712,11 +1769,12 @@
           category: "Touchpoints & teasers",
           name: "Online registration (OnReg)",
           sub: "Pre-race touchpoint — magazine offer during online race registration",
-          months: ["2026-07", "2026-09"],
+          months: ["2026-08"],
           effort: "med",
           impact: "vhigh",
           status: "todo",
           responsible: "Raphael",
+          description: "Prochaine étape : Katrin doit faire un test pour vérifier où l'offre est présente sur OnReg et où elle ne l'est pas.",
         },
         {
           stream: "magazine",
@@ -1824,22 +1882,35 @@
           responsible: "Katrin",
         },
         {
-          stream: ["coach", "magazine", "offline"],
+          stream: ["magazine", "offline"],
           category: "Touchpoints & teasers",
-          name: "Event presence",
-          sub: "Hand out and sell the magazine at events, and sell Coach",
+          name: "Event presence — Magazine",
+          sub: "Hand out and sell the magazine at an event",
           months: ["2026-08", "2026-09"],
-          effort: "vhigh",
+          effort: "high",
           impact: "high",
           status: "todo",
-          responsible: ["Raphael", "Katrin"],
+          responsible: "Katrin",
+          description: "Proposition : plutôt qu'un event commun, chacun prend en charge un event séparé — Katrin pour le magazine, Raphael pour le coach.",
+        },
+        {
+          stream: ["coach", "offline"],
+          category: "Touchpoints & teasers",
+          name: "Event presence — Coach",
+          sub: "Promote and sell the Coach at an event",
+          months: ["2026-08", "2026-09"],
+          effort: "high",
+          impact: "high",
+          status: "todo",
+          responsible: "Raphael",
+          description: "Proposition : plutôt qu'un event commun, chacun prend en charge un event séparé — Katrin pour le magazine, Raphael pour le coach.",
         },
         {
           stream: ["magazine", "offline"],
           category: "Touchpoints & teasers",
           name: "Magazine placement in running shops & physios",
           sub: "Display copies of the magazine in running shops, physiotherapy practices, fitness centers, etc.",
-          months: ["2026-07", "2026-08"],
+          months: ["2026-08"],
           effort: "med",
           impact: "med",
           status: "todo",
@@ -1850,11 +1921,11 @@
           category: "Touchpoints & teasers",
           name: "Send magazine to finishers",
           sub: "Send the magazine to event finishers as a “prize” for event participation",
-          months: ["2026-09", "2026-11"],
+          months: ["2026-08"],
           effort: "vhigh",
           impact: "high",
           status: "todo",
-          responsible: "Raphael",
+          responsible: "Katrin",
         },
         {
           stream: ["coach", "magazine"],
@@ -1882,13 +1953,100 @@
         {
           stream: "seo",
           category: "Indexation & technical SEO",
-          name: "Duplicate of athletes pages",
-          sub: "See what to do with the duplicate of athletes' pages on results.datasport.com + datasport.com",
-          months: ["2026-09", "2026-10"],
+          name: "Sitemap lastmod — future date bug (ITDB-150)",
+          sub: "Event pages' <lastmod> in sitemap.xml uses the edition/race date instead of a real content-updatedAt timestamp, producing future dates that erode Google's trust in the lastmod signal for the whole sitemap",
+          months: ["2026-07", "2026-08"],
           effort: "med",
           impact: "med",
           status: "todo",
           responsible: "Raphael",
+          link: "https://datasport.atlassian.net/browse/ITDB-150",
+          linkLabel: "ITDB-150",
+        },
+        {
+          stream: "seo",
+          category: "Indexation & technical SEO",
+          name: "Static HTML entry points to sponsored articles",
+          sub: "The homepage swipe carousel is currently the only entry point to the Puma / Gran Canaria / Swissmilk sponsored articles — it's JS/React-rendered with scroll-triggered lazy-loading, so the links are invisible to crawlers and undiscoverable without scrolling. Add static links visible in raw HTML.",
+          months: ["2026-08", "2026-09"],
+          effort: "high",
+          impact: "high",
+          status: "todo",
+          responsible: "Raphael",
+          goal: "make the sponsored articles crawlable and discoverable without depending on carousel scroll/lazy-loading",
+        },
+        {
+          stream: "seo",
+          category: "Indexation & technical SEO",
+          name: "Fix 404s — Gran Canaria article (FR/EN)",
+          sub: "Blocked — root cause not yet identified (broken redirect, multilingual routing, or incomplete publish); dependency likely dev team, to confirm once diagnosed",
+          months: ["2026-08"],
+          effort: "med",
+          impact: "high",
+          status: "todo",
+          responsible: "Raphael",
+          goal: "restore access & indexation of the FR/EN versions of the article",
+        },
+        {
+          stream: "seo",
+          category: "Performance & Core Web Vitals — sponsored content pages",
+          name: "Recompress & resize images (Puma / Gran Canaria / Swissmilk)",
+          sub: "Homepage carousel — the only entry point to these articles — has an INP of 2293ms (Google's 'good' threshold: <200ms), driven mainly by ~40MB of unoptimized images on AWS. Convert to WebP/AVIF at real display size (not raw upload size), quality 70-80%, re-upload to S3. No dev team needed — test manually first.",
+          months: ["2026-07"],
+          effort: "low",
+          impact: "high",
+          status: "todo",
+          responsible: "Raphael",
+          goal: "cut page weight & INP, get a quantified before/after proof before pulling in the dev team (Lighthouse estimate: up to 29.1 MB saved)",
+        },
+        {
+          stream: "seo",
+          category: "Performance & Core Web Vitals — sponsored content pages",
+          name: "Post-optimization Lighthouse/DevTools audit",
+          sub: "Re-run a performance audit on the page after the image recompression test to measure the real before/after impact (page weight, new INP) — proof only, not a fix by itself",
+          months: ["2026-07"],
+          effort: "low",
+          impact: "med",
+          status: "todo",
+          responsible: "Raphael",
+          goal: "quantify the gain to justify the next (dev-team) steps to Sandro",
+        },
+        {
+          stream: "seo",
+          category: "Performance & Core Web Vitals — sponsored content pages",
+          name: "Fix cache lifetimes for static assets",
+          sub: "Review cache headers / server or CDN config for static assets — requires dev team",
+          months: ["2026-08"],
+          effort: "med",
+          impact: "high",
+          status: "todo",
+          responsible: "Raphael",
+          goal: "cut needless re-downloads, speed up load time for returning visitors (Lighthouse estimate: up to 44.3 MB saved)",
+        },
+        {
+          stream: "seo",
+          category: "Performance & Core Web Vitals — sponsored content pages",
+          name: "Clean up legacy JavaScript",
+          sub: "Remove or gate obsolete JS still shipped to modern browsers that don't need it — requires dev team",
+          months: ["2026-08"],
+          effort: "med",
+          impact: "med",
+          status: "todo",
+          responsible: "Raphael",
+          goal: "reduce main-thread blocking, improve overall page responsiveness (Lighthouse estimate: ~15.9 kB saved, plus CPU time)",
+        },
+        {
+          stream: "seo",
+          category: "Performance & Core Web Vitals — sponsored content pages",
+          name: "Automated image optimization pipeline at upload",
+          sub: "Long-term option — auto-transform images on upload (Cloudinary, imgix, or AWS equivalent) so this doesn't need redoing manually per article. Requires dev team / infra — evaluate once short-term gains (above) are validated.",
+          months: ["2026-10", "2026-12"],
+          effort: "high",
+          impact: "high",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+          goal: "make image optimization durable without manual per-article work",
         },
       ];
 
@@ -2377,6 +2535,14 @@
       <span class="badge status-${m.status}">${statusLabels[m.status]}</span>
       ${responsibleBadgeHtml(m)}
     </div>
+    ${
+      m.description
+        ? `<div class="modal-section">
+      <div class="modal-section-title">Description</div>
+      <p class="modal-description">${m.description}</p>
+    </div>`
+        : ""
+    }
     ${
       m.goal || m.deadline || m.result
         ? `<div class="modal-section">

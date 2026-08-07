@@ -781,7 +781,7 @@
         {
           stream: "global",
           category: "Tracking & testing infrastructure",
-          name: "GA4 cross-domain tracking",
+          name: "GA4 global set up",
           sub: "3 sub-domains, exclude referrals & internal",
           months: ["2026-08", "2026-09"],
           effort: "med",
@@ -789,6 +789,8 @@
           status: "todo",
           type: "foundation",
           responsible: "Raphael",
+          description:
+            "check the reason why we lost 90% of the traffic on analytics - compare with the requests to the server to see if the gap is visible or not",
         },
         {
           stream: "global",
@@ -804,6 +806,17 @@
           goal: "be able to track acquisition sources / traffic (UTM parameters) reliably in GA4",
           link: "https://datasport.atlassian.net/browse/DNG-7929",
           linkLabel: "DNG-7929",
+        },
+        {
+          stream: "global",
+          category: "Tracking & testing infrastructure",
+          name: "Traffic report for Thomas Bachofner",
+          sub: "Report on website traffic requested by Thomas Bachofner",
+          months: ["2026-08"],
+          effort: "low",
+          impact: "low",
+          status: "done",
+          responsible: "Raphael",
         },
         {
           stream: "global",
@@ -873,6 +886,19 @@
           impact: "high",
           status: "todo",
           responsible: "Katrin",
+        },
+        {
+          stream: "global",
+          category: "Communication matrix & AI",
+          name: "Iron Bike AI Co-Pilot",
+          sub: "AI marketing co-pilot rebranded from the Sparta demo and deployed for Iron Bike Race Einsiedeln",
+          months: ["2026-08"],
+          effort: "high",
+          impact: "vhigh",
+          status: "done",
+          responsible: "Raphael",
+          description:
+            "Rebranded and migrated the AI Marketing Co-Pilot from the Sparta demo to Iron Bike Race Einsiedeln (participant segment export, Vercel Blob data fallback) and deployed it to production: https://ironbike-copilot.vercel.app",
         },
 
         {
@@ -1918,17 +1944,6 @@
           months: ["2026-08"],
           effort: "med",
           impact: "med",
-          status: "todo",
-          responsible: "Katrin",
-        },
-        {
-          stream: "magazine",
-          category: "Touchpoints & teasers",
-          name: "Send magazine to finishers",
-          sub: "Send the magazine to event finishers as a “prize” for event participation",
-          months: ["2026-08"],
-          effort: "vhigh",
-          impact: "high",
           status: "todo",
           responsible: "Katrin",
         },

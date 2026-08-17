@@ -102,6 +102,19 @@
         color: #fff;
         border-color: #111;
       }
+      .month-select {
+        font-size: 13px;
+        padding: 5px 10px;
+        border-radius: 20px;
+        border: 1px solid #d8d5ce;
+        background: #fff;
+        color: #666;
+        cursor: pointer;
+      }
+      .month-select:hover {
+        border-color: #aaa;
+        color: #333;
+      }
       .dot {
         width: 8px;
         height: 8px;
@@ -663,6 +676,12 @@
               <span class="dot dot-seo"></span>SEO
             </button>
           </div>
+          <div class="filters" id="roadmap-month-filters">
+            <span class="filter-label">Month</span>
+            <select class="month-select" id="roadmap-month-select">
+              <option value="all">All</option>
+            </select>
+          </div>
         </div>
         <div id="roadmap"></div>
       </div>
@@ -716,6 +735,12 @@
               Raphael
             </button>
             <button class="filter-btn" data-responsible="Katrin">Katrin</button>
+          </div>
+          <div class="filters" id="month-filters">
+            <span class="filter-label">Month</span>
+            <select class="month-select" id="month-select">
+              <option value="all">All</option>
+            </select>
           </div>
         </div>
         <div id="table-container"></div>
@@ -1048,7 +1073,7 @@
           responsible: "Katrin",
           goal: "CTR ≥ 1.5%",
           description:
-            "Next steps:\n• Katrin to pick about ten events this can run on\n• Katrin to send the teaser translation she wants to use\n• Raphael to create the teaser mock up\n• Contact the SSMs to get their confirmation",
+            "Events have been selected — still open whether we'll be allowed to integrate the teaser for them.",
         },
         {
           stream: ["coach", "magazine"],
@@ -1457,6 +1482,19 @@
           status: "todo",
           type: "foundation",
           responsible: "Raphael",
+        },
+        {
+          stream: "global",
+          category: "Tracking & testing infrastructure",
+          name: "Event page CTAs — Pavlo to email Thomas B",
+          sub: "CTA for startlist, live, results and leaderboard on the event page — dynamic based on event timeline, or always all 4?",
+          months: ["2026-08"],
+          effort: "med",
+          impact: "low",
+          status: "todo",
+          responsible: "Raphael",
+          description:
+            "Pavlo must send an email to Thomas B regarding the event page, where we'd like to have a CTA for startlist, a CTA for live, a CTA for results, and a CTA for leaderboard — open question: do we make it dynamic based on the event timeline, or always show all 4 CTAs?\n\nWe decided to avoid having the same content on the regular event page and the results page, since the event page calls results via an iframe.",
         },
         {
           stream: "global",
@@ -1893,6 +1931,8 @@
           type: "foundation",
           responsible: ["Raphael", "Katrin"],
           goal: "offer tracking possibility",
+          description:
+            "Vali and Emmely have been informed and are integrating the tracking parameter into the newsletter.",
         },
         {
           stream: "magazine",
@@ -1951,6 +1991,8 @@
           impact: "high",
           status: "inprogress",
           responsible: "Katrin",
+          description:
+            "Katrin is drafting a plan with ideas on where and how free copies could be offered.",
         },
         {
           stream: ["coach", "magazine"],
@@ -1962,6 +2004,8 @@
           impact: "high",
           status: "inprogress",
           responsible: "Katrin",
+          description:
+            "Sandro is in discussions with various providers regarding bundles.",
         },
         {
           stream: ["magazine", "offline"],
@@ -1974,7 +2018,7 @@
           status: "todo",
           responsible: "Katrin",
           description:
-            "Proposal: instead of one shared event, each of us takes a separate event\n• Katrin — Magazine\n• Raphael — Coach",
+            "Proposal: instead of one shared event, each of us takes a separate event\n• Katrin — Magazine\n• Raphael — Coach\n\nNext step: pick a German-speaking event where Katrin will try to collect leads.",
         },
         {
           stream: ["coach", "offline"],
@@ -2000,7 +2044,8 @@
           status: "inprogress",
           responsible: "Katrin",
           goal: "604 magazines placed (currently ~400 placed)",
-          description: "Issue period: 23.07.2026 – 23.08.2026",
+          description:
+            "Issue period: 23.07.2026 – 23.08.2026\n\nCurrent issue is sold out except for one box left.",
         },
         {
           stream: ["magazine", "offline"],
@@ -2012,7 +2057,8 @@
           impact: "med",
           status: "todo",
           responsible: "Katrin",
-          description: "Issue period: 03.09.2026 – 03.10.2026",
+          description:
+            "Issue period: 03.09.2026 – 03.10.2026\n\nFor this next issue, we'll rely more on free samples again instead of just distributing copies.",
         },
         {
           stream: ["magazine", "offline"],
@@ -2048,6 +2094,8 @@
           impact: "med",
           status: "todo",
           responsible: "Katrin",
+          description:
+            "Weekly Instagram story on FFL to promote the free issue.",
         },
 
         {
@@ -2233,11 +2281,22 @@
       let activeStream = "all";
       let activeStatus = "all";
       let activeResponsible = "all";
+      let activeMonth = "all";
       let activeRoadmapStream = "all";
+      let activeRoadmapMonth = "all";
       const expandedCategories = new Set();
 
       function inStream(m, s) {
         return Array.isArray(m.stream) ? m.stream.includes(s) : m.stream === s;
+      }
+
+      function measureInMonth(m, monthKey) {
+        if (monthKey === "all") return true;
+        const { startKey, endKey } = measureMonthBounds(m);
+        return (
+          monthKeySort(startKey) <= monthKeySort(monthKey) &&
+          monthKeySort(monthKey) <= monthKeySort(endKey)
+        );
       }
 
       function hasResponsible(m, name) {
@@ -2348,7 +2407,10 @@
       function groupByCategory(stream) {
         const groups = new Map();
         measures
-          .filter((m) => inStream(m, stream))
+          .filter(
+            (m) =>
+              inStream(m, stream) && measureInMonth(m, activeRoadmapMonth),
+          )
           .forEach((m) => {
             const key = m.category || "Other";
             if (!groups.has(key)) groups.set(key, []);
@@ -2360,8 +2422,10 @@
       function renderRoadmapSummary() {
         const streams =
           activeRoadmapStream === "all" ? streamOrder : [activeRoadmapStream];
-        const rows = measures.filter((m) =>
-          streams.some((s) => inStream(m, s)),
+        const rows = measures.filter(
+          (m) =>
+            streams.some((s) => inStream(m, s)) &&
+            measureInMonth(m, activeRoadmapMonth),
         );
         const total = rows.length;
         const done = rows.filter((m) => m.status === "done").length;
@@ -2410,6 +2474,16 @@
           ? `${monthNames[date.getMonth()]} '${String(date.getFullYear()).slice(2)}`
           : monthNames[date.getMonth()];
       }
+
+      const monthOptionsHtml = allMonthKeys
+        .map((key) => `<option value="${key}">${monthKeyLabel(key)}</option>`)
+        .join("");
+      document
+        .getElementById("roadmap-month-select")
+        .insertAdjacentHTML("beforeend", monthOptionsHtml);
+      document
+        .getElementById("month-select")
+        .insertAdjacentHTML("beforeend", monthOptionsHtml);
 
       function renderRoadmap() {
         renderRoadmapSummary();
@@ -2528,7 +2602,8 @@
             (activeStream === "all" || inStream(m, activeStream)) &&
             (activeStatus === "all" || m.status === activeStatus) &&
             (activeResponsible === "all" ||
-              hasResponsible(m, activeResponsible)),
+              hasResponsible(m, activeResponsible)) &&
+            measureInMonth(m, activeMonth),
         );
         renderSummary(filtered);
         let html = "";
@@ -2538,7 +2613,8 @@
               inStream(m, s) &&
               (activeStatus === "all" || m.status === activeStatus) &&
               (activeResponsible === "all" ||
-                hasResponsible(m, activeResponsible)),
+                hasResponsible(m, activeResponsible)) &&
+              measureInMonth(m, activeMonth),
           );
           if (!rows.length) return;
           const meta = streamMeta[s];
@@ -2569,6 +2645,13 @@
           document
             .querySelectorAll("#roadmap-filters .filter-btn")
             .forEach((b) => b.classList.toggle("active", b === btn));
+          renderRoadmap();
+        });
+
+      document
+        .getElementById("roadmap-month-select")
+        .addEventListener("change", (e) => {
+          activeRoadmapMonth = e.target.value;
           renderRoadmap();
         });
 
@@ -2614,6 +2697,11 @@
             .forEach((b) => b.classList.toggle("active", b === btn));
           renderTable();
         });
+
+      document.getElementById("month-select").addEventListener("change", (e) => {
+        activeMonth = e.target.value;
+        renderTable();
+      });
 
       document.querySelectorAll(".tab-btn").forEach((btn) => {
         btn.addEventListener("click", () => {

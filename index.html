@@ -791,7 +791,7 @@
           type: "foundation",
           responsible: "Raphael",
           description:
-            "check the reason why we lost 90% of the traffic on analytics - compare with the requests to the server to see if the gap is visible or not",
+            "Request sent to Filippo:\n• Domain consolidation — check whether every page/content currently live on results.datasport.com also exists under datasport.com (e.g. results.datasport.com/fr/course/{race}/ranking → datasport.com/fr/course/{race}/ranking). If full parity is confirmed, set up a global 301 redirect from results.datasport.com to the equivalent datasport.com URL.\n• Single GA4 tag — once consolidated, the entire datasport.com domain should send data to one GA4 property only: Website PROD (G-G9NVTND2GF). This means removing/replacing the other measurement IDs currently in use across the site — e.g. datasport.com/fr/course/sierre-zinal-2026/leaderboard currently fires only ResultsHub's tag (G-7LCT8JBR6H), not Website PROD — plus the legacy /live/ pages' G-2KY84KDWKS. Every page should end up firing the same tag.",
         },
         {
           stream: "global",
@@ -2086,6 +2086,21 @@
           responsible: "Raphael",
           link: "https://datasport.atlassian.net/browse/DNG-7989",
           linkLabel: "DNG-7989",
+        },
+        {
+          stream: "seo",
+          category: "Indexation & technical SEO",
+          name: "Breadcrumb navigation + BreadcrumbList schema (SRH-170)",
+          sub: "datasport.com has no breadcrumb navigation anywhere on the site — surfaced while working on SRH-169 (broken \"Back\" button on athlete result pages). Ask Pavlo to propose a breadcrumb hierarchy for the main page types (courses, rankings/results, athlete pages, favorites, search, etc.)",
+          months: ["2026-08"],
+          effort: "med",
+          impact: "low",
+          status: "todo",
+          responsible: "Raphael",
+          description:
+            "Points to take into account in Pavlo's proposal, based on what we discussed on SRH-169:\n• Use a stable, location-based hierarchy (fixed parent per page type) rather than one that depends on the user's actual navigation path — avoids the ambiguity of \"which page did the user come from\".\n• Avoid nesting a page under a parent whose existence isn't guaranteed long-term (e.g. a specific course that could later be removed) — prefer stable hub/category pages as anchors.\n• Breadcrumb links must be real HTML &lt;a href&gt; links (not JS-driven), consistent with the original ask on SRH-169.\n• Include BreadcrumbList schema.org structured data so it's picked up by search engines.\n\nRelates to SRH-169 (first concrete case: athlete result pages).",
+          link: "https://datasport.atlassian.net/browse/SRH-170",
+          linkLabel: "SRH-170",
         },
         {
           stream: "seo",

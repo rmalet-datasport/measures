@@ -781,10 +781,10 @@
       const measures = [
         {
           stream: "global",
-          category: "Tracking & testing infrastructure",
+          category: "Tracking ",
           name: "Mapping entry points + tracking",
           sub: "Mapping via channel / product offered",
-          months: ["2026-07", "2026-09"],
+          months: ["2026-09", "2026-10"],
           effort: "vhigh",
           impact: "high",
           status: "inprogress",
@@ -793,7 +793,7 @@
         },
         {
           stream: "global",
-          category: "Tracking & testing infrastructure",
+          category: "Tooling & access",
           name: "Web AB testing tool — setup",
           sub: "Prerequisite for future iterations",
           months: ["2026-07", "2026-08"],
@@ -803,10 +803,11 @@
           type: "foundation",
           responsible: "Raphael",
           deadline: "2026-08-31",
+          link: "https://datasport.atlassian.net/browse/DNG-8001",
         },
         {
           stream: "global",
-          category: "Tracking & testing infrastructure",
+          category: "Tooling & access",
           name: "GA4 global set up",
           sub: "3 sub-domains, exclude referrals & internal",
           months: ["2026-08", "2026-09"],
@@ -817,10 +818,11 @@
           responsible: "Raphael",
           description:
             "Request sent to Filippo:\n• Domain consolidation — check whether every page/content currently live on results.datasport.com also exists under datasport.com (e.g. results.datasport.com/fr/course/{race}/ranking → datasport.com/fr/course/{race}/ranking). If full parity is confirmed, set up a global 301 redirect from results.datasport.com to the equivalent datasport.com URL.\n• Single GA4 tag — once consolidated, the entire datasport.com domain should send data to one GA4 property only: Website PROD (G-G9NVTND2GF). This means removing/replacing the other measurement IDs currently in use across the site — e.g. datasport.com/fr/course/sierre-zinal-2026/leaderboard currently fires only ResultsHub's tag (G-7LCT8JBR6H), not Website PROD — plus the legacy /live/ pages' G-2KY84KDWKS. Every page should end up firing the same tag.",
+          link: "https://datasport.atlassian.net/browse/DNG-8004",
         },
         {
           stream: "global",
-          category: "Tracking & testing infrastructure",
+          category: "Tracking ",
           name: "Fix GA4 page_view — missing UTM/query string (DNG-7929)",
           sub: "page_location currently sends path only (e.g. /en/fitforlifecoach), dropping all query params before they reach GA4 — no campaign/source ever gets attributed. Fix: push full URL (window.location.href) to dataLayer instead of the manually built path.",
           months: ["2026-07", "2026-08"],
@@ -835,7 +837,7 @@
         },
         {
           stream: "global",
-          category: "Tracking & testing infrastructure",
+          category: "Tracking ",
           name: "Traffic report for Thomas Bachofner",
           sub: "Report on website traffic requested by Thomas Bachofner",
           months: ["2026-08"],
@@ -868,7 +870,7 @@
         },
         {
           stream: "global",
-          category: "Tracking & testing infrastructure",
+          category: "Tooling & access",
           name: "Mail AB testing tool — setup",
           sub: "set up an ab test system for our emails",
           months: ["2026-10", "2026-12"],
@@ -1485,23 +1487,23 @@
         },
         {
           stream: "global",
-          category: "Tracking & testing infrastructure",
-          name: "Event page CTAs — Pavlo to email Thomas B",
+          category: "Tracking ",
+          name: "Split of event pages and results pages — Pavlo to email Thomas B",
           sub: "CTA for startlist, live, results and leaderboard on the event page — dynamic based on event timeline, or always all 4?",
           months: ["2026-08"],
           effort: "med",
           impact: "low",
-          status: "todo",
+          status: "inprogress",
           responsible: "Raphael",
           description:
-            "Pavlo must send an email to Thomas B regarding the event page, where we'd like to have a CTA for startlist, a CTA for live, a CTA for results, and a CTA for leaderboard — open question: do we make it dynamic based on the event timeline, or always show all 4 CTAs?\n\nWe decided to avoid having the same content on the regular event page and the results page, since the event page calls results via an iframe.",
+            "Pavlo sent an email to Thomas B regarding the event page, where we'd like to have a CTA for startlist, a CTA for live, a CTA for results, and a CTA for leaderboard — dynamical CTA base on the status of the event\n\nWe decided to avoid having the same content on the regular event page and the results page, since the event page calls results via an iframe. Validated from Thomas W and Pavlo must open a ticket",
         },
         {
           stream: "global",
-          category: "Tracking & testing infrastructure",
+          category: "Tracking ",
           name: "Review results display customer journey",
           sub: "New website duplicates the results page",
-          months: ["2026-09"],
+          months: ["2026-08"],
           effort: "med",
           impact: "med",
           status: "done",
@@ -2112,6 +2114,19 @@
         {
           stream: "seo",
           category: "Indexation & technical SEO",
+          name: "Apex domain switch + sitemap/hreflang fixes (ITDB-94)",
+          sub: "Switch site to apex domain (datasport.com, no www), fix canonical/hreflang URLs across all page types, add fitforlifecoach to the sitemap, replace lastModified:today with real per-URL timestamps, and resolve the missing hreflang on the [...rest] catch-all route",
+          months: ["2026-08", "2026-09"],
+          effort: "high",
+          impact: "high",
+          status: "todo",
+          responsible: "Raphael",
+          link: "https://datasport.atlassian.net/browse/ITDB-94",
+          linkLabel: "ITDB-94",
+        },
+        {
+          stream: "seo",
+          category: "Indexation & technical SEO",
           name: "Sitemap lastmod — future date bug (ITDB-150)",
           sub: "Event pages' <lastmod> in sitemap.xml uses the edition/race date instead of a real content-updatedAt timestamp, producing future dates that erode Google's trust in the lastmod signal for the whole sitemap",
           months: ["2026-07", "2026-08"],
@@ -2126,7 +2141,7 @@
           stream: "seo",
           category: "Indexation & technical SEO",
           name: "Invalid eventStatus value in SportsEvent JSON-LD (DNG-7989)",
-          sub: "Past event pages set eventStatus to \"EventCompleted\", which isn't a valid schema.org EventStatusType value and gets flagged by Google — default to EventScheduled instead and only switch for Cancelled/Postponed/Rescheduled/MovedOnline cases",
+          sub: 'Past event pages set eventStatus to "EventCompleted", which isn\'t a valid schema.org EventStatusType value and gets flagged by Google — default to EventScheduled instead and only switch for Cancelled/Postponed/Rescheduled/MovedOnline cases',
           months: ["2026-08", "2026-09"],
           effort: "low",
           impact: "med",
@@ -2139,7 +2154,7 @@
           stream: "seo",
           category: "Indexation & technical SEO",
           name: "Breadcrumb navigation + BreadcrumbList schema (SRH-170)",
-          sub: "datasport.com has no breadcrumb navigation anywhere on the site — surfaced while working on SRH-169 (broken \"Back\" button on athlete result pages). Ask Pavlo to propose a breadcrumb hierarchy for the main page types (courses, rankings/results, athlete pages, favorites, search, etc.)",
+          sub: 'datasport.com has no breadcrumb navigation anywhere on the site — surfaced while working on SRH-169 (broken "Back" button on athlete result pages). Ask Pavlo to propose a breadcrumb hierarchy for the main page types (courses, rankings/results, athlete pages, favorites, search, etc.)',
           months: ["2026-08"],
           effort: "med",
           impact: "low",
@@ -2408,8 +2423,7 @@
         const groups = new Map();
         measures
           .filter(
-            (m) =>
-              inStream(m, stream) && measureInMonth(m, activeRoadmapMonth),
+            (m) => inStream(m, stream) && measureInMonth(m, activeRoadmapMonth),
           )
           .forEach((m) => {
             const key = m.category || "Other";
@@ -2698,10 +2712,12 @@
           renderTable();
         });
 
-      document.getElementById("month-select").addEventListener("change", (e) => {
-        activeMonth = e.target.value;
-        renderTable();
-      });
+      document
+        .getElementById("month-select")
+        .addEventListener("change", (e) => {
+          activeMonth = e.target.value;
+          renderTable();
+        });
 
       document.querySelectorAll(".tab-btn").forEach((btn) => {
         btn.addEventListener("click", () => {

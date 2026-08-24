@@ -288,6 +288,12 @@
       .seg-done {
         background: #6aab87;
       }
+      .seg-canceled {
+        background: #cbb9b9;
+      }
+      .seg-onhold {
+        background: #d9c98a;
+      }
       .roadmap-legend {
         display: flex;
         flex-wrap: wrap;
@@ -405,6 +411,31 @@
       .measure-row.is-inprogress .measure-sub {
         color: #b8894a;
       }
+      .measure-row.is-canceled {
+        background: #faf7f7;
+      }
+      .measure-row.is-canceled:hover {
+        background: #f5f0f0;
+      }
+      .measure-row.is-canceled .measure-name {
+        color: #999;
+        text-decoration: line-through;
+      }
+      .measure-row.is-canceled .measure-sub {
+        color: #b0a0a0;
+      }
+      .measure-row.is-onhold {
+        background: #fdfbf2;
+      }
+      .measure-row.is-onhold:hover {
+        background: #faf5e3;
+      }
+      .measure-row.is-onhold .measure-name {
+        color: #8a7a2e;
+      }
+      .measure-row.is-onhold .measure-sub {
+        color: #b3a15a;
+      }
       .measure-name {
         font-size: 13.5px;
         color: #111;
@@ -481,6 +512,14 @@
       .status-done {
         background: #eaf3de;
         color: #3b6d11;
+      }
+      .status-canceled {
+        background: #f3ecec;
+        color: #a35a5a;
+      }
+      .status-onhold {
+        background: #fbf5df;
+        color: #8a7a2e;
       }
       .responsible-raphael {
         background: #eaf0fb;
@@ -676,6 +715,16 @@
               <span class="dot dot-seo"></span>SEO
             </button>
           </div>
+          <div class="filters" id="roadmap-responsible-filters">
+            <span class="filter-label">Responsible</span>
+            <button class="filter-btn active" data-responsible="all">
+              All
+            </button>
+            <button class="filter-btn" data-responsible="Raphael">
+              Raphael
+            </button>
+            <button class="filter-btn" data-responsible="Katrin">Katrin</button>
+          </div>
           <div class="filters" id="roadmap-month-filters">
             <span class="filter-label">Month</span>
             <select class="month-select" id="roadmap-month-select">
@@ -725,6 +774,10 @@
               In progress
             </button>
             <button class="filter-btn" data-status="done">Done</button>
+            <button class="filter-btn" data-status="canceled">
+              Canceled
+            </button>
+            <button class="filter-btn" data-status="onhold">On hold</button>
           </div>
           <div class="filters" id="responsible-filters">
             <span class="filter-label">Responsible</span>
@@ -775,8 +828,10 @@
       //   result: "3200 clicks/month (as of Aug)" — plain-text outcome, OR an object with any of
       //     { emailsSent: 12500, ctr: "3.4%", onboardingsStarted: 210 } for a per-field breakdown
       //   screenshots: ["screenshots/foo.png"] — relative paths to images to display
-      //   link: "https://datasport.atlassian.net/browse/DNG-1234" — related ticket/doc URL
-      //   linkLabel: "DNG-1234" — text shown for the link (defaults to the raw URL)
+      //   link: "https://datasport.atlassian.net/browse/DNG-1234" — related ticket/doc URL,
+      //     or an array of URLs (e.g. ["...DNG-1234", "...DNG-5678"]) when a measure has several tickets
+      //   linkLabel: "DNG-1234" — text shown for the link (defaults to the raw URL);
+      //     when `link` is an array, pass a matching array of labels (same order/index)
       //   description: "longer free text — next steps, notes, who does what" — shown in its own modal section
       const measures = [
         {
@@ -818,6 +873,19 @@
           responsible: "Raphael",
           description:
             "Request sent to Filippo:\n• Domain consolidation — check whether every page/content currently live on results.datasport.com also exists under datasport.com (e.g. results.datasport.com/fr/course/{race}/ranking → datasport.com/fr/course/{race}/ranking). If full parity is confirmed, set up a global 301 redirect from results.datasport.com to the equivalent datasport.com URL.\n• Single GA4 tag — once consolidated, the entire datasport.com domain should send data to one GA4 property only: Website PROD (G-G9NVTND2GF). This means removing/replacing the other measurement IDs currently in use across the site — e.g. datasport.com/fr/course/sierre-zinal-2026/leaderboard currently fires only ResultsHub's tag (G-7LCT8JBR6H), not Website PROD — plus the legacy /live/ pages' G-2KY84KDWKS. Every page should end up firing the same tag.",
+        },
+        {
+          stream: "global",
+          category: "Tooling & access",
+          name: "GTM implementation",
+          sub: "Google Tag Manager rollout",
+          months: ["2026-08", "2026-09"],
+          effort: "med",
+          impact: "vhigh",
+          status: "inprogress",
+          type: "foundation",
+          responsible: "Raphael",
+          description: "PR done, waiting for merge.",
           link: "https://datasport.atlassian.net/browse/DNG-8004",
         },
         {
@@ -952,6 +1020,9 @@
           status: "inprogress",
           responsible: "Raphael",
           goal: "CTR ≥ 2%",
+          description: "Designs are finalized. Need to see with Pavlo for the implementation.",
+          link: "https://www.figma.com/design/Nx8XJ2cSsgteW9Ji7OgpoK/test-waiting-page?node-id=43-4978",
+          linkLabel: "Figma",
         },
         {
           stream: "magazine",
@@ -976,6 +1047,9 @@
           status: "inprogress",
           responsible: "Raphael",
           goal: "CTR ≥ 2%",
+          description: "Designs are finalized. Need to see with Pavlo for the implementation.",
+          link: "https://www.figma.com/design/Nx8XJ2cSsgteW9Ji7OgpoK/test-waiting-page?node-id=43-4978",
+          linkLabel: "Figma",
         },
         {
           stream: "magazine",
@@ -997,9 +1071,10 @@
           months: ["2026-08"],
           effort: "low",
           impact: "low",
-          status: "inprogress",
+          status: "canceled",
           responsible: "Raphael",
           goal: "CTR ≥ 0.3%",
+          description: "Decided not to add a teaser here.",
         },
         {
           stream: "magazine",
@@ -1021,9 +1096,10 @@
           months: ["2026-08"],
           effort: "med",
           impact: "low",
-          status: "inprogress",
+          status: "canceled",
           responsible: "Raphael",
           goal: "CTR ≥ 0.3%",
+          description: "Decided not to add a teaser here.",
         },
         {
           stream: "magazine",
@@ -1048,7 +1124,9 @@
           status: "inprogress",
           responsible: "Raphael",
           description:
-            "Integration of a teaser (ideally a video) without any CTA, slow down of the waiting page so that users see the teaser.",
+            "Integration of a teaser (ideally a video) without any CTA, slow down of the waiting page so that users see the teaser. Designs are finalized. Need to see with Pavlo for the implementation.",
+          link: "https://www.figma.com/design/Nx8XJ2cSsgteW9Ji7OgpoK/test-waiting-page?node-id=43-4978",
+          linkLabel: "Figma",
         },
         {
           stream: "coach",
@@ -1204,9 +1282,11 @@
           months: ["2026-08", "2026-08"],
           effort: "high",
           impact: "high",
-          status: "todo",
+          status: "inprogress",
           type: "foundation",
           responsible: "Raphael",
+          description:
+            "BE is missing some elements needed to write the SQL queries to get all the data. Dev requested from Eugen.",
         },
         {
           stream: "coach",
@@ -1240,9 +1320,10 @@
           months: ["2026-07", "2026-09"],
           effort: "med",
           impact: "high",
-          status: "inprogress",
+          status: "onhold",
           type: "foundation",
           responsible: "Raphael",
+          description: "On hold — SSM said they're not interested in this.",
         },
         {
           stream: "b2b",
@@ -1430,7 +1511,7 @@
           category: "Organizer growth & partnerships",
           name: "Referral Program",
           sub: "refer a friend and get an incentive",
-          months: ["2026-07", "2026-09"],
+          months: ["2026-10"],
           effort: "high",
           impact: "vhigh",
           status: "todo",
@@ -1446,6 +1527,63 @@
           impact: "vhigh",
           status: "todo",
           type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2c",
+          category: "New product testing",
+          name: "New product testing — teaser format & channels",
+          sub: "3-layer teaser: 1) Headline + \"Learn more\", 2) Product details + \"Buy now\", 3) Coming soon + email capture",
+          months: ["2026-08"],
+          effort: "med",
+          impact: "high",
+          status: "inprogress",
+          responsible: "Raphael",
+          description:
+            "Testing customer interest for potential new products — Social, Performance, Intelligence, Profile, Loyalty/Benefits buckets — via teasers placed across the site.\n\nPlan agreed with Thomas:\n• 24.–30.8: everyone individually challenges the bucket allocation + sets price ranges per bucket; Raphael defines teaser channels & requirements (look & feel, size, etc.) — Thomas wants 3 layered teasers.\n• 31.8–6.9: Martin/Thomas write the copy (3 versions per bucket); Alessia/Raphael create the designs; Raphael preps the A/B infra incl. measurement + email collection.\n• From 7.9: go live and measure.",
+        },
+        {
+          stream: "b2c",
+          category: "New product testing",
+          name: "New product testing — teaser copy (3 versions per bucket)",
+          sub: "Martin/Thomas",
+          months: ["2026-08", "2026-09"],
+          effort: "low",
+          impact: "high",
+          status: "todo",
+          responsible: "Thomas",
+        },
+        {
+          stream: "b2c",
+          category: "New product testing",
+          name: "New product testing — teaser designs",
+          sub: "Alessia/Raphael — fallback: quick & dirty via Claude Design if Alessia unavailable during vacation",
+          months: ["2026-08", "2026-09"],
+          effort: "med",
+          impact: "high",
+          status: "todo",
+          responsible: ["Alessia", "Raphael"],
+        },
+        {
+          stream: "b2c",
+          category: "New product testing",
+          name: "New product testing — A/B infra & measurement",
+          sub: "Includes email collection for the \"coming soon\" layer",
+          months: ["2026-08", "2026-09"],
+          effort: "med",
+          impact: "high",
+          status: "todo",
+          responsible: "Raphael",
+        },
+        {
+          stream: "b2c",
+          category: "New product testing",
+          name: "New product testing — go live & measurement",
+          sub: "Measure interest per bucket / teaser layer",
+          months: ["2026-09"],
+          effort: "low",
+          impact: "vhigh",
+          status: "todo",
           responsible: "Raphael",
         },
 
@@ -1496,7 +1634,12 @@
           status: "inprogress",
           responsible: "Raphael",
           description:
-            "Pavlo sent an email to Thomas B regarding the event page, where we'd like to have a CTA for startlist, a CTA for live, a CTA for results, and a CTA for leaderboard — dynamical CTA base on the status of the event\n\nWe decided to avoid having the same content on the regular event page and the results page, since the event page calls results via an iframe. Validated from Thomas W and Pavlo must open a ticket",
+            "Pavlo sent an email to Thomas B regarding the event page, where we'd like to have a CTA for startlist, a CTA for live, a CTA for results, and a CTA for leaderboard — dynamical CTA base on the status of the event\n\nWe decided to avoid having the same content on the regular event page and the results page, since the event page calls results via an iframe. Validated from Thomas W and Pavlo must open a ticket. Ticket opened finalizing with Pavlo last results. Needs some BE dev",
+          link: [
+            "https://datasport.atlassian.net/browse/ITDB-159",
+            "https://datasport.atlassian.net/browse/ITDB-160",
+          ],
+          linkLabel: ["ITDB-159", "ITDB-160"],
         },
         {
           stream: "global",
@@ -2291,6 +2434,8 @@
         todo: "To do",
         inprogress: "In progress",
         done: "Done",
+        canceled: "Canceled",
+        onhold: "On hold",
       };
 
       let activeStream = "all";
@@ -2298,6 +2443,7 @@
       let activeResponsible = "all";
       let activeMonth = "all";
       let activeRoadmapStream = "all";
+      let activeRoadmapResponsible = "all";
       let activeRoadmapMonth = "all";
       const expandedCategories = new Set();
 
@@ -2377,7 +2523,7 @@
       }
 
       function measureRowHtml(m) {
-        return `<div class="measure-row${m.status === "done" ? " is-done" : m.status === "inprogress" ? " is-inprogress" : ""}">
+        return `<div class="measure-row${m.status === "done" ? " is-done" : m.status === "inprogress" ? " is-inprogress" : m.status === "canceled" ? " is-canceled" : m.status === "onhold" ? " is-onhold" : ""}">
     <div><div class="measure-name"><span class="measure-link" data-id="${m.id}">${m.name}</span>${m.type === "foundation" ? `<span class="badge badge-foundation">Foundation</span>` : ""}</div>${m.sub ? `<div class="measure-sub">${m.sub}</div>` : ""}</div>
     <div><span class="badge badge-q">${measureMonthLabel(m)}</span></div>
     <div><span class="badge effort-${m.effort}">${effortLabels[m.effort]}</span></div>
@@ -2423,7 +2569,11 @@
         const groups = new Map();
         measures
           .filter(
-            (m) => inStream(m, stream) && measureInMonth(m, activeRoadmapMonth),
+            (m) =>
+              inStream(m, stream) &&
+              (activeRoadmapResponsible === "all" ||
+                hasResponsible(m, activeRoadmapResponsible)) &&
+              measureInMonth(m, activeRoadmapMonth),
           )
           .forEach((m) => {
             const key = m.category || "Other";
@@ -2439,12 +2589,16 @@
         const rows = measures.filter(
           (m) =>
             streams.some((s) => inStream(m, s)) &&
+            (activeRoadmapResponsible === "all" ||
+              hasResponsible(m, activeRoadmapResponsible)) &&
             measureInMonth(m, activeRoadmapMonth),
         );
         const total = rows.length;
         const done = rows.filter((m) => m.status === "done").length;
         const inprogress = rows.filter((m) => m.status === "inprogress").length;
-        const todo = total - done - inprogress;
+        const canceled = rows.filter((m) => m.status === "canceled").length;
+        const onhold = rows.filter((m) => m.status === "onhold").length;
+        const todo = total - done - inprogress - canceled - onhold;
         const categoryKeys = new Set();
         streams.forEach((s) =>
           groupByCategory(s).forEach((_, category) =>
@@ -2457,6 +2611,8 @@
     <div class="metric"><div class="metric-label">Done</div><div class="metric-value" style="color:#2d6a4a">${done}</div></div>
     <div class="metric"><div class="metric-label">In progress</div><div class="metric-value" style="color:#854F0B">${inprogress}</div></div>
     <div class="metric"><div class="metric-label">To do</div><div class="metric-value">${todo}</div></div>
+    <div class="metric"><div class="metric-label">Canceled</div><div class="metric-value" style="color:#a35a5a">${canceled}</div></div>
+    <div class="metric"><div class="metric-label">On hold</div><div class="metric-value" style="color:#8a7a2e">${onhold}</div></div>
   `;
       }
 
@@ -2548,11 +2704,24 @@
             const inprogressCount = rows.filter(
               (m) => m.status === "inprogress",
             ).length;
-            const todoCount = rows.length - doneCount - inprogressCount;
+            const canceledCount = rows.filter(
+              (m) => m.status === "canceled",
+            ).length;
+            const onholdCount = rows.filter(
+              (m) => m.status === "onhold",
+            ).length;
+            const todoCount =
+              rows.length -
+              doneCount -
+              inprogressCount -
+              canceledCount -
+              onholdCount;
             const segs = [
               { st: "done", count: doneCount },
               { st: "inprogress", count: inprogressCount },
               { st: "todo", count: todoCount },
+              { st: "onhold", count: onholdCount },
+              { st: "canceled", count: canceledCount },
             ]
               .filter((seg) => seg.count > 0)
               .map(
@@ -2560,7 +2729,7 @@
                   `<div class="gantt-seg seg-${seg.st}" style="width:${((seg.count / rows.length) * 100).toFixed(2)}%"></div>`,
               )
               .join("");
-            const summaryLabel = `${rows.length} measure${rows.length > 1 ? "s" : ""} · ${doneCount} done · ${inprogressCount} in progress · ${todoCount} to do`;
+            const summaryLabel = `${rows.length} measure${rows.length > 1 ? "s" : ""} · ${doneCount} done · ${inprogressCount} in progress · ${todoCount} to do${onholdCount ? ` · ${onholdCount} on hold` : ""}${canceledCount ? ` · ${canceledCount} canceled` : ""}`;
             return `<div class="gantt-row category-row" data-stream="${s}" data-category="${slugify(category)}">
               <div class="gantt-label">
                 <div class="gantt-label-title"><span class="chevron">${isOpen ? "▾" : "▸"}</span>${category}</div>
@@ -2605,6 +2774,8 @@
     <span><span class="legend-seg seg-todo"></span>To do</span>
     <span><span class="legend-seg seg-inprogress"></span>In progress</span>
     <span><span class="legend-seg seg-done"></span>Done</span>
+    <span><span class="legend-seg seg-onhold"></span>On hold</span>
+    <span><span class="legend-seg seg-canceled"></span>Canceled</span>
   </div>`;
         document.getElementById("roadmap").innerHTML = html;
       }
@@ -2658,6 +2829,18 @@
           activeRoadmapStream = btn.dataset.stream;
           document
             .querySelectorAll("#roadmap-filters .filter-btn")
+            .forEach((b) => b.classList.toggle("active", b === btn));
+          renderRoadmap();
+        });
+
+      document
+        .getElementById("roadmap-responsible-filters")
+        .addEventListener("click", (e) => {
+          const btn = e.target.closest(".filter-btn");
+          if (!btn) return;
+          activeRoadmapResponsible = btn.dataset.responsible;
+          document
+            .querySelectorAll("#roadmap-responsible-filters .filter-btn")
             .forEach((b) => b.classList.toggle("active", b === btn));
           renderRoadmap();
         });
@@ -2732,6 +2915,22 @@
         });
       });
 
+      function ticketLinksHtml(m) {
+        const urls = Array.isArray(m.link) ? m.link : m.link ? [m.link] : [];
+        if (!urls.length) return "";
+        const labels = Array.isArray(m.linkLabel)
+          ? m.linkLabel
+          : m.linkLabel
+            ? [m.linkLabel]
+            : [];
+        return urls
+          .map(
+            (url, i) =>
+              `<div class="modal-kv"><span class="modal-k">Ticket</span><span class="modal-v"><a href="${url}" target="_blank" rel="noopener">${labels[i] || url}</a></span></div>`,
+          )
+          .join("");
+      }
+
       const resultFieldLabels = {
         emailsSent: "Emails sent",
         ctr: "CTR",
@@ -2792,7 +2991,7 @@
       <div class="modal-section-title">Objective &amp; result</div>
       ${m.goal ? `<div class="modal-kv"><span class="modal-k">Goal</span><span class="modal-v">${m.goal}</span></div>` : ""}
       ${m.deadline ? `<div class="modal-kv"><span class="modal-k">Deadline</span><span class="modal-v">${m.deadline}</span></div>` : ""}
-      ${m.link ? `<div class="modal-kv"><span class="modal-k">Ticket</span><span class="modal-v"><a href="${m.link}" target="_blank" rel="noopener">${m.linkLabel || m.link}</a></span></div>` : ""}
+      ${ticketLinksHtml(m)}
       ${resultRowsHtml(m.result)}
     </div>`
         : ""

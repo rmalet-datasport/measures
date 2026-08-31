@@ -872,7 +872,7 @@
           type: "foundation",
           responsible: "Raphael",
           description:
-            "Request sent to Filippo:\n• Domain consolidation — check whether every page/content currently live on results.datasport.com also exists under datasport.com (e.g. results.datasport.com/fr/course/{race}/ranking → datasport.com/fr/course/{race}/ranking). If full parity is confirmed, set up a global 301 redirect from results.datasport.com to the equivalent datasport.com URL.\n• Single GA4 tag — once consolidated, the entire datasport.com domain should send data to one GA4 property only: Website PROD (G-G9NVTND2GF). This means removing/replacing the other measurement IDs currently in use across the site — e.g. datasport.com/fr/course/sierre-zinal-2026/leaderboard currently fires only ResultsHub's tag (G-7LCT8JBR6H), not Website PROD — plus the legacy /live/ pages' G-2KY84KDWKS. Every page should end up firing the same tag.",
+            "Request sent to Filippo:\n• Domain consolidation — check whether every page/content currently live on results.datasport.com also exists under datasport.com (e.g. results.datasport.com/fr/course/{race}/ranking → datasport.com/fr/course/{race}/ranking). If full parity is confirmed, set up a global 301 redirect from results.datasport.com to the equivalent datasport.com URL.\n• Single GA4 tag — once consolidated, the entire datasport.com domain should send data to one GA4 property only: Website PROD (G-G9NVTND2GF). This means removing/replacing the other measurement IDs currently in use across the site — e.g. datasport.com/fr/course/sierre-zinal-2026/leaderboard currently fires only ResultsHub's tag (G-7LCT8JBR6H), not Website PROD — plus the legacy /live/ pages' G-2KY84KDWKS. Every page should end up firing the same tag.\n\nPR to remove the hardcoded GA4 code has been made: https://github.com/datasport-com/ds_website_fe/pull/205 — waiting on merge to route all tracking through GTM.",
         },
         {
           stream: "global",
@@ -887,6 +887,29 @@
           responsible: "Raphael",
           description: "Live on dev and tested.",
           link: "https://datasport.atlassian.net/browse/DNG-8004",
+        },
+        {
+          stream: "global",
+          category: "Tooling & access",
+          name: "Consent Mode V2 for GA4",
+          sub: "Once GTM is live",
+          months: ["2026-09"],
+          effort: "low",
+          impact: "med",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
+        },
+        {
+          stream: "global",
+          category: "Tooling & access",
+          name: "Meta Ads tag set up",
+          months: ["2026-09"],
+          effort: "low",
+          impact: "high",
+          status: "todo",
+          type: "foundation",
+          responsible: "Raphael",
         },
         {
           stream: "global",
@@ -947,6 +970,7 @@
           status: "todo",
           type: "foundation",
           responsible: "Raphael",
+          description: "waiting for release for all domains and sub domains"
         },
         {
           stream: "global",
@@ -985,6 +1009,19 @@
         },
         {
           stream: "b2b",
+          category: "Strategy & foundations",
+          name: "B2B Kommunikation Konzept",
+          sub: "Untapped potential in B2B communication — to be improved",
+          months: ["2026-08", "2026-10"],
+          effort: "med",
+          impact: "med",
+          status: "inprogress",
+          responsible: "Katrin",
+          description:
+            "We have potential in B2B communication that we haven't tapped into yet. This should be improved. Concept currently being drafted.",
+        },
+        {
+          stream: "b2b",
           category: "AI campaign tools",
           name: "Iron Bike AI Co-Pilot",
           sub: "AI marketing co-pilot rebranded from the Sparta demo and deployed for Iron Bike Race Einsiedeln",
@@ -1007,6 +1044,17 @@
           status: "done",
           responsible: "Raphael",
           deadline: "2026-08-12",
+        },
+        {
+          stream: "b2b",
+          category: "AI campaign tools",
+          name: "Client-side exclusion list upload",
+          sub: "Clients can upload their own bounced/unsubscribed/already-registered email lists to avoid duplicate or erroneous sends",
+          months: ["2026-08"],
+          effort: "med",
+          impact: "high",
+          status: "done",
+          responsible: "Raphael",
         },
 
         {
@@ -1154,7 +1202,7 @@
           responsible: "Katrin",
           goal: "CTR ≥ 1.5%",
           description:
-            "Events have been selected — still open whether we'll be allowed to integrate the teaser for them. Asked Thomas W. to integrate the teaser directly in the future email template.",
+            "Events have been selected — still open whether we'll be allowed to integrate the teaser for them. Asked Thomas W. to integrate the teaser directly in the future email template.\n\nConfirmation from Marcel for Engadiner Skimarathon still pending — ticket will be created once confirmed.",
         },
         {
           stream: ["coach", "magazine"],
@@ -1562,7 +1610,7 @@
           months: ["2026-08", "2026-09"],
           effort: "med",
           impact: "high",
-          status: "todo",
+          status: "inprogress",
           responsible: ["Alessia", "Raphael"],
         },
         {
@@ -2073,7 +2121,7 @@
           months: ["2026-07", "2026-07"],
           effort: "low",
           impact: "low",
-          status: "todo",
+          status: "inprogress",
           type: "foundation",
           responsible: ["Raphael", "Katrin"],
           goal: "offer tracking possibility",
@@ -2138,7 +2186,7 @@
           status: "inprogress",
           responsible: "Katrin",
           description:
-            "Katrin is drafting a plan with ideas on where and how free copies could be offered.",
+            "Katrin is drafting a plan with ideas on where and how free copies could be offered.\n\nSocks campaign started.",
         },
         {
           stream: ["coach", "magazine"],
@@ -2151,7 +2199,7 @@
           status: "inprogress",
           responsible: "Katrin",
           description:
-            "Sandro is in discussions with various providers regarding bundles.",
+            "Sandro is in discussions with various providers regarding bundles. He has organized two bundle options we'll be able to offer soon: flasks and a trail running vest.",
         },
         {
           stream: ["magazine", "offline"],
@@ -2201,10 +2249,10 @@
           months: ["2026-09", "2026-10"],
           effort: "med",
           impact: "med",
-          status: "todo",
+          status: "inprogress",
           responsible: "Katrin",
           description:
-            "Issue period: 03.09.2026 – 03.10.2026\n\nFor this next issue, we'll rely more on free samples again instead of just distributing copies.",
+            "Issue period: 03.09.2026 – 03.10.2026\n\nFor this next issue, we'll rely more on free samples again instead of just distributing copies.\n\nBack on it for the new magazine — events and further locations are being selected.",
         },
         {
           stream: ["magazine", "offline"],
@@ -2238,7 +2286,7 @@
           months: ["2026-07", "2026-09"],
           effort: "high",
           impact: "med",
-          status: "todo",
+          status: "inprogress",
           responsible: "Katrin",
           description:
             "Weekly Instagram story on FFL to promote the free issue.",

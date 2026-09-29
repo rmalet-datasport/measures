@@ -914,8 +914,10 @@
           status: "done",
           type: "foundation",
           responsible: "Raphael",
+          description: "Staging cookie banner installed and working on the dev environment (website-dev.datasport.com)",
           link: "https://github.com/datasport-com/ds_website_fe/pull/220",
           linkLabel: "PR #220",
+          screenshots: ["screenshots/staging%20cookies%20banner%20in%20dev.png"],
         },
         {
           stream: "global",
@@ -1652,6 +1654,11 @@
           responsible: "Raphael",
           description:
             "Testing customer interest for potential new products — Social, Performance, Intelligence, Profile, Loyalty/Benefits buckets — via teasers placed across the site.\n\nPlan agreed with Thomas:\n• 24.–30.8: everyone individually challenges the bucket allocation + sets price ranges per bucket; Raphael defines teaser channels & requirements (look & feel, size, etc.) — Thomas wants 3 layered teasers.\n• 31.8–6.9: Martin/Thomas write the copy (3 versions per bucket); Alessia/Raphael create the designs; Raphael preps the A/B infra incl. measurement + email collection.\n• From 7.9: go live and measure. \n• Waiting for the original version to be live so that we can set up the ab test. Pictures on the waiting page to be validated before being able to set up the test\n\nCentralized results: https://claude.ai/artifact/2WcQXtSycJbGmcbGshg9TT?sk=7QlB8AOC426miJksJH9U6A",
+          link: [
+            "https://docs.google.com/spreadsheets/d/1SCMKnhUnT4QtJ33bNq8yzHmSv6ZFPDlSXKczfUqdOIk/edit?usp=sharing",
+            "https://app.wingify.com/#/test/ab/6/report?token=eyJhY2NvdW50X2lkIjoxMjQxODAyLCJleHBlcmltZW50X2lkIjo2LCJjcmVhdGVkX29uIjoxNzg5MTA3ODE4LCJ0eXBlIjoiY2FtcGFpZ24iLCJ2ZXJzaW9uIjoyLCJpZCI6IjY2MjYyIiwiaGFzaCI6IjE4ZDA3OGQwNjVmMDFhZWZkOGNiMzUxNTVhM2VlMzkzIiwic2NvcGUiOiIiLCJmcm4iOmZhbHNlfQ==&lang=en",
+          ],
+          linkLabel: ["Collected emails (Google Sheet)", "Wingify A/B test report"],
         },
         {
           stream: "b2c",
@@ -1665,6 +1672,33 @@
           responsible: ["Alessia", "Raphael"],
           link: "https://www.figma.com/design/NlsX6cwoOjzFPBcOc6z98f/DIGITAL-MARKETING%E2%80%A8PROMO?node-id=1-4827",
           linkLabel: "Figma",
+        },
+        {
+          stream: "b2c",
+          category: "New features testing",
+          name: "New features testing — purchase test on one bucket",
+          sub: "Test real purchases on the Know-Good bucket, at different price points",
+          months: ["2026-10"],
+          effort: "med",
+          impact: "high",
+          status: "inprogress",
+          responsible: "Raphael",
+          description:
+            "• Know-Good is the bucket chosen for the first purchase test\n• Offer different prices on Know-Good to find the pricing model that works best",
+          goal: "find the pricing model that converts best before rolling it out to the other buckets",
+        },
+        {
+          stream: "b2c",
+          category: "New features testing",
+          name: "New features testing — roll out purchase tests to other buckets",
+          sub: "Once the pricing model is validated, launch the purchase tests on the remaining buckets",
+          months: ["2026-10"],
+          effort: "med",
+          impact: "high",
+          status: "todo",
+          responsible: "Raphael",
+          description:
+            "• Starts once the pricing model to test has been found on the Know-Good bucket\n• Launch the purchase tests with this pricing model on the other buckets",
         },
         {
           stream: "b2c",
@@ -2213,11 +2247,13 @@
           months: ["2026-10"],
           effort: "high",
           impact: "high",
-          status: "todo",
+          status: "inprogress",
           responsible: "Raphael",
           description:
-            "• Landing page for the HYROX \"Outfit to Win\" operation\n• QR code pointing to the landing page\n• Email data collection form with a prize draw",
+            "• Landing page for the HYROX \"Outfit to Win\" operation\n• QR code pointing to the landing page\n• Email data collection form with a prize draw\n\nURLs:\n• QR code short URL: https://datasport.com/qr/puma (confirmation pending from Sandro)\n• Target URL: https://datasport.com/?utm_source=fitforlife&utm_medium=qrCode&utm_campaign=hyrox\n\nDone:\n• QR code created and sent\n• Ticket WS-6521 created to set up the QR code redirect (datasport.com/qr/puma → target URL)\n\nNext steps:\n• Landing page concept to be delivered by Sandro by Friday 02.10 — asked for: hero photo, title, short description (100–200 words?), product photos (1 photo with both items or several), form, long description, fitforlife magazine teaser, FAQ\n• Build the landing page in 4 languages, connected to a Google Sheet collecting the emails\n• Create the confirmation email template and automate the sending (probably every morning from Raphael's computer)",
           goal: "collect qualified emails from the HYROX audience via the prize draw",
+          link: "https://datasport.atlassian.net/servicedesk/customer/portal/2/WS-6521",
+          linkLabel: "Ticket WS-6521 — QR code redirect",
         },
         {
           stream: "magazine",

@@ -2129,6 +2129,8 @@
           status: "inprogress",
           type: "foundation",
           responsible: "Raphael",
+          link: "https://claude.ai/artifact/KjcuHoLmYJh41dQPzk3udq?sk=yK9CDOtWd1BSlAkBntLGWA",
+          linkLabel: "Fit for Life strategy (Claude artifact)",
         },
         {
           stream: "magazine",
@@ -2250,10 +2252,13 @@
           status: "inprogress",
           responsible: "Raphael",
           description:
-            "• Landing page for the HYROX \"Outfit to Win\" operation\n• QR code pointing to the landing page\n• Email data collection form with a prize draw\n\nURLs:\n• QR code short URL: https://datasport.com/qr/puma (confirmation pending from Sandro)\n• Target URL: https://datasport.com/?utm_source=fitforlife&utm_medium=qrCode&utm_campaign=hyrox\n\nDone:\n• QR code created and sent\n• Ticket WS-6521 created to set up the QR code redirect (datasport.com/qr/puma → target URL)\n\nNext steps:\n• Landing page concept to be delivered by Sandro by Friday 02.10 — asked for: hero photo, title, short description (100–200 words?), product photos (1 photo with both items or several), form, long description, fitforlife magazine teaser, FAQ\n• Build the landing page in 4 languages, connected to a Google Sheet collecting the emails\n• Create the confirmation email template and automate the sending (probably every morning from Raphael's computer)",
+            "• Landing page for the HYROX \"Outfit to Win\" operation\n• QR code pointing to the landing page\n• Email data collection form with a prize draw\n\nURLs:\n• QR code short URL: https://datasport.com/qr/puma (confirmation pending from Sandro)\n• Target URL: https://datasport.com/?utm_source=fitforlife&utm_medium=qrCode&utm_campaign=hyrox\n\nDone:\n• QR code created and sent\n• Ticket WS-6521 created to set up the QR code redirect (datasport.com/qr/puma → target URL)\n• Landing pages created (PR ds_website_fe #229)\n• Form connected in the backend to the Google Sheet collecting the emails\n\nNext steps:\n• Add the landing page contents (only thing missing) — asked Sandro for: hero photo, title, short description (100–200 words?), product photos (1 photo with both items or several), form, long description, fitforlife magazine teaser, FAQ\n• Create the confirmation email template and automate the sending (probably every morning from Raphael's computer)",
           goal: "collect qualified emails from the HYROX audience via the prize draw",
-          link: "https://datasport.atlassian.net/servicedesk/customer/portal/2/WS-6521",
-          linkLabel: "Ticket WS-6521 — QR code redirect",
+          link: [
+            "https://datasport.atlassian.net/servicedesk/customer/portal/2/WS-6521",
+            "https://github.com/datasport-com/ds_website_fe/pull/229",
+          ],
+          linkLabel: ["Ticket WS-6521 — QR code redirect", "PR #229 — landing pages"],
         },
         {
           stream: "magazine",
@@ -2433,6 +2438,24 @@
           responsible: "Raphael",
           link: "https://datasport.atlassian.net/browse/DNG-7989",
           linkLabel: "DNG-7989",
+        },
+        {
+          stream: "seo",
+          category: "Indexation & technical SEO",
+          name: "Fix location snippet on event pages",
+          sub: "Fix the location structured-data snippet on event pages: remove duplicate snippets on results and event pages, don't output snippets when the information isn't provided by EMM, and replace the hardcoded CH country code since we cover several countries",
+          months: ["2026-10"],
+          effort: "low",
+          impact: "low",
+          status: "done",
+          responsible: "Raphael",
+          description:
+            "• Fixed the location snippet on event pages\n• Removed the duplicate snippet output on results pages and event pages\n• Added conditions so snippets aren't rendered when the information isn't provided by EMM\n• Replaced the country code hardcoded to CH with the event's actual country (we run events in several countries)",
+          link: [
+            "https://github.com/datasport-com/ds_website_fe/pull/228",
+            "https://github.com/datasport-com/ds_fe_ranking/pull/952",
+          ],
+          linkLabel: ["ds_website_fe PR #228", "ds_fe_ranking PR #952"],
         },
         {
           stream: "seo",

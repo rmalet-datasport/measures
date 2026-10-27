@@ -2613,12 +2613,12 @@
           status: "inprogress",
           responsible: "Raphael",
           description:
-            "• Static HTML entry points to the sponsored articles — the homepage swipe carousel is currently the only entry point; it's JS/React-rendered with scroll-triggered lazy-loading, so the links are invisible to crawlers. Add static links visible in raw HTML\n• Fix the 404s on the Gran Canaria article FR/EN — root cause not yet identified (broken redirect, multilingual routing, or incomplete publish); dependency likely dev team\n• Identify pages with traffic where an advertorial teaser can bring visitors — related content or a relevant athlete audience\n• Explore new communication channels: social media + email\n\nSwipe module technical fix: PR opened (ds_website_fe #219). Image reduced in size for Zalando with Emmely — waiting on the BE support ticket (WS-6513) to be able to call the medium-size image in the module",
+            "• Identify pages with traffic where an advertorial teaser can bring visitors — related content or a relevant athlete audience\n• Explore new communication channels: social media + email\n• Waiting on the BE support ticket (WS-6513) to be able to call the medium-size image in the carousel instead of the original\n\nDone:\n• Static HTML entry points to the sponsored articles: the homepage carousel is now server-rendered (PR ds_website_fe #219, merged), 10 localized article links in the raw HTML instead of 0\n• 404s on the Gran Canaria article FR/EN fixed\n• Article images recompressed & resized",
           link: [
             "https://github.com/datasport-com/ds_website_fe/pull/219",
             "https://datasport.atlassian.net/servicedesk/customer/portal/2/WS-6513",
           ],
-          linkLabel: ["PR #219", "WS-6513"],
+          linkLabel: ["PR #219 — SSR homepage carousel", "WS-6513"],
           goal: "give the advertorials durable visibility and bring them qualified traffic",
         },
         {
@@ -2690,7 +2690,7 @@
           months: ["2026-10"],
           effort: "low",
           impact: "low",
-          status: "inprogress",
+          status: "done",
           responsible: "Raphael",
           link: "https://github.com/datasport-com/ds_website_fe/pull/247",
           linkLabel: "PR #247",

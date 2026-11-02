@@ -2577,10 +2577,10 @@
           months: ["2026-10"],
           effort: "low",
           impact: "low",
-          status: "done",
+          status: "inprogress",
           responsible: "Raphael",
           description:
-            "• Fixed the location snippet on event pages\n• Removed the duplicate snippet output on results pages and event pages\n• Added conditions so snippets aren't rendered when the information isn't provided by EMM\n• Replaced the country code hardcoded to CH with the event's actual country (we run events in several countries)",
+            "ds_website_fe PR #228 merged on 2026-10-26. What it adds to the SportsEvent JSON-LD on event pages:\n• Location name now uses the event's town, falling back to the region name\n• Full address: addressLocality (town), addressRegion (region) and addressCountry\n• addressCountry is the event's real country (ISO2 from EMM) instead of the hardcoded CH, since we run events in several countries\n• GeoCoordinates (latitude/longitude) added when EMM provides a precise location\n• Blank EMM values ('' or ' ') are skipped, with fallback to the locale, then EN, DE, then any language\n• No SportsEvent snippet is rendered when there is no location, since Google requires it for Event rich results\n\nds_fe_ranking PR #952 (removes the duplicate SportsEvent JSON-LD from results pages) is still open.",
           link: [
             "https://github.com/datasport-com/ds_website_fe/pull/228",
             "https://github.com/datasport-com/ds_fe_ranking/pull/952",

@@ -1,0 +1,1553 @@
+Received: from ZR6PR10MB992229.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:910:d5::22) by AM7PR10MB3592.EURPRD10.PROD.OUTLOOK.COM with HTTPS;
+ Mon, 9 Nov 2026 11:48:51 +0000
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=mKN0zvSXS+Gu9w8kLYMg3mr7tyEwlHBzI4fzx2XsziJYrGZUnFA9AQbccA/p67rlACEpPiI8Dsh8fKOm4yKoImQmMFhyvhnsGfazNW2vg1lUsdJhpLQ0Vw7G6+xsF5/HnleoiugPc9vcfzNDEdo2CMHIEzdqfiDQemkAxDnlp8hTCpXuXpIuvlgnWBgPc8SBaIeBrfLgNqq82fdUy6DL/NaQcuZCGa1OJjKb45vMHy1+/CeLw18vbhzhSiYcMdlOhZ6vsCEw+TE4FvjcHyOQsE8n6cldPdD+l2UCJPTdeQ8Tuzkq7QoXJWHjhuU0M78iRjHUycNkC5LXq6htoRJ0OA==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1Aonk/eSClAfzZHI2nNHTk2soxJBN6EzAycZmpaIq9s=;
+ b=h14HJBZc1jxdtPZi+T/ysTvBqQGPufolhe9cPYZPna3KXxG2UTB8Lslg8Rf98tQkZ8YzYZU6+aoT6oDjbrMUHlW+9tl/fy54LIxcPIKdoWbx1dTvfHeYQfgIs3OG+GwGvZlQS2daY/XC1wVddAwk/wy/oeb39HarqknEYcLvPtbswxkfG7yItX4KgzIiyI1QcCl5/v1Fvrpk8MfC0Ap3bvNo2d/DveV+fYuGrnoelQ97awcjkAj1qqJJTpgy1wP62TValP0yQPa/WW3D41x06uUg5aZNE4n1TTkfZugw2zzR3vi8V9mjOooa8Qq0XdN3OBlr/nZ5rpahQ9ddWH8eNw==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=fail (sender ip is
+ 86.119.112.13) smtp.rcpttodomain=datasport.com smtp.mailfrom=amazonses.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=sovy.dev;
+ dkim=pass (signature was verified) header.d=sovy.dev; dkim=pass (signature
+ was verified) header.d=amazonses.com; arc=pass (0 oda=1 ltdi=1
+ dkim=[1,1,header.d=sovy.dev] dmarc=[1,1,header.from=sovy.dev])
+Received: from AS4P192CA0049.EURP192.PROD.OUTLOOK.COM (2603:10a6:20b:658::22)
+ by ZR6PR10MB992229.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:910:d5::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.615.7; Mon, 9 Nov 2026
+ 11:48:50 +0000
+Received: from AMS1EPF00000098.eurprd02.prod.outlook.com
+ (2603:10a6:20b:658:cafe::99) by AS4P192CA0049.outlook.office365.com
+ (2603:10a6:20b:658::22) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.592.13 via Frontend Transport; Mon, 9
+ Nov 2026 11:48:49 +0000
+Authentication-Results: mx.microsoft.com 1; spf=fail (sender IP is
+ 86.119.112.13) smtp.mailfrom=amazonses.com; dkim=pass (signature was
+ verified) header.d=sovy.dev;dkim=pass (signature was verified)
+ header.d=amazonses.com;dmarc=pass action=none
+ header.from=sovy.dev;compauth=pass reason=100
+Received-SPF: Fail (protection.outlook.com: domain of amazonses.com does not
+ designate 86.119.112.13 as permitted sender) receiver=protection.outlook.com;
+ client-ip=86.119.112.13; helo=sl-deliver01.ch.seppmail.cloud;
+Received: from sl-deliver01.ch.seppmail.cloud (86.119.112.13) by
+ AMS1EPF00000098.mail.protection.outlook.com (10.167.242.69) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.615.4
+ via Frontend Transport; Mon, 9 Nov 2026 11:48:49 +0000
+Received: from sl-glue01.ch.seppmail.cloud (sl-glue01.zhw.compute.local [10.4.0.160])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by sl-deliver01.ch.seppmail.cloud (Postfix) with ESMTPS id 4jNSjY2dm3z3xPt
+	for <rmalet@datasport.com>; Mon,  9 Nov 2026 12:48:49 +0100 (CET)
+Received: from sl-glue01.ch.seppmail.cloud (unknown [172.18.0.7])
+	by sl-glue01.ch.seppmail.cloud (Postfix) with SMTP id 4jNSjY2S3fz3wYV
+	for <rmalet@datasport.com>; Mon,  9 Nov 2026 12:48:49 +0100 (CET)
+X-SM-incoming: yes
+X-SEPP-Suspect: 460b5592c12a4aff953ba88069b3353e
+Authentication-Results-Original: sl-glue01.ch.seppmail.cloud;spf=pass
+ smtp.mailfrom=amazonses.com;dkim=pass header.d=sovy.dev
+ header.s=q2lzddcegicbngixozqvwr5u6fn7mui2;dmarc=pass
+ header.from=sovy.dev;iprev=pass
+ARC-Seal: i=1; cv=none; a=rsa-sha256; d=seppmail.cloud; s=arc2208;
+ t=1794224929;
+ b=PIMuZgEMlVl9hToK0JV5mLjJ8zIdtSbc5wHQtOUZ+7v1B/naqMihugWsGcxJS8XkTr6kj
+ JX3BnaF1EMZ0ed8OfkHhrarR48+jSQZzfDm4LtRxWy56q0D5l+5RARuKC1iovkLV2yFXJxd
+ KRQse3ld7iGaukiGWZh+8mVFlKmVEfwldjHYd1xWMwtkTK37un0BKs0tzKotony32S3vNsA
+ GIaQaF5Sg7uCLVjbP7vfZf5Z+WTaqxKgNYJB+ffuivbwASrLHuToK4P4wsFYBNeTWm/KVM7
+ +G4ryQHIq53KvEzpvAEAm19GA7pkbC4dgoz/Lv//4KVp6245lREqUOWPPz9w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=seppmail.cloud; s=arc2208; t=1794224929; h=content-transfer-encoding
+ : subject : from : to : content-language : user-agent : mime-version :
+ date : message-id; bh=1Aonk/eSClAfzZHI2nNHTk2soxJBN6EzAycZmpaIq9s=;
+ b=qMpGVFNoDs0TffyZRcuQ9S9tutU9Xi7uT56qsRTdlDvWPl2w1LZsrtb4EE4pPXmIswNGj
+ tgzP5+qJPZMh3jYWLMqeEaPocJIxNlnhrQoabNziu0CGAUtd/WB+i3Sq11BUq8SHzNCeUWz
+ i0adAeCQcRqHuZR08ZMveHyLvwBUl0xsqHoc+2I0PYzdXLD90ZMwztb8ZmClcEweslXb8d1
+ ImRPdjvKCMxofnBDzpTlrNROHyGnFhI/TAgdAc0Ucyn6XC4Fes0QkdB9SOnv7u1wzZQzvux
+ O4JfiQCcFsr3PfRnxe/GwZnV7CIYfPKSxZxqmhHq+yNYSNpM3bzFmiO8j3KA==
+ARC-Authentication-Results: i=1; sl-glue01.ch.seppmail.cloud;
+ spf=pass smtp.mailfrom=amazonses.com;
+ dkim=pass header.d=sovy.dev header.s=q2lzddcegicbngixozqvwr5u6fn7mui2;
+ dmarc=pass header.from=sovy.dev;
+ iprev=pass
+X-SEPP-Smarthost: 110b12c1-2e2a-4a74-9f2f-cffde33baabd:[datasport-com.mail.protection.outlook.com]:25
+Received: from sl-scan09.ch.seppmail.cloud (sl-scan09.zhw.compute.local [10.4.0.154])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	by sl-glue05.ch.seppmail.cloud (Postfix) with ESMTPS id 4jNSjY02qRz3wdM
+	for <rmalet@datasport.com>; Mon,  9 Nov 2026 12:48:49 +0100 (CET)
+Received: from sl-scan09 (localhost [127.0.0.1])
+	by sl-scan09.ch.seppmail.cloud (Postfix) with SMTP id 4jNSjX6Vm4zYsk
+	for <rmalet@datasport.com>; Mon, 09 Nov 2026 12:48:48 +0100 (CET)
+Received: from sl-gate03.ch.seppmail.cloud (sl-gate03.zhw.compute.local [10.4.0.101])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by sl-scan09.ch.seppmail.cloud (Postfix) with ESMTPS
+	for <rmalet@datasport.com>; Mon, 09 Nov 2026 12:48:48 +0100 (CET)
+Received: from a48-91.smtp-out.amazonses.com (a48-91.smtp-out.amazonses.com [54.240.48.91])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by sl-gate03.ch.seppmail.cloud (Postfix) with ESMTPS id 4jNSjX06cnz3w8B
+	for <rmalet@datasport.com>; Mon,  9 Nov 2026 12:48:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=q2lzddcegicbngixozqvwr5u6fn7mui2; d=sovy.dev; t=1794224920;
+	h=From:To:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-ID:Date;
+	bh=VsF1OGBhL0oFVt/vuG39QtzKDPfLZBop2YXPZfg0y3U=;
+	b=FrpNhqo7VIczGTAyt2VTI/U7BrF+0uxgUQPsFMo4FL+TrkhsJi8SKr87u8e8D289
+	D4xqlDKxYRuACpy0UzOBE1CJX2jXg0ZRJwwLeLPnfeFRcLGIrJbzQ5DeFhUOBVrm2Sh
+	PqwQpQ35fQzghNsFBjyTMfd6W05giCYdf0BZVFNdKbtv2rEJGT3BZIP77LOZrA5UkFo
+	IKMvNyIj5zPoAvpQoAn6XWyGlqzcvzTQb3Bn030ZZeV4eKXMPn20wlFwU0PK1cmi49U
+	IZ4t1ClFuijLO1yQ/NBRDXBcnFl4uhKe1Y9dqVIu3b3ghwdK2pUmTOLE5Cv+U3vlBdq
+	VqrWtEShoA==
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=224i4yxa5dv7c2xz3womw6peuasteono; d=amazonses.com; t=1794224920;
+	h=From:To:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-ID:Date:Feedback-ID;
+	bh=VsF1OGBhL0oFVt/vuG39QtzKDPfLZBop2YXPZfg0y3U=;
+	b=VpkObwTGWKcS5uQCFh2w1SymSh/NqxHd1+MLhRtMkxvI3OTYTBmc3Pp9l7kb0V53
+	AhP+27t4ABWzfQD9F7RQe5EVt/tH1mPA0oLd1yX0trTPYCbKYPAgWUlkiyVYqTaLAMK
+	cOJfW+IJCEbzxfdPQulxgTP+JJUNMRf2WkrvsJEk=
+From: Sovy Tester <tester@sovy.dev>
+To: rmalet@datasport.com
+Subject: {{event.name}} - Bald geht's los!
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Message-ID: <010001a1c02395cc-2edaeeac-0377-469a-ad6b-323bf9b58cec-000000@email.amazonses.com>
+Date: Mon, 9 Nov 2026 11:48:40 +0000
+Feedback-ID: ::1.us-east-1.3TNfgbIy6/h45hfQ2flYbLDkp57eio2BLv65cTjwaZw=:AmazonSES
+X-SES-Outgoing: 2026.11.09-54.240.48.91
+Received-SPF: Pass (sl-gate03.ch.seppmail.cloud: sender SPF authorized)
+ receiver=sl-gate03.ch.seppmail.cloud; identity=mailfrom; =?utf-8?q?envelope?=
+ =?utf-8?q?-from=3D010001a1c02395cc-2edaeeac-0377-469a-ad6b-323bf9b58cec-000?=
+ =?utf-8?q?000=40amazonses=2Ecom=3B?= client-ip=54.240.48.91;
+ helo=a48-91.smtp-out.amazonses.com
+X-SEPP-CCCVersion: 2026-07-16T14:50:29+02:00 96be5760
+Return-Path: 010001a1c02395cc-2edaeeac-0377-469a-ad6b-323bf9b58cec-000000@amazonses.com
+X-MS-Exchange-Organization-ExpirationStartTime: 09 Nov 2026 11:48:49.6706
+ (UTC)
+X-MS-Exchange-Organization-ExpirationStartTimeReason: OriginalSubmit
+X-MS-Exchange-Organization-ExpirationInterval: 1:00:00:00.0000000
+X-MS-Exchange-Organization-ExpirationIntervalReason: OriginalSubmit
+X-MS-Exchange-Organization-Network-Message-Id: 4fa7d00a-5445-41bc-bae5-08df3e576b82
+X-EOPAttributedMessage: 0
+X-EOPTenantAttributedMessage: 110b12c1-2e2a-4a74-9f2f-cffde33baabd:0
+X-MS-Exchange-Organization-MessageDirectionality: Incoming
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AMS1EPF00000098:EE_|ZR6PR10MB992229:EE_|AM7PR10MB3592:EE_
+X-MS-Exchange-Organization-AuthSource: AMS1EPF00000098.eurprd02.prod.outlook.com
+X-MS-Exchange-Organization-AuthAs: Anonymous
+X-MS-Office365-Filtering-Correlation-Id: 4fa7d00a-5445-41bc-bae5-08df3e576b82
+X-SM-ruleversion: 2.1.0
+X-MS-Exchange-Organization-SCL: -1
+X-Microsoft-Antispam: BCL:0;ARA:13230040|704162211799003|82310400026|7149299003|3109299003|7049299003|32142699015|260918215300599003|260918224100599003|1032899013|69100299015|19002099009|16102099003|4113699003|10067099003|8096899003|18003699003|2066899003|13003099007|56012099006|5063699009|261028144727099003|261026121527099003|261019150727099003|261019141927099003|261019132127099003|261022075727099003|261022105027099003|261019143827099003|261026140227099003;
+X-Forefront-Antispam-Report: CIP:86.119.112.13;CTRY:CH;LANG:de;SCL:-1;SRV:;IPV:NLI;SFV:SFE;H:sl-deliver01.ch.seppmail.cloud;PTR:sl-deliver01.ch.seppmail.cloud;CAT:NONE;SFS:(13230040)(704162211799003)(82310400026)(7149299003)(3109299003)(7049299003)(32142699015)(260918215300599003)(260918224100599003)(1032899013)(69100299015)(19002099009)(16102099003)(4113699003)(10067099003)(8096899003)(18003699003)(2066899003)(13003099007)(56012099006)(5063699009)(261028144727099003)(261026121527099003)(261019150727099003)(261019141927099003)(261019132127099003)(261022075727099003)(261022105027099003)(261019143827099003)(261026140227099003);DIR:INB;
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2026 11:48:49.5974
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4fa7d00a-5445-41bc-bae5-08df3e576b82
+X-MS-Exchange-CrossTenant-Id: 110b12c1-2e2a-4a74-9f2f-cffde33baabd
+X-MS-Exchange-CrossTenant-AuthSource: AMS1EPF00000098.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZR6PR10MB992229
+X-MS-Exchange-Transport-EndToEndLatency: 00:00:01.9137815
+X-MS-Exchange-Processed-By-BccFoldering: 15.21.0615.005
+X-Microsoft-Antispam-Mailbox-Delivery:
+	wl:1;pcwl:1;ucf:0;jmr:0;auth:0;dest:I;ENG:(910005)(944506478)(944626604)(920097)(811242)(255002)(410001)(930201)(20251009284)(140003);
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?L3QyL0hHSFM3bFdsSDVCUWhhZCtIOG9IZUtDcTJQcnlzd0xhSStZNVVEbC94?=
+ =?utf-8?B?SllrdHNGcVpaZTBqdlc3QmpvVmt2WGtVdGsvSzlXNDdNN1p3Z3RDRGFIUWpi?=
+ =?utf-8?B?VDdsN01EM3o0SHJnaDhZRDdLcjkyYW9FVHgrZXUyNklCYTFVUUhyMy9RSWVT?=
+ =?utf-8?B?UWNqd3N0b1lIK0VRVHBpUzBzU041Z0RTUFErajgzbWdzaVZwc1h1ajY4a1ZQ?=
+ =?utf-8?B?WWVFRWg2REVBSW0yM1hkMGpnQ0w2cHM2ZFpORGhHdnRWNkEwVzJZRU5EejJN?=
+ =?utf-8?B?eUZlQ3czV3djcWJ4N0ZnUWZuV1l4enZXU1gxM2hDZ0RsaEFSdDRnQ0tiOUgx?=
+ =?utf-8?B?MDJmUHVLNzI5RGIxdTFDOGlTYzdUdElRdStoNGg5TFo4eTltVHdzb040MWlM?=
+ =?utf-8?B?Z1JBU1pKRktmNnU5bFZZejdGeHZMSWRHWVBNeG84c2JTZS9wKy96YW1vTk1r?=
+ =?utf-8?B?c2lFcHZDOU9YWGgrVG8xaytIMklnd0RscGYwN3QrRTRPNk5YTVo5OWQzd29q?=
+ =?utf-8?B?d2JjUm1KdlpKQjBlZU9zdkxQYjQ2NmpDSno0Z25KcW1WaWN6VWdUSUJKOFI5?=
+ =?utf-8?B?elpOWUJQcnh0cmpWSmtlZ1lIT21OUGh0eEpFRUpqSWN5aVhtVCtBKzFlMlZr?=
+ =?utf-8?B?UGZXV2J1ZTZUcGhrd0h0U243VWQzRWlLMGk5NEJYM1BweDhGOVhaTFJhNXEz?=
+ =?utf-8?B?SjdsMjlLNFZ2SG9mYzZIbmRtay9XQlY4UTRNMUgyUE9nWXIyOGt2aTlYVkdG?=
+ =?utf-8?B?azJQRkNFa1ZTS05hdFYvYkhBeUZ1dUJFcnBtc0hDbTBRNlg5eDFzT1ZybFJ1?=
+ =?utf-8?B?SitXLzdLeHNrN2RmeTlkSFhlalpEMXRHRUJJM0dlb2dyaXVmck84andaMWh1?=
+ =?utf-8?B?TTJEaFpnWXdPTmFxU0UzdHQwZ0dKd0plTFYwLyswbllpRVFYNzYzU3EzTnox?=
+ =?utf-8?B?eWxIWXBtZVh5RG9mT2c3NDRDSGVqL0FNY20zWUJCNG85RzlhcTYyZlR4aGpF?=
+ =?utf-8?B?b1lCQk0vYmtJZ0hxZHNsZGZaRU90YVhvRW5JZWpGYUpxWDJlZVprSU9JUFVS?=
+ =?utf-8?B?ZjIvay9ERkFXa0lYUm8wKzVoYWZzRWV1elNXU1I3eDNtMWJKVURkbGRZbitU?=
+ =?utf-8?B?c0VQdEgyUTV5UjBrVkNubWtudStIU3hLa2lTTFlML080ajVCZ2VtQmVvQm9n?=
+ =?utf-8?B?a2tvSi9vTE1TZFQwZUoxeVp0WlFDbDlSRWJKRVdRM1JIM040VkozTCtUaVJq?=
+ =?utf-8?B?YTF2WXFLemZoMEY0TmxtNHVLRXM1THRBWm1aS2gzb2haendoUURKUkIyV2JZ?=
+ =?utf-8?B?eExHNmRGSHhxc0ZiaktGdmFGQklIdVpDZzFDcFVTa01uRFRxcU5pMlQ2Vyt0?=
+ =?utf-8?B?cTNvUXF6TEt5S0xhRjVod1VUZThidSt1dnBvRzZCb3pVUGVNeTJsK0paMFlr?=
+ =?utf-8?B?UHBoUTN1NWZvTnB1SWlJaE1Dd1MzRTlsNjAyNzg0TVNZazdVdDc1R1VGUXFC?=
+ =?utf-8?B?eGNVbGdhTWJlb1k2MzAvVHdWTjUxUGVoWmxkT2E5bFIvcGpDb1NoMHdyOVFy?=
+ =?utf-8?B?L3FiUkhTcUVyQzlNR3Z0TFhkaWhnSExOWGMrU0ZpVEJscVhXSkhqUUhBVFht?=
+ =?utf-8?B?WENLYkV0ZUdlMHBmQ3ZUZ3FTR2lrcUpBQ0psdlhobHZrdU54RkNBdVJpTmNi?=
+ =?utf-8?B?N1RFcUo0OEljaTdNSXBHOFVYV29tNkJvM0YrcTJPKzFZWFl2MzdxcHhEWWtF?=
+ =?utf-8?B?RWdZYXhRd0g2MTFRendUU2hXaUJIZ0dZMThMSDFXWVJTYVZJbHFUUGtLeVdu?=
+ =?utf-8?B?UmJsK0ZaOEFzY2RldVB1Zy8xWkVITzVDbkxSTnlGMldqbUt0aGl4WHNZM2Ry?=
+ =?utf-8?B?ZU1EaUN1YlRsM0plK1pFSHoyUGF4K1RoNWhaZmt1TEtsbk8ybDY2OEZtenBO?=
+ =?utf-8?B?bjM3eml4UU95MldzV2xJNW1YcUNiUHJLbjJRRjU3NVl5cUdpMFppQnBPdXk0?=
+ =?utf-8?B?bXVCeUtiRVZkekFNdHY5OFdzUHBTMFcyTlVTWVpncUJoVlQ4QUpnRmV5RXFs?=
+ =?utf-8?B?eXFDNmkwSlhwYkxTaTFQQTFibnBxTWdlQWwxYmlwUG9vZDl6eExUbzZrT244?=
+ =?utf-8?B?VUhEcVNHR0lTclkwQWlnVWs2OG5zcEM4RWJsM29hUWRWTTR4MVJsNkpoV2k1?=
+ =?utf-8?B?Y2VKSlhQRmFwU2ZHTU9LUGw2algrcWNUTHBKTXh6bld6ZVUrTkNvK3ltdUlV?=
+ =?utf-8?B?ZFJQODcrei9RcEJpNVdSTnN0Vk0xZXRST0tXL295ek1FM3d4MHlLNHF3dDA4?=
+ =?utf-8?B?b2E1NmJOQnpWTmtiSFpWVmp1VjhIbWlpclg1VC85WGpIWE1yVEdYMFhkOWJo?=
+ =?utf-8?B?SVExTnV4MXE4cUNsRmx0UTFTWk1zbjFJSDAwbFhUbitMZHlKUUh4K0thZ09G?=
+ =?utf-8?B?RER1VHBaOU9CR3J3cG0zTytaSG1oQ3I4QTdtRkRyUm1mUHRMcDhrT3BzUkMr?=
+ =?utf-8?B?ZXdMU1Roclg0MWhyWWRTSWlVV2tZMStYWWgzNytna1hCQ290TXFYN2VlSDJv?=
+ =?utf-8?B?VU5EV0NjVDFHMzZjYmRkdlh3bkF0bnhldnBHdWxNWHB1WEthdk9NamYvSzBB?=
+ =?utf-8?B?anZLMXRySFA0OXpkZVNueTYyRzRTS21kcnZFc1VMRURVclh1clRKU1M0Qi8v?=
+ =?utf-8?B?TmoyK3JaMEpsekk1b0F2MFg5N291YVJ4ZXh2a1d0RGhUNVp0bEdTY0gwNW1k?=
+ =?utf-8?B?c3VybnUvRDZTeWttZ09ERURDQ2pGTTJFQWYxZnBlVUNKSmViREp6MmRIT0xP?=
+ =?utf-8?B?VnNFell2OVNMRFllK1krcmNvdHR1TUxCT3VjNmhSVE15bWlvVG5mZFJXNG1j?=
+ =?utf-8?B?dElqVUNXQ0lkcC9NMmg0ZWZ6MFd4RkEyZHFYb3Y5cDhJS3dlSnJGT0lrRWpM?=
+ =?utf-8?B?NHg4L2oyTGJ3OFFxc1g1ZnBxVzZKQjMveS9Ca0k0Y1BxOEVicU8vSjZnR3VV?=
+ =?utf-8?B?SUZXRmQzZDZSeGwyeTJjRXFlSjNFclV6blh4ZDlrSGdPUW9uNWRYM2FBbWNY?=
+ =?utf-8?B?MGNuZjFIak5iS3hTVHVyZ3lacEJUd3RqT09tN2FVTUpBeitnZHRCS2dnZTFC?=
+ =?utf-8?B?aVRJeGxlSHJXb0ZCSGpSK3lQNmNZanZTMkpySFlGelYzaXkvK3c3dG41UzJt?=
+ =?utf-8?B?NnpxenY4Y1JjRWZ6NzUrOGs1Q2hIM3JxSzhuZ09ndTdRZUtxZG9FNlJQa29s?=
+ =?utf-8?Q?eqXP96BE2RQOnVwImzIzW+Wqsx6F+JzCuHwgVtZ3v3cuH3t?=
+MIME-Version: 1.0
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www=
+.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns=3D"http://www.w3=
+.org/1999/xhtml" xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:s=
+chemas-microsoft-com:office:office"><head><!--[if gte mso 9]>
+<xml>
+  <o:OfficeDocumentSettings>
+    <o:AllowPNG/>
+    <o:PixelsPerInch>96</o:PixelsPerInch>
+  </o:OfficeDocumentSettings>
+</xml>
+<![endif]-->
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dutf-8">
+  <meta name=3D"viewport" content=3D"width=3Ddevice-width, initial-scale=3D=
+1.0">
+  <meta name=3D"x-apple-disable-message-reformatting">
+  <!--[if !mso]><!--><meta http-equiv=3D"X-UA-Compatible" content=3D"IE=3De=
+dge"><!--<![endif]-->
+ =20
+ =20
+    <style type=3D"text/css">
+     =20
+      @media only screen and (min-width: 660px) {
+        .u-row {
+          width: 640px !important;
+        }
+
+        .u-row .u-col {
+          vertical-align: top;
+        }
+
+       =20
+            .u-row .u-col-100 {
+              width: 640px !important;
+            }
+         =20
+      }
+
+      @media only screen and (max-width: 660px) {
+        .u-row-container {
+          max-width: 100% !important;
+          padding-left: 0px !important;
+          padding-right: 0px !important;
+        }
+
+        .u-row {
+          width: 100% !important;
+        }
+
+        .u-row .u-col {
+          display: block !important;
+          width: 100% !important;
+          min-width: 320px !important;
+          max-width: 100% !important;
+        }
+
+        .u-row .u-col > div {
+          margin: 0 auto;
+        }
+
+}
+   =20
+body{margin:0;padding:0}table,td,tr{border-collapse:collapse;vertical-align=
+:top}p{margin:0}.ie-container table,.mso-container table{table-layout:fixed=
+}*{line-height:inherit}a[x-apple-data-detectors=3Dtrue]{color:inherit!impor=
+tant;text-decoration:none!important}
+
+
+table, td { color: #231f20; } #u_body a { color: #c31229; text-decoration: =
+underline; }
+    </style>
+ =20
+ =20
+
+<!--[if !mso]><!--><link href=3D"https://fonts.googleapis.com/css?family=3D=
+Open+Sans:400,700" rel=3D"stylesheet" type=3D"text/css"><!--<![endif]-->
+
+</head>
+
+<body class=3D"clean-body u_body" style=3D"margin: 0;padding: 0;-webkit-tex=
+t-size-adjust: 100%;background-color: #f7f8f9;color: #231f20">
+  <!--[if IE]><div class=3D"ie-container"><![endif]-->
+  <!--[if mso]><div class=3D"mso-container"><![endif]-->
+  <table role=3D"presentation" id=3D"u_body" style=3D"border-collapse: coll=
+apse;table-layout: fixed;border-spacing: 0;mso-table-lspace: 0pt;mso-table-=
+rspace: 0pt;vertical-align: top;min-width: 320px;Margin: 0 auto;background-=
+color: #f7f8f9;width:100%" cellpadding=3D"0" cellspacing=3D"0">
+  <tbody>
+  <tr>
+    <td style=3D"display:none !important;visibility:hidden;mso-hide:all;fon=
+t-size:1px;color:#ffffff;line-height:1px;max-height:0px;max-width:0px;opaci=
+ty:0;overflow:hidden;">
+      Hallo Max! Wir freuen uns, dir mitteilen zu k=C3=B6nnen, dass wir dei=
+ne Registrierung erhalten haben!
+    </td>
+  </tr>
+ =20
+  <tr style=3D"vertical-align: top">
+    <td style=3D"word-break: break-word;border-collapse: collapse !importan=
+t;vertical-align: top">
+    <!--[if (mso)|(IE)]><table role=3D"presentation" width=3D"100%" cellpad=
+ding=3D"0" cellspacing=3D"0" border=3D"0"><tr><td align=3D"center" style=3D=
+"background-color: #f7f8f9;" bgcolor=3D"#f7f8f9"><table role=3D"presentatio=
+n" cellpadding=3D"0" cellspacing=3D"0" border=3D"0" width=3D"640" align=3D"=
+center" style=3D"border-collapse: collapse;"><tr><td style=3D"padding:0;"><=
+![endif]-->
+   =20
+
+
+<div class=3D"u-row-container" style=3D"padding: 0px;background-color: tran=
+sparent;">
+  <div class=3D"u-row" style=3D"margin: 0 auto;min-width: 320px;max-width: =
+640px;overflow-wrap: break-word;word-wrap: break-word;word-break: break-wor=
+d;background-color: transparent;">
+    <div style=3D"border-collapse: collapse;display: table;width: 100%;heig=
+ht: 100%;background-color: transparent;">
+      <!--[if (mso)|(IE)]><table role=3D"presentation" width=3D"100%" cellp=
+adding=3D"0" cellspacing=3D"0" border=3D"0"><tr><td style=3D"padding: 0px;b=
+ackground-color: transparent;"><table role=3D"presentation" cellpadding=3D"=
+0" cellspacing=3D"0" border=3D"0" width=3D"100%"><tr style=3D"background-co=
+lor: transparent;"><![endif]-->
+     =20
+<!--[if (mso)|(IE)]><td align=3D"center" width=3D"640" style=3D"width: 640p=
+x;border-top: 0px solid transparent;border-left: 0px solid transparent;bord=
+er-right: 0px solid transparent;border-bottom: 0px solid transparent;border=
+-radius: 0px;-webkit-border-radius: 0px; -moz-border-radius: 0px;" valign=
+=3D"top"><table role=3D"presentation" width=3D"100%" cellpadding=3D"0" cell=
+spacing=3D"0" border=3D"0"><tr><td style=3D"padding: 0px;"><![endif]-->
+<div class=3D"u-col u-col-100" style=3D"max-width: 320px;min-width: 640px;d=
+isplay: table-cell;vertical-align: top;">
+  <div style=3D"height: 100%;width: 100% !important;border-radius: 0px;-web=
+kit-border-radius: 0px; -moz-border-radius: 0px;">
+  <!--[if (!mso)&(!IE)]><!--><div style=3D"box-sizing: border-box; height: =
+100%; padding: 0px;border-top: 0px solid transparent;border-left: 0px solid=
+ transparent;border-right: 0px solid transparent;border-bottom: 0px solid t=
+ransparent;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radiu=
+s: 0px;"><!--<![endif]-->
+ =20
+<table style=3D"font-family:'Open Sans',sans-serif;" role=3D"presentation" =
+cellpadding=3D"0" cellspacing=3D"0" width=3D"100%" border=3D"0">
+  <tbody>
+    <tr>
+      <td style=3D"overflow-wrap:break-word;word-break:break-word;padding:0=
+px;font-family:'Open Sans',sans-serif;" align=3D"left">
+       =20
+  <div>
+    <!--
+  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+  700DATASPORT GLOBAL STYLES =E2=80=94 lives in the HEADER block (always fi=
+rst, always used).
+  Unlayer/Sovy controls the document <head> and we can't edit it, so these
+  styles ride along inside the body via the header. Embedded <style> in the=
+ body
+  is applied by every client that supports media queries (Apple Mail, iOS M=
+ail,
+  Gmail, Outlook.com). Outlook desktop ignores them and falls back to the i=
+nline
+  Arial font + full-width layout =E2=80=94 by design. The FOOTER closes not=
+hing, because
+  we deliberately do NOT open <html>/<head>/<body> here (that would create =
+a
+  broken nested document inside Unlayer's own wrapper).
+  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+-->
+<style>
+  /* Web font =E2=80=94 renders in Apple Mail / iOS; Gmail & Outlook use Ar=
+ial fallback */
+  @import url('https://fonts.googleapis.com/css2?family=3DOpen+Sans:wght@40=
+0;600;700&display=3Dswap');
+
+  /* Mobile (=E2=89=A4640px): shrink the 32px gutters and stack the 2-colum=
+n links block */
+  @media only screen and (max-width:700px){
+    .ds-container     { width:100%!important; max-width:100%!important; bor=
+der-radius:0!important; }
+    .ds-body-pad      { padding-left:16px!important; padding-right:16px!imp=
+ortant; }
+    .ds-footer-pad    { padding-left:16px!important; padding-right:16px!imp=
+ortant; }
+    .ds-links-col     { display:block!important; width:100%!important; padd=
+ing-left:0!important; padding-right:0!important; }
+    .ds-header-banner { height:auto!important; }
+  }
+</style>
+
+        <table role=3D"presentation" width=3D"100%" cellpadding=3D"0" cells=
+pacing=3D"0" border=3D"0" style=3D"mso-table-lspace:0pt;mso-table-rspace:0p=
+t;"><tbody>
+        <tr>
+          <td style=3D"padding:0;border-radius:12px 12px 0 0;overflow:hidde=
+n;mso-table-lspace:0pt;mso-table-rspace:0pt;">
+
+            <!--[if !mso]><!-->
+            <table role=3D"presentation" class=3D"ds-header-banner" width=
+=3D"100%" height=3D"194" cellpadding=3D"0" cellspacing=3D"0" border=3D"0" s=
+tyle=3D"width:100%;height:194px;background-color:#000000;background-image:u=
+rl('');background-size:cover;background-position:center;background-repeat:n=
+o-repeat;border-radius:12px 12px 0 0;mso-table-lspace:0pt;mso-table-rspace:=
+0pt;">
+              <!-- Logo (over photo, top) -->
+              <tr>
+                <td align=3D"center" valign=3D"top" height=3D"40" style=3D"=
+padding:18px 32px 0;mso-table-lspace:0pt;mso-table-rspace:0pt;">
+                  <img src=3D"https://datasport-platform-prod-public-s3-buc=
+ket.s3.eu-central-1.amazonaws.com/logos/datasport_logo.png" width=3D"140" h=
+eight=3D"20" alt=3D"Datasport" style=3D"display:block;margin:0 auto;width:1=
+40px;height:auto;max-width:140px;border:0;outline:none;text-decoration:none=
+;">
+                </td>
+              </tr>
+              <!-- Event title on a translucent band, pinned to the BOTTOM =
+over the photo -->
+              <tr>
+                <td align=3D"center" valign=3D"bottom" style=3D"padding:0;m=
+so-table-lspace:0pt;mso-table-rspace:0pt;">
+                  <table role=3D"presentation" width=3D"100%" cellpadding=
+=3D"0" cellspacing=3D"0" border=3D"0" style=3D"width:100%;background-color:=
+#000000;background-color:rgba(0,0,0,0.50);mso-table-lspace:0pt;mso-table-rs=
+pace:0pt;">
+                    <tr>
+                      <td align=3D"center" style=3D"padding:14px 32px 16px;=
+text-align:center;mso-table-lspace:0pt;mso-table-rspace:0pt;">
+                        <p style=3D"margin:0; margin:0 0 6px;line-height:1.=
+2;"><span style=3D"font-family:&quot;Open Sans&quot;,Arial,Helvetica,sans-s=
+erif;font-size:26px;font-weight:700;color:#ffffff;text-transform:uppercase;=
+letter-spacing:0.5px;">Test Lauf 2026</span></p>
+                        <p style=3D"margin:0; margin:0;line-height:1.3;"><s=
+pan style=3D"font-family:&quot;Open Sans&quot;,Arial,Helvetica,sans-serif;f=
+ont-size:15px;font-weight:600;color:#ffffff;">14.=E2=80=9315.03.2027</span>=
+</p>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+            <!--<![endif]-->
+
+            <!--[if mso]>
+            <table role=3D"presentation" width=3D"100%" cellpadding=3D"0" c=
+ellspacing=3D"0" border=3D"0" bgcolor=3D"#000000" style=3D"width:100%;backg=
+round-color:#000000;">
+              <tr>
+                <td align=3D"center" style=3D"padding:24px 32px 18px;">
+                  <img src=3D"https://datasport-platform-prod-public-s3-buc=
+ket.s3.eu-central-1.amazonaws.com/logos/datasport_logo.png" width=3D"140" h=
+eight=3D"20" alt=3D"Datasport" style=3D"display:block;margin:0 auto;border:=
+0;outline:none;text-decoration:none;" />
+                </td>
+              </tr>
+              <tr>
+                <td align=3D"center" style=3D"padding:0;font-size:0;line-he=
+ight:0;">
+                  <img src=3D"" width=3D"100%" alt=3D"Test Lauf 2026" style=
+=3D"display:block;width:100%;height:auto;border:0;outline:none;text-decorat=
+ion:none;" />
+                </td>
+              </tr>
+              <tr>
+                <td align=3D"center" bgcolor=3D"#000000" style=3D"padding:2=
+4px 32px 28px;background-color:#000000;">
+                  <p style=3D"margin:0; margin:0 0 8px;line-height:1.2;"><s=
+pan style=3D"font-family:Arial,Helvetica,sans-serif;font-size:26px;font-wei=
+ght:700;color:#ffffff;text-transform:uppercase;letter-spacing:0.5px;">Test =
+Lauf 2026</span></p>
+                  <p style=3D"margin:0; margin:0;line-height:1.3;"><span st=
+yle=3D"font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:60=
+0;color:#ffffff;">14.=E2=80=9315.03.2027</span></p>
+                </td>
+              </tr>
+            </table>
+            <![endif]-->
+
+          </td>
+        </tr>
+        </tbody></table>
+  </div>
+
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+  <!--[if (!mso)&(!IE)]><!--></div><!--<![endif]-->
+  </div>
+</div>
+<!--[if (mso)|(IE)]></td></tr></table></td><![endif]-->
+      <!--[if (mso)|(IE)]></tr></table></td></tr></table><![endif]-->
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<div class=3D"u-row-container" style=3D"padding: 0px;background-color: tran=
+sparent;">
+  <div class=3D"u-row" style=3D"margin: 0 auto;min-width: 320px;max-width: =
+640px;overflow-wrap: break-word;word-wrap: break-word;word-break: break-wor=
+d;background-color: transparent;">
+    <div style=3D"border-collapse: collapse;display: table;width: 100%;heig=
+ht: 100%;background-color: transparent;">
+      <!--[if (mso)|(IE)]><table role=3D"presentation" width=3D"100%" cellp=
+adding=3D"0" cellspacing=3D"0" border=3D"0"><tr><td style=3D"padding: 0px;b=
+ackground-color: transparent;"><table role=3D"presentation" cellpadding=3D"=
+0" cellspacing=3D"0" border=3D"0" width=3D"100%"><tr style=3D"background-co=
+lor: transparent;"><![endif]-->
+     =20
+<!--[if (mso)|(IE)]><td align=3D"center" width=3D"640" style=3D"background-=
+color: #ffffff;width: 640px;border-top: 0px solid transparent;border-left: =
+0px solid transparent;border-right: 0px solid transparent;border-bottom: 0p=
+x solid transparent;border-radius: 0px;-webkit-border-radius: 0px; -moz-bor=
+der-radius: 0px;" valign=3D"top"><table role=3D"presentation" width=3D"100%=
+" cellpadding=3D"0" cellspacing=3D"0" border=3D"0"><tr><td style=3D"padding=
+: 0px;"><![endif]-->
+<div class=3D"u-col u-col-100" style=3D"max-width: 320px;min-width: 640px;d=
+isplay: table-cell;vertical-align: top;">
+  <div style=3D"background-color: #ffffff;height: 100%;width: 100% !importa=
+nt;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radius: 0px;"=
+>
+  <!--[if (!mso)&(!IE)]><!--><div style=3D"box-sizing: border-box; height: =
+100%; padding: 0px;border-top: 0px solid transparent;border-left: 0px solid=
+ transparent;border-right: 0px solid transparent;border-bottom: 0px solid t=
+ransparent;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radiu=
+s: 0px;"><!--<![endif]-->
+ =20
+<table style=3D"font-family:'Open Sans',sans-serif;" role=3D"presentation" =
+cellpadding=3D"0" cellspacing=3D"0" width=3D"100%" border=3D"0">
+  <tbody>
+    <tr>
+      <td style=3D"overflow-wrap:break-word;word-break:break-word;padding:5=
+0px 20px 30px;font-family:'Open Sans',sans-serif;" align=3D"left">
+       =20
+  <div style=3D"font-family: 'Open Sans',sans-serif; font-size: 14px; font-=
+weight: 400; letter-spacing: 0px; line-height: 1.1;  text-align: left; word=
+-wrap: break-word;">
+    <p style=3D"margin:0; margin: 0px; margin-block: 0px;"><span style=3D"f=
+ont-weight: bold">Hallo Max!</span></p><p style=3D"margin:0; margin: 0px; m=
+argin-block: 0px;"><br></p><p style=3D"margin:0; margin: 0px; margin-block:=
+ 0px;"><span>Schon bald geht es los! Bist du bereit f=C3=BCr die Herausford=
+erung?</span></p>
+  </div>
+
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+  <!--[if (!mso)&(!IE)]><!--></div><!--<![endif]-->
+  </div>
+</div>
+<!--[if (mso)|(IE)]></td></tr></table></td><![endif]-->
+      <!--[if (mso)|(IE)]></tr></table></td></tr></table><![endif]-->
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<div class=3D"u-row-container" style=3D"padding: 0px;background-color: tran=
+sparent;">
+  <div class=3D"u-row" style=3D"margin: 0 auto;min-width: 320px;max-width: =
+640px;overflow-wrap: break-word;word-wrap: break-word;word-break: break-wor=
+d;background-color: transparent;">
+    <div style=3D"border-collapse: collapse;display: table;width: 100%;heig=
+ht: 100%;background-color: transparent;">
+      <!--[if (mso)|(IE)]><table role=3D"presentation" width=3D"100%" cellp=
+adding=3D"0" cellspacing=3D"0" border=3D"0"><tr><td style=3D"padding: 0px;b=
+ackground-color: transparent;"><table role=3D"presentation" cellpadding=3D"=
+0" cellspacing=3D"0" border=3D"0" width=3D"100%"><tr style=3D"background-co=
+lor: transparent;"><![endif]-->
+     =20
+<!--[if (mso)|(IE)]><td align=3D"center" width=3D"640" style=3D"width: 640p=
+x;border-top: 0px solid transparent;border-left: 0px solid transparent;bord=
+er-right: 0px solid transparent;border-bottom: 0px solid transparent;border=
+-radius: 0px;-webkit-border-radius: 0px; -moz-border-radius: 0px;" valign=
+=3D"top"><table role=3D"presentation" width=3D"100%" cellpadding=3D"0" cell=
+spacing=3D"0" border=3D"0"><tr><td style=3D"padding: 0px;"><![endif]-->
+<div class=3D"u-col u-col-100" style=3D"max-width: 320px;min-width: 640px;d=
+isplay: table-cell;vertical-align: top;">
+  <div style=3D"height: 100%;width: 100% !important;border-radius: 0px;-web=
+kit-border-radius: 0px; -moz-border-radius: 0px;">
+  <!--[if (!mso)&(!IE)]><!--><div style=3D"box-sizing: border-box; height: =
+100%; padding: 0px;border-top: 0px solid transparent;border-left: 0px solid=
+ transparent;border-right: 0px solid transparent;border-bottom: 0px solid t=
+ransparent;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radiu=
+s: 0px;"><!--<![endif]-->
+ =20
+<table style=3D"font-family:'Open Sans',sans-serif;" role=3D"presentation" =
+cellpadding=3D"0" cellspacing=3D"0" width=3D"100%" border=3D"0">
+  <tbody>
+    <tr>
+      <td style=3D"overflow-wrap:break-word;word-break:break-word;padding:0=
+px;font-family:'Open Sans',sans-serif;" align=3D"left">
+       =20
+  <div>
+    <table role=3D"presentation" width=3D"100%" cellpadding=3D"0" cellspaci=
+ng=3D"0" border=3D"0" style=3D"mso-table-lspace:0pt;mso-table-rspace:0pt;">=
+<tbody><tr><td class=3D"ds-body-pad" bgcolor=3D"#ffffff" style=3D"backgroun=
+d:#ffffff;background-color:#ffffff;padding:10px 20px;mso-table-lspace:0pt;m=
+so-table-rspace:0pt;"><p style=3D"margin:0; font-family:&quot;Open Sans&quo=
+t;,Arial,sans-serif;font-size:14px;font-weight:400;color:#F62121;line-heigh=
+t:1.4;margin:0 0 12px;text-transform:uppercase;letter-spacing:0.5px;">Your =
+event</p><table role=3D"presentation" width=3D"100%" cellpadding=3D"0" cell=
+spacing=3D"0" border=3D"0" style=3D"mso-table-lspace:0pt;mso-table-rspace:0=
+pt;"><tr><td class=3D"ds-card-gutter" width=3D"0" style=3D"width:0;font-siz=
+e:0;line-height:0;mso-table-lspace:0pt;mso-table-rspace:0pt;"></td><td styl=
+e=3D"mso-table-lspace:0pt;mso-table-rspace:0pt;"><table role=3D"presentatio=
+n" class=3D"ds-body-card-table" width=3D"100%" cellpadding=3D"0" cellspacin=
+g=3D"0" border=3D"0" align=3D"center" bgcolor=3D"#ffffff" style=3D"border-c=
+ollapse:separate;border:1px solid #ece5e5;border-radius:12px;background:#ff=
+ffff;background-color:#ffffff;width:100%;mso-table-lspace:0pt;mso-table-rsp=
+ace:0pt;"><tr><td class=3D"ds-body-card-inner" align=3D"left" style=3D"padd=
+ing:16px 24px;mso-table-lspace:0pt;mso-table-rspace:0pt;"><table role=3D"pr=
+esentation" width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" border=3D"0"=
+ style=3D"mso-table-lspace:0pt;mso-table-rspace:0pt;">
+  <tr><td class=3D"ds-card-label" width=3D"140" style=3D"font-family:&quot;=
+Open Sans&quot;,Arial,Helvetica,sans-serif;font-size:13px;font-weight:400;c=
+olor:#656770;line-height:1.4;padding:4px 0 12px;white-space:nowrap;vertical=
+-align:baseline;mso-table-lspace:0pt;mso-table-rspace:0pt;">Event</td><td a=
+lign=3D"right" style=3D"font-family:&quot;Open Sans&quot;,Arial,Helvetica,s=
+ans-serif;font-size:14px;font-weight:600;color:#231f20;line-height:1.4;padd=
+ing:4px 0 12px;text-align:right;vertical-align:baseline;mso-table-lspace:0p=
+t;mso-table-rspace:0pt;">Test Lauf 2026</td></tr>
+  <tr><td colspan=3D"2" style=3D"height:1px;font-size:0;line-height:0;backg=
+round-color:#ece5e5;padding:0;mso-table-lspace:0pt;mso-table-rspace:0pt;"><=
+/td></tr>
+  <tr><td class=3D"ds-card-label" width=3D"140" style=3D"font-family:&quot;=
+Open Sans&quot;,Arial,Helvetica,sans-serif;font-size:13px;font-weight:400;c=
+olor:#656770;line-height:1.4;padding:12px 0;white-space:nowrap;vertical-ali=
+gn:baseline;mso-table-lspace:0pt;mso-table-rspace:0pt;">Category</td><td al=
+ign=3D"right" style=3D"font-family:&quot;Open Sans&quot;,Arial,Helvetica,sa=
+ns-serif;font-size:14px;font-weight:600;color:#231f20;line-height:1.4;paddi=
+ng:12px 0;text-align:right;vertical-align:baseline;mso-table-lspace:0pt;mso=
+-table-rspace:0pt;">Herren 10 km</td></tr>
+  <tr><td colspan=3D"2" style=3D"height:1px;font-size:0;line-height:0;backg=
+round-color:#ece5e5;padding:0;mso-table-lspace:0pt;mso-table-rspace:0pt;"><=
+/td></tr>
+  <tr><td class=3D"ds-card-label" width=3D"140" style=3D"font-family:&quot;=
+Open Sans&quot;,Arial,Helvetica,sans-serif;font-size:13px;font-weight:400;c=
+olor:#656770;line-height:1.4;padding:12px 0 0;white-space:nowrap;vertical-a=
+lign:baseline;mso-table-lspace:0pt;mso-table-rspace:0pt;">Date</td><td alig=
+n=3D"right" style=3D"font-family:&quot;Open Sans&quot;,Arial,Helvetica,sans=
+-serif;font-size:14px;font-weight:600;color:#231f20;line-height:1.4;padding=
+:12px 0 0;text-align:right;vertical-align:baseline;mso-table-lspace:0pt;mso=
+-table-rspace:0pt;">14.03.2027</td></tr>
+  <tr><td colspan=3D"2" style=3D"height:1px;font-size:0;line-height:0;backg=
+round-color:#ece5e5;padding:0;mso-table-lspace:0pt;mso-table-rspace:0pt;"><=
+/td></tr><tr><td class=3D"ds-card-label" width=3D"140" style=3D"font-family=
+:&quot;Open Sans&quot;,Arial,Helvetica,sans-serif;font-size:13px;font-weigh=
+t:400;color:#656770;line-height:1.4;padding:12px 0 0;white-space:nowrap;ver=
+tical-align:baseline;mso-table-lspace:0pt;mso-table-rspace:0pt;">Bib</td><t=
+d align=3D"right" style=3D"font-family:&quot;Open Sans&quot;,Arial,Helvetic=
+a,sans-serif;font-size:14px;font-weight:600;color:#231f20;line-height:1.4;p=
+adding:12px 0 0;text-align:right;vertical-align:baseline;mso-table-lspace:0=
+pt;mso-table-rspace:0pt;">1234</td></tr>
+  <tr><td colspan=3D"2" style=3D"height:1px;font-size:0;line-height:0;backg=
+round-color:#ece5e5;padding:0;mso-table-lspace:0pt;mso-table-rspace:0pt;"><=
+/td></tr><tr><td class=3D"ds-card-label" width=3D"140" style=3D"font-family=
+:&quot;Open Sans&quot;,Arial,Helvetica,sans-serif;font-size:13px;font-weigh=
+t:400;color:#656770;line-height:1.4;padding:12px 0 0;white-space:nowrap;ver=
+tical-align:baseline;mso-table-lspace:0pt;mso-table-rspace:0pt;">Start time=
+</td><td align=3D"right" style=3D"font-family:&quot;Open Sans&quot;,Arial,H=
+elvetica,sans-serif;font-size:14px;font-weight:600;color:#231f20;line-heigh=
+t:1.4;padding:12px 0 0;text-align:right;vertical-align:baseline;mso-table-l=
+space:0pt;mso-table-rspace:0pt;">09:30</td></tr>
+  <tr><td colspan=3D"2" style=3D"height:1px;font-size:0;line-height:0;backg=
+round-color:#ece5e5;padding:0;mso-table-lspace:0pt;mso-table-rspace:0pt;"><=
+/td></tr><tr><td class=3D"ds-card-label" width=3D"140" style=3D"font-family=
+:&quot;Open Sans&quot;,Arial,Helvetica,sans-serif;font-size:13px;font-weigh=
+t:400;color:#656770;line-height:1.4;padding:12px 0 0;white-space:nowrap;ver=
+tical-align:baseline;mso-table-lspace:0pt;mso-table-rspace:0pt;">Start bloc=
+k</td><td align=3D"right" style=3D"font-family:&quot;Open Sans&quot;,Arial,=
+Helvetica,sans-serif;font-size:14px;font-weight:600;color:#231f20;line-heig=
+ht:1.4;padding:12px 0 0;text-align:right;vertical-align:baseline;mso-table-=
+lspace:0pt;mso-table-rspace:0pt;">B</td></tr>
+  <tr><td colspan=3D"2" style=3D"height:1px;font-size:0;line-height:0;backg=
+round-color:#ece5e5;padding:0;mso-table-lspace:0pt;mso-table-rspace:0pt;"><=
+/td></tr><tr><td class=3D"ds-card-label" width=3D"140" style=3D"font-family=
+:&quot;Open Sans&quot;,Arial,Helvetica,sans-serif;font-size:13px;font-weigh=
+t:400;color:#656770;line-height:1.4;padding:12px 0 0;white-space:nowrap;ver=
+tical-align:baseline;mso-table-lspace:0pt;mso-table-rspace:0pt;">Team / Clu=
+b</td><td align=3D"right" style=3D"font-family:&quot;Open Sans&quot;,Arial,=
+Helvetica,sans-serif;font-size:14px;font-weight:600;color:#231f20;line-heig=
+ht:1.4;padding:12px 0 0;text-align:right;vertical-align:baseline;mso-table-=
+lspace:0pt;mso-table-rspace:0pt;">Test Club</td></tr>
+</table></td></tr></table></td><td class=3D"ds-card-gutter" width=3D"0" sty=
+le=3D"width:0;font-size:0;line-height:0;mso-table-lspace:0pt;mso-table-rspa=
+ce:0pt;"></td></tr></table><table role=3D"presentation" width=3D"100%" cell=
+padding=3D"0" cellspacing=3D"0" border=3D"0" style=3D"mso-table-lspace:0pt;=
+mso-table-rspace:0pt;margin-top:24px;"><tr><td style=3D"height:1px;font-siz=
+e:0;line-height:0;background-color:#ece5e5;mso-table-lspace:0pt;mso-table-r=
+space:0pt;"></td></tr></table></td></tr></tbody></table>
+  </div>
+
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+  <!--[if (!mso)&(!IE)]><!--></div><!--<![endif]-->
+  </div>
+</div>
+<!--[if (mso)|(IE)]></td></tr></table></td><![endif]-->
+      <!--[if (mso)|(IE)]></tr></table></td></tr></table><![endif]-->
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<div class=3D"u-row-container" style=3D"padding: 0px;background-color: tran=
+sparent;">
+  <div class=3D"u-row" style=3D"margin: 0 auto;min-width: 320px;max-width: =
+640px;overflow-wrap: break-word;word-wrap: break-word;word-break: break-wor=
+d;background-color: transparent;">
+    <div style=3D"border-collapse: collapse;display: table;width: 100%;heig=
+ht: 100%;background-color: transparent;">
+      <!--[if (mso)|(IE)]><table role=3D"presentation" width=3D"100%" cellp=
+adding=3D"0" cellspacing=3D"0" border=3D"0"><tr><td style=3D"padding: 0px;b=
+ackground-color: transparent;"><table role=3D"presentation" cellpadding=3D"=
+0" cellspacing=3D"0" border=3D"0" width=3D"100%"><tr style=3D"background-co=
+lor: transparent;"><![endif]-->
+     =20
+<!--[if (mso)|(IE)]><td align=3D"center" width=3D"640" style=3D"width: 640p=
+x;border-top: 0px solid transparent;border-left: 0px solid transparent;bord=
+er-right: 0px solid transparent;border-bottom: 0px solid transparent;border=
+-radius: 0px;-webkit-border-radius: 0px; -moz-border-radius: 0px;" valign=
+=3D"top"><table role=3D"presentation" width=3D"100%" cellpadding=3D"0" cell=
+spacing=3D"0" border=3D"0"><tr><td style=3D"padding: 0px;"><![endif]-->
+<div class=3D"u-col u-col-100" style=3D"max-width: 320px;min-width: 640px;d=
+isplay: table-cell;vertical-align: top;">
+  <div style=3D"height: 100%;width: 100% !important;border-radius: 0px;-web=
+kit-border-radius: 0px; -moz-border-radius: 0px;">
+  <!--[if (!mso)&(!IE)]><!--><div style=3D"box-sizing: border-box; height: =
+100%; padding: 0px;border-top: 0px solid transparent;border-left: 0px solid=
+ transparent;border-right: 0px solid transparent;border-bottom: 0px solid t=
+ransparent;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radiu=
+s: 0px;"><!--<![endif]-->
+ =20
+<table style=3D"font-family:'Open Sans',sans-serif;" role=3D"presentation" =
+cellpadding=3D"0" cellspacing=3D"0" width=3D"100%" border=3D"0">
+  <tbody>
+    <tr>
+      <td style=3D"overflow-wrap:break-word;word-break:break-word;padding:0=
+px;font-family:'Open Sans',sans-serif;" align=3D"left">
+       =20
+  <div>
+    <table role=3D"presentation" width=3D"100%" cellpadding=3D"0" cellspaci=
+ng=3D"0" border=3D"0" style=3D"mso-table-lspace:0pt;mso-table-rspace:0pt;">=
+<tbody><tr><td class=3D"ds-body-pad" bgcolor=3D"#ffffff" style=3D"backgroun=
+d:#ffffff;background-color:#ffffff;padding:10px 20px;mso-table-lspace:0pt;m=
+so-table-rspace:0pt;">
+  <p style=3D"margin:0; font-family:&quot;Open Sans&quot;,Arial,sans-serif;=
+font-size:14px;font-weight:400;color:#F62121;line-height:1.4;margin:0 0 12p=
+x;text-transform:uppercase;letter-spacing:0.5px;">Your details</p>
+
+  <p style=3D"margin:0; font-family:&quot;Open Sans&quot;,Arial,Helvetica,s=
+ans-serif;font-size:14px;font-weight:400;color:#231f20;line-height:1.4;marg=
+in:0 0 16px;">Check your details in myDatasport.</p>
+  <table role=3D"presentation" width=3D"100%" cellpadding=3D"0" cellspacing=
+=3D"0" border=3D"0" style=3D"margin:0 0 16px;mso-table-lspace:0pt;mso-table=
+-rspace:0pt;">
+    <tr>
+      <td align=3D"center" style=3D"mso-table-lspace:0pt;mso-table-rspace:0=
+pt;">
+        <!--[if mso]><table role=3D"presentation" cellpadding=3D"0" cellspa=
+cing=3D"0" border=3D"0" align=3D"center"><tr><td align=3D"center" bgcolor=
+=3D"#CD0014" style=3D"border-radius:2px;mso-padding-alt:9px 24px;"><![endif=
+]-->
+        <a href=3D"" style=3D"display:inline-block;background-color:#CD0014=
+;color:#ffffff;font-family:&quot;Open Sans&quot;,Arial,Helvetica,sans-serif=
+;font-size:12px;font-weight:700;line-height:1.4;text-decoration:none;paddin=
+g:9px 24px;border-radius:2px;">Open myDatasport</a>
+        <!--[if mso]></td></tr></table><![endif]-->
+      </td>
+    </tr>
+  </table>
+
+  <table role=3D"presentation" width=3D"100%" cellpadding=3D"0" cellspacing=
+=3D"0" border=3D"0" style=3D"mso-table-lspace:0pt;mso-table-rspace:0pt;"><t=
+r><td class=3D"ds-card-gutter" width=3D"0" style=3D"width:0;font-size:0;lin=
+e-height:0;mso-table-lspace:0pt;mso-table-rspace:0pt;"></td><td style=3D"ms=
+o-table-lspace:0pt;mso-table-rspace:0pt;"><table role=3D"presentation" clas=
+s=3D"ds-body-card-table" width=3D"100%" cellpadding=3D"0" cellspacing=3D"0"=
+ border=3D"0" align=3D"center" bgcolor=3D"#ffffff" style=3D"border-collapse=
+:separate;border:1px solid #ece5e5;border-radius:12px;background:#ffffff;ba=
+ckground-color:#ffffff;width:100%;mso-table-lspace:0pt;mso-table-rspace:0pt=
+;"><tr><td class=3D"ds-body-card-inner" align=3D"left" style=3D"padding:16p=
+x 24px;mso-table-lspace:0pt;mso-table-rspace:0pt;"><table role=3D"presentat=
+ion" width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" border=3D"0" style=
+=3D"mso-table-lspace:0pt;mso-table-rspace:0pt;">
+    <tr><td class=3D"ds-card-label" width=3D"140" style=3D"font-family:&quo=
+t;Open Sans&quot;,Arial,Helvetica,sans-serif;font-size:13px;font-weight:400=
+;color:#656770;line-height:1.4;padding:4px 0 12px;white-space:nowrap;vertic=
+al-align:baseline;mso-table-lspace:0pt;mso-table-rspace:0pt;">Last name</td=
+><td align=3D"right" style=3D"font-family:&quot;Open Sans&quot;,Arial,Helve=
+tica,sans-serif;font-size:14px;font-weight:600;color:#231f20;line-height:1.=
+4;padding:4px 0 12px;text-align:right;vertical-align:baseline;mso-table-lsp=
+ace:0pt;mso-table-rspace:0pt;">Muster</td></tr>
+    <tr><td colspan=3D"2" style=3D"height:1px;font-size:0;line-height:0;bac=
+kground-color:#ece5e5;padding:0;mso-table-lspace:0pt;mso-table-rspace:0pt;"=
+></td></tr>
+    <tr><td class=3D"ds-card-label" width=3D"140" style=3D"font-family:&quo=
+t;Open Sans&quot;,Arial,Helvetica,sans-serif;font-size:13px;font-weight:400=
+;color:#656770;line-height:1.4;padding:12px 0;white-space:nowrap;vertical-a=
+lign:baseline;mso-table-lspace:0pt;mso-table-rspace:0pt;">First name</td><t=
+d align=3D"right" style=3D"font-family:&quot;Open Sans&quot;,Arial,Helvetic=
+a,sans-serif;font-size:14px;font-weight:600;color:#231f20;line-height:1.4;p=
+adding:12px 0;text-align:right;vertical-align:baseline;mso-table-lspace:0pt=
+;mso-table-rspace:0pt;">Max</td></tr>
+    <tr><td colspan=3D"2" style=3D"height:1px;font-size:0;line-height:0;bac=
+kground-color:#ece5e5;padding:0;mso-table-lspace:0pt;mso-table-rspace:0pt;"=
+></td></tr>
+    <tr><td class=3D"ds-card-label" width=3D"140" style=3D"font-family:&quo=
+t;Open Sans&quot;,Arial,Helvetica,sans-serif;font-size:13px;font-weight:400=
+;color:#656770;line-height:1.4;padding:12px 0;white-space:nowrap;vertical-a=
+lign:baseline;mso-table-lspace:0pt;mso-table-rspace:0pt;">Gender</td><td al=
+ign=3D"right" style=3D"font-family:&quot;Open Sans&quot;,Arial,Helvetica,sa=
+ns-serif;font-size:14px;font-weight:600;color:#231f20;line-height:1.4;paddi=
+ng:12px 0;text-align:right;vertical-align:baseline;mso-table-lspace:0pt;mso=
+-table-rspace:0pt;">M</td></tr>
+    <tr><td colspan=3D"2" style=3D"height:1px;font-size:0;line-height:0;bac=
+kground-color:#ece5e5;padding:0;mso-table-lspace:0pt;mso-table-rspace:0pt;"=
+></td></tr>
+    <tr><td class=3D"ds-card-label" width=3D"140" style=3D"font-family:&quo=
+t;Open Sans&quot;,Arial,Helvetica,sans-serif;font-size:13px;font-weight:400=
+;color:#656770;line-height:1.4;padding:12px 0;white-space:nowrap;vertical-a=
+lign:baseline;mso-table-lspace:0pt;mso-table-rspace:0pt;">Birthdate</td><td=
+ align=3D"right" style=3D"font-family:&quot;Open Sans&quot;,Arial,Helvetica=
+,sans-serif;font-size:14px;font-weight:600;color:#231f20;line-height:1.4;pa=
+dding:12px 0;text-align:right;vertical-align:baseline;mso-table-lspace:0pt;=
+mso-table-rspace:0pt;">01.01.1990</td></tr>
+    <tr><td colspan=3D"2" style=3D"height:1px;font-size:0;line-height:0;bac=
+kground-color:#ece5e5;padding:0;mso-table-lspace:0pt;mso-table-rspace:0pt;"=
+></td></tr>
+    <tr><td class=3D"ds-card-label" width=3D"140" style=3D"font-family:&quo=
+t;Open Sans&quot;,Arial,Helvetica,sans-serif;font-size:13px;font-weight:400=
+;color:#656770;line-height:1.4;padding:12px 0;white-space:nowrap;vertical-a=
+lign:baseline;mso-table-lspace:0pt;mso-table-rspace:0pt;">Address</td><td a=
+lign=3D"right" style=3D"font-family:&quot;Open Sans&quot;,Arial,Helvetica,s=
+ans-serif;font-size:14px;font-weight:600;color:#231f20;line-height:1.4;padd=
+ing:12px 0;text-align:right;vertical-align:baseline;mso-table-lspace:0pt;ms=
+o-table-rspace:0pt;">Teststrasse 1</td></tr>
+    <tr><td colspan=3D"2" style=3D"height:1px;font-size:0;line-height:0;bac=
+kground-color:#ece5e5;padding:0;mso-table-lspace:0pt;mso-table-rspace:0pt;"=
+></td></tr>
+    <tr><td class=3D"ds-card-label" width=3D"140" style=3D"font-family:&quo=
+t;Open Sans&quot;,Arial,Helvetica,sans-serif;font-size:13px;font-weight:400=
+;color:#656770;line-height:1.4;padding:12px 0 0;white-space:nowrap;vertical=
+-align:baseline;mso-table-lspace:0pt;mso-table-rspace:0pt;">ZIP / Town</td>=
+<td align=3D"right" style=3D"font-family:&quot;Open Sans&quot;,Arial,Helvet=
+ica,sans-serif;font-size:14px;font-weight:600;color:#231f20;line-height:1.4=
+;padding:12px 0 0;text-align:right;vertical-align:baseline;mso-table-lspace=
+:0pt;mso-table-rspace:0pt;">1000 Testdorf</td></tr>
+  </table></td></tr></table></td><td class=3D"ds-card-gutter" width=3D"0" s=
+tyle=3D"width:0;font-size:0;line-height:0;mso-table-lspace:0pt;mso-table-rs=
+pace:0pt;"></td></tr></table>
+
+  <table role=3D"presentation" width=3D"100%" cellpadding=3D"0" cellspacing=
+=3D"0" border=3D"0" style=3D"mso-table-lspace:0pt;mso-table-rspace:0pt;marg=
+in-top:24px;"><tr><td style=3D"height:1px;font-size:0;line-height:0;backgro=
+und-color:#ece5e5;mso-table-lspace:0pt;mso-table-rspace:0pt;"></td></tr></t=
+able>
+</td></tr></tbody></table>
+  </div>
+
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+  <!--[if (!mso)&(!IE)]><!--></div><!--<![endif]-->
+  </div>
+</div>
+<!--[if (mso)|(IE)]></td></tr></table></td><![endif]-->
+      <!--[if (mso)|(IE)]></tr></table></td></tr></table><![endif]-->
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<div class=3D"u-row-container" style=3D"padding: 0px;background-color: tran=
+sparent;">
+  <div class=3D"u-row" style=3D"margin: 0 auto;min-width: 320px;max-width: =
+640px;overflow-wrap: break-word;word-wrap: break-word;word-break: break-wor=
+d;background-color: transparent;">
+    <div style=3D"border-collapse: collapse;display: table;width: 100%;heig=
+ht: 100%;background-color: transparent;">
+      <!--[if (mso)|(IE)]><table role=3D"presentation" width=3D"100%" cellp=
+adding=3D"0" cellspacing=3D"0" border=3D"0"><tr><td style=3D"padding: 0px;b=
+ackground-color: transparent;"><table role=3D"presentation" cellpadding=3D"=
+0" cellspacing=3D"0" border=3D"0" width=3D"100%"><tr style=3D"background-co=
+lor: transparent;"><![endif]-->
+     =20
+<!--[if (mso)|(IE)]><td align=3D"center" width=3D"640" style=3D"background-=
+color: #ffffff;width: 640px;border-top: 0px solid transparent;border-left: =
+0px solid transparent;border-right: 0px solid transparent;border-bottom: 0p=
+x solid transparent;border-radius: 0px;-webkit-border-radius: 0px; -moz-bor=
+der-radius: 0px;" valign=3D"top"><table role=3D"presentation" width=3D"100%=
+" cellpadding=3D"0" cellspacing=3D"0" border=3D"0"><tr><td style=3D"padding=
+: 0px;"><![endif]-->
+<div class=3D"u-col u-col-100" style=3D"max-width: 320px;min-width: 640px;d=
+isplay: table-cell;vertical-align: top;">
+  <div style=3D"background-color: #ffffff;height: 100%;width: 100% !importa=
+nt;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radius: 0px;"=
+>
+  <!--[if (!mso)&(!IE)]><!--><div style=3D"box-sizing: border-box; height: =
+100%; padding: 0px;border-top: 0px solid transparent;border-left: 0px solid=
+ transparent;border-right: 0px solid transparent;border-bottom: 0px solid t=
+ransparent;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radiu=
+s: 0px;"><!--<![endif]-->
+ =20
+<table style=3D"font-family:'Open Sans',sans-serif;" role=3D"presentation" =
+cellpadding=3D"0" cellspacing=3D"0" width=3D"100%" border=3D"0">
+  <tbody>
+    <tr>
+      <td style=3D"overflow-wrap:break-word;word-break:break-word;padding:0=
+px;font-family:'Open Sans',sans-serif;" align=3D"left">
+       =20
+  <div>
+    <table role=3D"presentation" width=3D"100%" cellpadding=3D"0" cellspaci=
+ng=3D"0" border=3D"0" style=3D"mso-table-lspace:0pt;mso-table-rspace:0pt;">=
+<tbody>
+<tr>
+  <td class=3D"ds-body-pad" bgcolor=3D"#ffffff" style=3D"background:#ffffff=
+;background-color:#ffffff;padding:10px 20px 20px;mso-table-lspace:0pt;mso-t=
+able-rspace:0pt;">
+    <table role=3D"presentation" width=3D"100%" cellpadding=3D"0" cellspaci=
+ng=3D"0" border=3D"0" style=3D"mso-table-lspace:0pt;mso-table-rspace:0pt;">
+      <tr>
+        <td style=3D"vertical-align:bottom;padding-right:16px;mso-table-lsp=
+ace:0pt;mso-table-rspace:0pt;">
+          <p style=3D"margin:0; font-family:&quot;Open Sans&quot;,Arial,san=
+s-serif;font-size:14px;font-weight:400;color:#F62121;line-height:1.4;margin=
+:0 0 8px;text-transform:uppercase;letter-spacing:0.5px;">
+            Results
+          </p>
+          <p style=3D"margin:0; font-family:&quot;Open Sans&quot;,Arial,Hel=
+vetica,sans-serif;font-size:14px;font-weight:400;color:#231f20;line-height:=
+1.55;margin:0;">
+            Find your results here.
+          </p>
+        </td>
+        <td width=3D"160" style=3D"width:160px;white-space:nowrap;vertical-=
+align:bottom;mso-table-lspace:0pt;mso-table-rspace:0pt;">
+          <!--[if mso]>
+          <table role=3D"presentation" cellpadding=3D"0" cellspacing=3D"0" =
+border=3D"0" align=3D"center"><tr><td align=3D"center" bgcolor=3D"#CD0014" =
+style=3D"border-radius:2px;mso-padding-alt:9px 24px;">
+          <![endif]-->
+          <a href=3D"" style=3D"display:inline-block;background-color:#CD00=
+14;color:#ffffff;font-family:&quot;Open Sans&quot;,Arial,Helvetica,sans-ser=
+if;font-size:12px;font-weight:700;line-height:1.4;text-decoration:none;padd=
+ing:9px 24px;border-radius:2px;white-space:nowrap;">
+            Results
+          </a>
+          <!--[if mso]>
+          </td></tr></table>
+          <![endif]-->
+        </td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+  <td style=3D"padding:0 20px 10px;mso-table-lspace:0pt;mso-table-rspace:0p=
+t;">
+    <table role=3D"presentation" width=3D"100%" cellpadding=3D"0" cellspaci=
+ng=3D"0" border=3D"0" style=3D"mso-table-lspace:0pt;mso-table-rspace:0pt;">
+      <tr>
+        <td style=3D"border-top:1px solid #ece5e5;font-size:0;line-height:0=
+;mso-table-lspace:0pt;mso-table-rspace:0pt;"><!--[if gte mso 15]>&nbsp;<![e=
+ndif]--></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</tbody></table>
+  </div>
+
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+  <!--[if (!mso)&(!IE)]><!--></div><!--<![endif]-->
+  </div>
+</div>
+<!--[if (mso)|(IE)]></td></tr></table></td><![endif]-->
+      <!--[if (mso)|(IE)]></tr></table></td></tr></table><![endif]-->
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<div class=3D"u-row-container" style=3D"padding: 0px;background-color: tran=
+sparent;">
+  <div class=3D"u-row" style=3D"margin: 0 auto;min-width: 320px;max-width: =
+640px;overflow-wrap: break-word;word-wrap: break-word;word-break: break-wor=
+d;background-color: transparent;">
+    <div style=3D"border-collapse: collapse;display: table;width: 100%;heig=
+ht: 100%;background-color: transparent;">
+      <!--[if (mso)|(IE)]><table role=3D"presentation" width=3D"100%" cellp=
+adding=3D"0" cellspacing=3D"0" border=3D"0"><tr><td style=3D"padding: 0px;b=
+ackground-color: transparent;"><table role=3D"presentation" cellpadding=3D"=
+0" cellspacing=3D"0" border=3D"0" width=3D"100%"><tr style=3D"background-co=
+lor: transparent;"><![endif]-->
+     =20
+<!--[if (mso)|(IE)]><td align=3D"center" width=3D"640" style=3D"background-=
+color: #ffffff;width: 640px;border-top: 0px solid transparent;border-left: =
+0px solid transparent;border-right: 0px solid transparent;border-bottom: 0p=
+x solid transparent;border-radius: 0px;-webkit-border-radius: 0px; -moz-bor=
+der-radius: 0px;" valign=3D"top"><table role=3D"presentation" width=3D"100%=
+" cellpadding=3D"0" cellspacing=3D"0" border=3D"0"><tr><td style=3D"padding=
+: 0px;"><![endif]-->
+<div class=3D"u-col u-col-100" style=3D"max-width: 320px;min-width: 640px;d=
+isplay: table-cell;vertical-align: top;">
+  <div style=3D"background-color: #ffffff;height: 100%;width: 100% !importa=
+nt;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radius: 0px;"=
+>
+  <!--[if (!mso)&(!IE)]><!--><div style=3D"box-sizing: border-box; height: =
+100%; padding: 0px;border-top: 0px solid transparent;border-left: 0px solid=
+ transparent;border-right: 0px solid transparent;border-bottom: 0px solid t=
+ransparent;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radiu=
+s: 0px;"><!--<![endif]-->
+ =20
+<table style=3D"font-family:'Open Sans',sans-serif;" role=3D"presentation" =
+cellpadding=3D"0" cellspacing=3D"0" width=3D"100%" border=3D"0">
+  <tbody>
+    <tr>
+      <td style=3D"overflow-wrap:break-word;word-break:break-word;padding:0=
+px;font-family:'Open Sans',sans-serif;" align=3D"left">
+       =20
+  <div>
+<table role=3D"presentation" width=3D"100%" cellpadding=3D"0" cellspacing=
+=3D"0" border=3D"0" style=3D"mso-table-lspace:0pt;mso-table-rspace:0pt;"><t=
+body>
+<tr>
+  <td class=3D"ds-body-pad" bgcolor=3D"#ffffff" style=3D"background:#ffffff=
+;background-color:#ffffff;padding:10px 20px 20px;mso-table-lspace:0pt;mso-t=
+able-rspace:0pt;">
+    <table role=3D"presentation" width=3D"100%" cellpadding=3D"0" cellspaci=
+ng=3D"0" border=3D"0" style=3D"mso-table-lspace:0pt;mso-table-rspace:0pt;">
+      <tr>
+        <td style=3D"vertical-align:bottom;padding-right:16px;mso-table-lsp=
+ace:0pt;mso-table-rspace:0pt;">
+          <p style=3D"margin:0; font-family:&quot;Open Sans&quot;,Arial,san=
+s-serif;font-size:14px;font-weight:400;color:#F62121;line-height:1.4;margin=
+:0 0 8px;text-transform:uppercase;letter-spacing:0.5px;">
+            Event website
+          </p>
+          <p style=3D"margin:0; font-family:&quot;Open Sans&quot;,Arial,Hel=
+vetica,sans-serif;font-size:14px;font-weight:400;color:#231f20;line-height:=
+1.55;margin:0;">
+            All infos about the event.
+          </p>
+        </td>
+        <td width=3D"160" style=3D"width:160px;white-space:nowrap;vertical-=
+align:bottom;mso-table-lspace:0pt;mso-table-rspace:0pt;">
+          <!--[if mso]>
+          <table role=3D"presentation" cellpadding=3D"0" cellspacing=3D"0" =
+border=3D"0" align=3D"center"><tr><td align=3D"center" bgcolor=3D"#CD0014" =
+style=3D"border-radius:2px;mso-padding-alt:9px 24px;">
+          <![endif]-->
+          <a href=3D"" style=3D"display:inline-block;background-color:#CD00=
+14;color:#ffffff;font-family:&quot;Open Sans&quot;,Arial,Helvetica,sans-ser=
+if;font-size:12px;font-weight:700;line-height:1.4;text-decoration:none;padd=
+ing:9px 24px;border-radius:2px;white-space:nowrap;">
+            Website
+          </a>
+          <!--[if mso]>
+          </td></tr></table>
+          <![endif]-->
+        </td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+  <td style=3D"padding:0 20px 10px;mso-table-lspace:0pt;mso-table-rspace:0p=
+t;">
+    <table role=3D"presentation" width=3D"100%" cellpadding=3D"0" cellspaci=
+ng=3D"0" border=3D"0" style=3D"mso-table-lspace:0pt;mso-table-rspace:0pt;">
+      <tr>
+        <td style=3D"border-top:1px solid #ece5e5;font-size:0;line-height:0=
+;mso-table-lspace:0pt;mso-table-rspace:0pt;"><!--[if gte mso 15]>&nbsp;<![e=
+ndif]--></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</tbody></table>
+  </div>
+
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+  <!--[if (!mso)&(!IE)]><!--></div><!--<![endif]-->
+  </div>
+</div>
+<!--[if (mso)|(IE)]></td></tr></table></td><![endif]-->
+      <!--[if (mso)|(IE)]></tr></table></td></tr></table><![endif]-->
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<div class=3D"u-row-container" style=3D"padding: 0px;background-color: tran=
+sparent;">
+  <div class=3D"u-row" style=3D"margin: 0 auto;min-width: 320px;max-width: =
+640px;overflow-wrap: break-word;word-wrap: break-word;word-break: break-wor=
+d;background-color: transparent;">
+    <div style=3D"border-collapse: collapse;display: table;width: 100%;heig=
+ht: 100%;background-color: transparent;">
+      <!--[if (mso)|(IE)]><table role=3D"presentation" width=3D"100%" cellp=
+adding=3D"0" cellspacing=3D"0" border=3D"0"><tr><td style=3D"padding: 0px;b=
+ackground-color: transparent;"><table role=3D"presentation" cellpadding=3D"=
+0" cellspacing=3D"0" border=3D"0" width=3D"100%"><tr style=3D"background-co=
+lor: transparent;"><![endif]-->
+     =20
+<!--[if (mso)|(IE)]><td align=3D"center" width=3D"640" style=3D"background-=
+color: #ffffff;width: 640px;border-top: 0px solid transparent;border-left: =
+0px solid transparent;border-right: 0px solid transparent;border-bottom: 0p=
+x solid transparent;border-radius: 0px;-webkit-border-radius: 0px; -moz-bor=
+der-radius: 0px;" valign=3D"top"><table role=3D"presentation" width=3D"100%=
+" cellpadding=3D"0" cellspacing=3D"0" border=3D"0"><tr><td style=3D"padding=
+: 0px;"><![endif]-->
+<div class=3D"u-col u-col-100" style=3D"max-width: 320px;min-width: 640px;d=
+isplay: table-cell;vertical-align: top;">
+  <div style=3D"background-color: #ffffff;height: 100%;width: 100% !importa=
+nt;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radius: 0px;"=
+>
+  <!--[if (!mso)&(!IE)]><!--><div style=3D"box-sizing: border-box; height: =
+100%; padding: 0px;border-top: 0px solid transparent;border-left: 0px solid=
+ transparent;border-right: 0px solid transparent;border-bottom: 0px solid t=
+ransparent;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radiu=
+s: 0px;"><!--<![endif]-->
+ =20
+<table style=3D"font-family:'Open Sans',sans-serif;" role=3D"presentation" =
+cellpadding=3D"0" cellspacing=3D"0" width=3D"100%" border=3D"0">
+  <tbody>
+    <tr>
+      <td style=3D"overflow-wrap:break-word;word-break:break-word;padding:5=
+0px 20px 30px;font-family:'Open Sans',sans-serif;" align=3D"left">
+       =20
+  <div style=3D"font-family: 'Open Sans',sans-serif; font-size: 14px; font-=
+weight: 400; letter-spacing: 0px; line-height: 1.1;  text-align: left; word=
+-wrap: break-word;">
+    <p style=3D"margin:0; margin: 0px; margin-block: 0px;"><span>Nun kann's=
+ losgehen! Wir w=C3=BCnschen dir viel Power, Erfolg und eine Menge Spass.</=
+span></p><p style=3D"margin:0; margin: 0px; margin-block: 0px;"><br></p><p =
+style=3D"margin:0; margin: 0px; margin-block: 0px;"><span>Dein Datasport-Te=
+am</span></p>
+  </div>
+
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table style=3D"font-family:'Open Sans',sans-serif;" role=3D"presentation" =
+cellpadding=3D"0" cellspacing=3D"0" width=3D"100%" border=3D"0">
+  <tbody>
+    <tr>
+      <td style=3D"overflow-wrap:break-word;word-break:break-word;padding:1=
+0px;font-family:'Open Sans',sans-serif;" align=3D"left">
+       =20
+  <div>
+    <!--- START NEWSLETTER_TEASER --->
+<table role=3D"presentation" width=3D"100%" cellpadding=3D"0" cellspacing=
+=3D"0" border=3D"0" style=3D"width:100%;max-width:640px;">
+ <tr><td style=3D"padding:0 20px 28px;">
+  <table role=3D"presentation" width=3D"100%" cellpadding=3D"0" cellspacing=
+=3D"0" border=3D"0" style=3D"width:100%;background-color:#f9f7f7;border-lef=
+t:4px solid #c31229;border-radius:4px;">
+   <tr><td style=3D"padding:0;font-size:0;line-height:0;">
+     <a href=3D"https://docs.google.com/forms/d/e/1FAIpQLScc6fcFsGh7F6ENmwU=
+EdJ_NXHWVuhlzuZf0AW7tYVupAWBZhg/viewform" target=3D"_blank" style=3D"displa=
+y:block;"><img src=3D"https://assets.unlayer.com/projects/258121/1794222843=
+871-nl_banner_DE.jpg" width=3D"596" alt=3D"Datasport-Sportnews: Hol das Bes=
+te aus deinem Sport raus" style=3D"display:block;width:100%;max-width:596px=
+;height:auto;border:0;outline:none;text-decoration:none;border-radius:0 4px=
+ 0 0;"></a>
+   </td></tr>
+   <tr><td style=3D"padding:14px 16px 16px;">
+     <p style=3D"margin:0; margin:0 0 14px;padding:0 4px;font-family:'Open =
+Sans',Arial,Helvetica,sans-serif;font-size:13px;line-height:1.5;color:#6567=
+70;">Melde dich jetzt f=C3=BCr die Datasport-Sportnews an und erhalte alle =
+zwei Wochen Tipps zu Training, Ern=C3=A4hrung und Veranstaltungen.</p>
+     <div style=3D"font-size:0;line-height:0;text-align:center;">
+       <!--[if mso]><table role=3D"presentation" width=3D"100%" cellpadding=
+=3D"0" cellspacing=3D"0" border=3D"0"><tr><td width=3D"25%" valign=3D"top">=
+<![endif]-->
+       <div style=3D"display:inline-block;vertical-align:top;width:100%;max=
+-width:120px;padding:0 0 14px;">
+          <img src=3D"https://assets.unlayer.com/projects/258121/1794222576=
+747-icon_training.png" width=3D"32" height=3D"32" alt=3D"" style=3D"display=
+:block;margin:0 auto 6px;width:32px;height:32px;border:0;">
+          <p style=3D"margin:0; margin:0;padding:0 4px;font-family:'Open Sa=
+ns',Arial,Helvetica,sans-serif;font-size:11px;line-height:1.35;color:#65677=
+0;text-align:center;"><strong style=3D"color:#231f20;text-transform:upperca=
+se;">Trainingstipps</strong><br>von Spezialist:innen</p>
+        </div><!--[if mso]></td><td width=3D"25%" valign=3D"top"><![endif]-=
+-><div style=3D"display:inline-block;vertical-align:top;width:100%;max-widt=
+h:120px;padding:0 0 14px;">
+          <img src=3D"https://assets.unlayer.com/projects/258121/1794222593=
+772-icon_events.png" width=3D"32" height=3D"32" alt=3D"" style=3D"display:b=
+lock;margin:0 auto 6px;width:32px;height:32px;border:0;">
+          <p style=3D"margin:0; margin:0;padding:0 4px;font-family:'Open Sa=
+ns',Arial,Helvetica,sans-serif;font-size:11px;line-height:1.35;color:#65677=
+0;text-align:center;"><strong style=3D"color:#231f20;text-transform:upperca=
+se;">Event-Tipps</strong><br>&amp; Anmeldungen</p>
+        </div><!--[if mso]></td><td width=3D"25%" valign=3D"top"><![endif]-=
+-><div style=3D"display:inline-block;vertical-align:top;width:100%;max-widt=
+h:120px;padding:0 0 14px;">
+          <img src=3D"https://assets.unlayer.com/projects/258121/1794222615=
+987-icon_contest.png" width=3D"32" height=3D"32" alt=3D"" style=3D"display:=
+block;margin:0 auto 6px;width:32px;height:32px;border:0;">
+          <p style=3D"margin:0; margin:0;padding:0 4px;font-family:'Open Sa=
+ns',Arial,Helvetica,sans-serif;font-size:11px;line-height:1.35;color:#65677=
+0;text-align:center;"><strong style=3D"color:#231f20;text-transform:upperca=
+se;">Verlosungen</strong><br>&amp; exklusive Angebote</p>
+        </div><!--[if mso]></td><td width=3D"25%" valign=3D"top"><![endif]-=
+-><div style=3D"display:inline-block;vertical-align:top;width:100%;max-widt=
+h:120px;padding:0 0 14px;">
+          <img src=3D"https://assets.unlayer.com/projects/258121/1794222629=
+889-icon_health.png" width=3D"32" height=3D"32" alt=3D"" style=3D"display:b=
+lock;margin:0 auto 6px;width:32px;height:32px;border:0;">
+          <p style=3D"margin:0; margin:0;padding:0 4px;font-family:'Open Sa=
+ns',Arial,Helvetica,sans-serif;font-size:11px;line-height:1.35;color:#65677=
+0;text-align:center;"><strong style=3D"color:#231f20;text-transform:upperca=
+se;">Gesundheitstipps</strong><br>von Expert:innen</p>
+        </div>
+       <!--[if mso]></td></tr></table><![endif]-->
+     </div>
+     <div style=3D"font-size:0;line-height:0;padding:0 4px;">
+       <!--[if mso]><table role=3D"presentation" cellpadding=3D"0" cellspac=
+ing=3D"0" border=3D"0"><tr><td valign=3D"middle"><![endif]-->
+       <div style=3D"display:inline-block;vertical-align:middle;margin:2px =
+14px 8px 0;">
+         <table role=3D"presentation" border=3D"0" cellspacing=3D"0" cellpa=
+dding=3D"0" style=3D"border-collapse:separate;"><tr>
+           <td align=3D"center" bgcolor=3D"#c31229" style=3D"border-radius:=
+2px;padding:9px 18px;">
+             <a href=3D"https://docs.google.com/forms/d/e/1FAIpQLScc6fcFsGh=
+7F6ENmwUEdJ_NXHWVuhlzuZf0AW7tYVupAWBZhg/viewform" target=3D"_blank" style=
+=3D"display:block;font-family:'Open Sans',Arial,Helvetica,sans-serif;font-s=
+ize:13px;font-weight:600;line-height:1.4;color:#ffffff;text-decoration:none=
+;"><!--[if mso]>&nbsp;<![endif]-->Jetzt kostenlos abonnieren<!--[if mso]>&n=
+bsp;<![endif]--></a>
+           </td></tr></table>
+       </div>
+       <!--[if mso]></td><td valign=3D"middle" style=3D"padding-left:14px;"=
+><![endif]-->
+       <div style=3D"display:inline-block;vertical-align:middle;max-width:3=
+00px;margin:0 0 8px;font-family:'Open Sans',Arial,Helvetica,sans-serif;font=
+-size:12px;line-height:1.45;color:#656770;">
+         <strong style=3D"color:#231f20;">Kostenlos.</strong> Kein Spam, je=
+derzeit abmeldbar.
+       </div>
+       <!--[if mso]></td></tr></table><![endif]-->
+     </div>
+   </td></tr>
+  </table>
+ </td></tr>
+</table>
+<!--- END NEWSLETTER_TEASER --->
+  </div>
+
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+  <!--[if (!mso)&(!IE)]><!--></div><!--<![endif]-->
+  </div>
+</div>
+<!--[if (mso)|(IE)]></td></tr></table></td><![endif]-->
+      <!--[if (mso)|(IE)]></tr></table></td></tr></table><![endif]-->
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<div class=3D"u-row-container" style=3D"padding: 0px;background-color: tran=
+sparent;">
+  <div class=3D"u-row" style=3D"margin: 0 auto;min-width: 320px;max-width: =
+640px;overflow-wrap: break-word;word-wrap: break-word;word-break: break-wor=
+d;background-color: transparent;">
+    <div style=3D"border-collapse: collapse;display: table;width: 100%;heig=
+ht: 100%;background-color: transparent;">
+      <!--[if (mso)|(IE)]><table role=3D"presentation" width=3D"100%" cellp=
+adding=3D"0" cellspacing=3D"0" border=3D"0"><tr><td style=3D"padding: 0px;b=
+ackground-color: transparent;"><table role=3D"presentation" cellpadding=3D"=
+0" cellspacing=3D"0" border=3D"0" width=3D"100%"><tr style=3D"background-co=
+lor: transparent;"><![endif]-->
+     =20
+<!--[if (mso)|(IE)]><td align=3D"center" width=3D"640" style=3D"width: 640p=
+x;border-top: 0px solid transparent;border-left: 0px solid transparent;bord=
+er-right: 0px solid transparent;border-bottom: 0px solid transparent;border=
+-radius: 0px;-webkit-border-radius: 0px; -moz-border-radius: 0px;" valign=
+=3D"top"><table role=3D"presentation" width=3D"100%" cellpadding=3D"0" cell=
+spacing=3D"0" border=3D"0"><tr><td style=3D"padding: 0px;"><![endif]-->
+<div class=3D"u-col u-col-100" style=3D"max-width: 320px;min-width: 640px;d=
+isplay: table-cell;vertical-align: top;">
+  <div style=3D"height: 100%;width: 100% !important;border-radius: 0px;-web=
+kit-border-radius: 0px; -moz-border-radius: 0px;">
+  <!--[if (!mso)&(!IE)]><!--><div style=3D"box-sizing: border-box; height: =
+100%; padding: 0px;border-top: 0px solid transparent;border-left: 0px solid=
+ transparent;border-right: 0px solid transparent;border-bottom: 0px solid t=
+ransparent;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radiu=
+s: 0px;"><!--<![endif]-->
+ =20
+<table style=3D"font-family:'Open Sans',sans-serif;" role=3D"presentation" =
+cellpadding=3D"0" cellspacing=3D"0" width=3D"100%" border=3D"0">
+  <tbody>
+    <tr>
+      <td style=3D"overflow-wrap:break-word;word-break:break-word;padding:0=
+px;font-family:'Open Sans',sans-serif;" align=3D"left">
+       =20
+  <div>
+    <table role=3D"presentation" width=3D"100%" cellpadding=3D"0" cellspaci=
+ng=3D"0" border=3D"0" bgcolor=3D"
+#F62121" style=3D"background:
+#F62121;background-color:
+#F62121;border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;=
+">
+    <tr>
+      <td class=3D"ds-footer-pad" bgcolor=3D"
+#F62121" style=3D"background:
+#F62121;background-color:
+#F62121;padding:40px 20px 10px 20px;mso-table-lspace:0pt;mso-table-rspace:0=
+pt;">
+              <p style=3D"font-family:&quot;Open Sans&quot;,Arial,Helvetica=
+,sans-serif;font-size:12px;font-weight:700;color:
+#ffffff;line-height:1.2;text-align:center;margin:0 0 6px;">
+                Questions?
+              </p>
+              <p style=3D"font-family:&quot;Open Sans&quot;,Arial,Helvetica=
+,sans-serif;font-size:12px;font-weight:400;color:
+#ffffff;line-height:1.5;text-align:center;margin:0 0 6px;">
+                Contact us. Please include your order number (<strong style=
+=3D"color:
+#ffffff;font-weight:700;">TEST-0001</strong>)
+              </p>
+              <p style=3D"font-family:&quot;Open Sans&quot;,Arial,Helvetica=
+,sans-serif;font-size:12px;font-weight:400;color:
+#ffffff;line-height:1.5;text-align:center;margin:0;">
+                <a href=3D"mailto:info@datasport.com" style=3D"color:
+#ffffff;text-decoration:none;font-weight:600;">info@datasport.com</a>
+              </p>
+      </td>
+    </tr>
+  </table>
+  </div>
+
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+  <!--[if (!mso)&(!IE)]><!--></div><!--<![endif]-->
+  </div>
+</div>
+<!--[if (mso)|(IE)]></td></tr></table></td><![endif]-->
+      <!--[if (mso)|(IE)]></tr></table></td></tr></table><![endif]-->
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<div class=3D"u-row-container" style=3D"padding: 0px;background-color: tran=
+sparent;">
+  <div class=3D"u-row" style=3D"margin: 0 auto;min-width: 320px;max-width: =
+640px;overflow-wrap: break-word;word-wrap: break-word;word-break: break-wor=
+d;background-color: transparent;">
+    <div style=3D"border-collapse: collapse;display: table;width: 100%;heig=
+ht: 100%;background-color: transparent;">
+      <!--[if (mso)|(IE)]><table role=3D"presentation" width=3D"100%" cellp=
+adding=3D"0" cellspacing=3D"0" border=3D"0"><tr><td style=3D"padding: 0px;b=
+ackground-color: transparent;"><table role=3D"presentation" cellpadding=3D"=
+0" cellspacing=3D"0" border=3D"0" width=3D"100%"><tr style=3D"background-co=
+lor: transparent;"><![endif]-->
+     =20
+<!--[if (mso)|(IE)]><td align=3D"center" width=3D"640" style=3D"width: 640p=
+x;border-top: 0px solid transparent;border-left: 0px solid transparent;bord=
+er-right: 0px solid transparent;border-bottom: 0px solid transparent;border=
+-radius: 0px;-webkit-border-radius: 0px; -moz-border-radius: 0px;" valign=
+=3D"top"><table role=3D"presentation" width=3D"100%" cellpadding=3D"0" cell=
+spacing=3D"0" border=3D"0"><tr><td style=3D"padding: 0px;"><![endif]-->
+<div class=3D"u-col u-col-100" style=3D"max-width: 320px;min-width: 640px;d=
+isplay: table-cell;vertical-align: top;">
+  <div style=3D"height: 100%;width: 100% !important;border-radius: 0px;-web=
+kit-border-radius: 0px; -moz-border-radius: 0px;">
+  <!--[if (!mso)&(!IE)]><!--><div style=3D"box-sizing: border-box; height: =
+100%; padding: 0px;border-top: 0px solid transparent;border-left: 0px solid=
+ transparent;border-right: 0px solid transparent;border-bottom: 0px solid t=
+ransparent;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radiu=
+s: 0px;"><!--<![endif]-->
+ =20
+<table style=3D"font-family:'Open Sans',sans-serif;" role=3D"presentation" =
+cellpadding=3D"0" cellspacing=3D"0" width=3D"100%" border=3D"0">
+  <tbody>
+    <tr>
+      <td style=3D"overflow-wrap:break-word;word-break:break-word;padding:0=
+px;font-family:'Open Sans',sans-serif;" align=3D"left">
+       =20
+  <div>
+    <table role=3D"presentation" width=3D"100%" cellpadding=3D"0" cellspaci=
+ng=3D"0" border=3D"0" bgcolor=3D"#F62121" style=3D"background:#F62121;backg=
+round-color:#F62121;border-collapse:collapse;mso-table-lspace:0pt;mso-table=
+-rspace:0pt;">
+    <tr>
+      <td class=3D"ds-footer-pad" bgcolor=3D"#F62121" style=3D"background:#=
+F62121;background-color:#F62121;padding:10px 20px;mso-table-lspace:0pt;mso-=
+table-rspace:0pt;">
+              <p style=3D"margin:0; font-family:&quot;Open Sans&quot;,Arial=
+,Helvetica,sans-serif;font-size:12px;font-weight:700;color:#ffffff;line-hei=
+ght:1.4;text-align:center;text-transform:capitalize;margin:0 0 16px;">
+                Follow us
+              </p>
+              <table role=3D"presentation" cellpadding=3D"0" cellspacing=3D=
+"0" border=3D"0" width=3D"100%" style=3D"mso-table-lspace:0pt;mso-table-rsp=
+ace:0pt;">
+                <tr>
+                  <td align=3D"center" style=3D"mso-table-lspace:0pt;mso-ta=
+ble-rspace:0pt;">
+                    <table role=3D"presentation" cellpadding=3D"0" cellspac=
+ing=3D"0" border=3D"0" align=3D"center" style=3D"margin:0 auto;mso-table-ls=
+pace:0pt;mso-table-rspace:0pt;">
+                      <tr>
+                        <td style=3D"padding:0 10px;mso-table-lspace:0pt;ms=
+o-table-rspace:0pt;">
+                          <a href=3D"">
+                            <img src=3D"https://datasport-platform-prod-pub=
+lic-s3-bucket.s3.eu-central-1.amazonaws.com/logos/facebook_icon.png" width=
+=3D"22" height=3D"22" alt=3D"Facebook" style=3D"display:block;width:22px;he=
+ight:22px;border:0;outline:none;text-decoration:none;">
+                          </a>
+                        </td>
+                        <td style=3D"padding:0 10px;mso-table-lspace:0pt;ms=
+o-table-rspace:0pt;">
+                          <a href=3D"">
+                            <img src=3D"https://datasport-platform-prod-pub=
+lic-s3-bucket.s3.eu-central-1.amazonaws.com/logos/instagram_icon.png" width=
+=3D"22" height=3D"22" alt=3D"Instagram" style=3D"display:block;width:22px;h=
+eight:22px;border:0;outline:none;text-decoration:none;">
+                          </a>
+                        </td>
+                        <td style=3D"padding:0 10px;mso-table-lspace:0pt;ms=
+o-table-rspace:0pt;">
+                          <a href=3D"">
+                            <img src=3D"https://datasport-platform-prod-pub=
+lic-s3-bucket.s3.eu-central-1.amazonaws.com/logos/linkedin_icon.png" width=
+=3D"22" height=3D"22" alt=3D"LinkedIn" style=3D"display:block;width:22px;he=
+ight:22px;border:0;outline:none;text-decoration:none;">
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td height=3D"24" style=3D"height:24px;font-size:0;line-h=
+eight:0;mso-table-lspace:0pt;mso-table-rspace:0pt;"></td>
+                </tr>
+              </table>
+              <p style=3D"margin:0; font-family:&quot;Open Sans&quot;,Arial=
+,Helvetica,sans-serif;font-size:10px;font-weight:400;color:#ffffff;line-hei=
+ght:1.4;text-align:center;margin:0 0 8px;">
+                <a href=3D"" style=3D"color:#ffffff;text-decoration:underli=
+ne;"></a>
+              </p>
+              <p style=3D"margin:0; font-family:&quot;Open Sans&quot;,Arial=
+,Helvetica,sans-serif;font-size:10px;font-weight:400;color:#ffffff;line-hei=
+ght:1.4;text-align:center;margin:0 0 32px;">
+                =C2=A9  Datasport =E2=80=94=20
+              </p>
+      </td>
+    </tr>
+  </table>
+  </div>
+
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+  <!--[if (!mso)&(!IE)]><!--></div><!--<![endif]-->
+  </div>
+</div>
+<!--[if (mso)|(IE)]></td></tr></table></td><![endif]-->
+      <!--[if (mso)|(IE)]></tr></table></td></tr></table><![endif]-->
+    </div>
+  </div>
+</div>
+
+
+
+    <!--[if (mso)|(IE)]></td></tr></table></td></tr></table><![endif]-->
+    </td>
+  </tr>
+  </tbody>
+  </table>
+  <!--[if mso]></div><![endif]-->
+  <!--[if IE]></div><![endif]-->
+</body>
+
+</html>

@@ -652,9 +652,165 @@
         line-height: 1.5;
         white-space: pre-line;
       }
+      .strategy-intro {
+        margin-bottom: 1.25rem;
+      }
+      .strategy-intro p {
+        font-size: 14px;
+        color: #555;
+        max-width: 720px;
+      }
+      #strategy-summary {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      .strategy-section-title {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #888;
+        margin: 0 0 0.5rem;
+      }
+      #strategy-timeline {
+        margin-bottom: 2rem;
+      }
+      #strategy-timeline .gantt-wrap {
+        border: 0.5px solid #e0ddd6;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .phase-num {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #111;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 600;
+        flex-shrink: 0;
+      }
+      .phase-num.is-side {
+        background: #fff;
+        color: #111;
+        border: 1px solid #111;
+      }
+      .phase-num.is-done {
+        background: #6aab87;
+      }
+      .phase-cards {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+      .phase-card {
+        background: #fff;
+        border: 0.5px solid #e0ddd6;
+        border-radius: 10px;
+        padding: 1.125rem 1.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        scroll-margin-top: 1rem;
+      }
+      .phase-card.is-highlighted {
+        box-shadow: 0 0 0 2px #51cad0;
+      }
+      .phase-card-head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .phase-card-title {
+        font-size: 15px;
+        font-weight: 600;
+        color: #111;
+        line-height: 1.3;
+      }
+      .phase-card-period {
+        font-size: 12px;
+        color: #999;
+        margin-left: auto;
+        white-space: nowrap;
+      }
+      .phase-objective {
+        font-size: 13px;
+        color: #444;
+      }
+      .phase-progress {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 12px;
+        color: #888;
+      }
+      .phase-progress .gantt-bar {
+        position: static;
+        transform: none;
+        flex: 1;
+        height: 8px;
+        border-radius: 4px;
+        box-shadow: none;
+      }
+      .phase-block-title {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #999;
+        margin-bottom: 4px;
+      }
+      .phase-list {
+        list-style: none;
+        font-size: 13px;
+        color: #222;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .phase-list li {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+      }
+      .phase-list .badge {
+        font-size: 10px;
+        padding: 2px 7px;
+        margin-left: auto;
+      }
+      .phase-kpi::before {
+        content: "→";
+        color: #51cad0;
+        font-weight: 600;
+      }
+      .phase-all {
+        font-size: 12px;
+        color: #888;
+        border-top: 0.5px solid #f0ede8;
+        padding-top: 10px;
+      }
+      .phase-all summary {
+        cursor: pointer;
+      }
+      .phase-all summary:hover {
+        color: #333;
+      }
+      .phase-all .phase-list {
+        margin-top: 8px;
+        font-size: 12.5px;
+      }
       @media (max-width: 700px) {
         body {
           padding: 1rem;
+        }
+        #strategy-summary,
+        .phase-cards {
+          grid-template-columns: 1fr 1fr;
+        }
+        .phase-cards {
+          grid-template-columns: 1fr;
         }
         .summary {
           grid-template-columns: repeat(2, 1fr);
@@ -682,6 +838,7 @@
       <div class="tabs">
         <button class="tab-btn active" data-tab="roadmap">Roadmap</button>
         <button class="tab-btn" data-tab="mesures">Detailed measures</button>
+        <button class="tab-btn" data-tab="strategy">FFL Magazine strategy</button>
       </div>
 
       <div class="tab-panel" id="tab-roadmap">
@@ -798,6 +955,24 @@
         </div>
         <div id="table-container"></div>
       </div>
+
+      <div class="tab-panel" id="tab-strategy" style="display: none">
+        <div class="strategy-intro">
+          <div class="stream-label">
+            <span class="dot dot-magazine"></span>FIT for LIFE magazine
+          </div>
+          <p>
+            Grow paid subscriptions step by step: fix the shop and measure it
+            (November), run the Christmas gift campaign (end of November to
+            20 December) while preparing the paid pilot, bring Datasport
+            athletes to the magazine and run the pilot (January), then strengthen
+            offers and retention (February).
+          </p>
+        </div>
+        <div class="summary" id="strategy-summary"></div>
+        <div id="strategy-timeline"></div>
+        <div id="strategy-phases"></div>
+      </div>
     </div>
 
     <div class="modal-overlay" id="measure-modal" style="display: none">
@@ -828,6 +1003,8 @@
       //   result: "3200 clicks/month (as of Aug)" — plain-text outcome, OR an object with any of
       //     { emailsSent: 12500, ctr: "3.4%", onboardingsStarted: 210 } for a per-field breakdown
       //   screenshots: ["screenshots/foo.png"] — relative paths to images to display
+      //   phase: "fix-shop" — magazine measures only: the step of the FFL Magazine strategy tab
+      //     (foundations | fix-shop | touchpoints | paid | offers-retention | christmas, see magazinePhases)
       //   link: "https://datasport.atlassian.net/browse/DNG-1234" — related ticket/doc URL,
       //     or an array of URLs (e.g. ["...DNG-1234", "...DNG-5678"]) when a measure has several tickets
       //   linkLabel: "DNG-1234" — text shown for the link (defaults to the raw URL);
@@ -1140,23 +1317,24 @@
           impact: "vhigh",
           status: "done",
           responsible: "Raphael",
-          goal: "CTR ≥ 2%",
-          description: "Designs are finalized.",
+          goal: "CTR ≥ 1% (per page view)",
+          description: "Current CTR (GA4 teaser_click, 26 Oct – 16 Nov 2026): ≈ 0.15% per page view — 177 clicks / 119,740 dashboard views (≈ 0.55% per user, 32,052 users).\n• DE 0.17% · FR 0.32% · IT 0.23% · EN 0.05% (EN has ≈ 7.9 views per user, likely reloads)\n• Denominator is all page views, not teaser impressions: add a teaser_view event to get the real CTR.\n\nDesigns are finalized.",
           link: "https://www.figma.com/design/Nx8XJ2cSsgteW9Ji7OgpoK/test-waiting-page?node-id=43-4978, https://datasport.atlassian.net/browse/MAI-1188, https://github.com/datasport-com/ds_fe_myds/pull/179",
           linkLabel: "Figma",
         },
         {
           stream: "magazine",
           category: "Touchpoints & teasers",
+          phase: "touchpoints",
           name: "CTA - Dashboard page (Magazine)",
           sub: "Design to be defined — tested via A/B test",
-          months: ["2026-12", "2027-01"],
+          months: ["2027-01"],
           effort: "low",
           impact: "vhigh",
           status: "todo",
           responsible: "Raphael",
-          goal: "CTR ≥ 2%",
-          description: "waiting for ab testing tool to be set up and campaign to be created"
+          goal: "CTR ≥ 1% (per page view)",
+          description: "The web A/B testing tool is set up (see 'Web AB testing tool — setup'): the campaign remains to be created.\nReference: the Coach teaser on the same page is at ≈ 0.15% per page view (GA4, 26 Oct – 16 Nov 2026).",
         },
         {
           stream: "coach",
@@ -1168,23 +1346,24 @@
           impact: "vhigh",
           status: "done",
           responsible: "Raphael",
-          goal: "CTR ≥ 2%",
-          description: "Designs are finalized.",
+          goal: "CTR ≥ 1% (per page view)",
+          description: "Current CTR (GA4 teaser_click, 26 Oct – 16 Nov 2026): ≈ 0.04% per page view — 97 clicks / 229,259 athlete result page views (/participant/) (≈ 0.16% per user, 61,250 users).\n• Denominator is all page views, not teaser impressions: add a teaser_view event to get the real CTR.\n\nDesigns are finalized.",
           link: "https://www.figma.com/design/Nx8XJ2cSsgteW9Ji7OgpoK/test-waiting-page?node-id=43-4978, https://github.com/datasport-com/ds_fe_ranking/pull/948, https://datasport.atlassian.net/browse/MAI-1188",
           linkLabel: "Figma",
         },
         {
           stream: "magazine",
           category: "Touchpoints & teasers",
+          phase: "touchpoints",
           name: "CTA - Results page (Magazine)",
           sub: "Design to be defined — tested via A/B test",
-          months: ["2026-12", "2027-01"],
+          months: ["2027-01"],
           effort: "low",
           impact: "vhigh",
           status: "todo",
           responsible: "Raphael",
-          goal: "CTR ≥ 2%",
-          description: "waiting for ab testing tool to be set up and campaign to be created"
+          goal: "CTR ≥ 1% (per page view)",
+          description: "The web A/B testing tool is set up (see 'Web AB testing tool — setup'): the campaign remains to be created.\nReference: the Coach teaser on the same page is at ≈ 0.04% per page view (GA4, 26 Oct – 16 Nov 2026).",
         },
         {
           stream: "coach",
@@ -1202,9 +1381,10 @@
         {
           stream: "magazine",
           category: "Touchpoints & teasers",
+          phase: "touchpoints",
           name: "CTA - Athlete search page (Magazine)",
           sub: "teasing for the magazine on athletes' search page? — tested via A/B test",
-          months: ["2026-11"],
+          months: ["2027-01"],
           effort: "low",
           impact: "low",
           status: "todo",
@@ -1228,9 +1408,10 @@
         {
           stream: "magazine",
           category: "Touchpoints & teasers",
+          phase: "touchpoints",
           name: "CTA - Start list (Magazine)",
           sub: "Product presence on the start list — tested via A/B test",
-          months: ["2026-11"],
+          months: ["2027-01"],
           effort: "med",
           impact: "low",
           status: "todo",
@@ -1270,6 +1451,7 @@
         {
           stream: "magazine",
           category: "Touchpoints & teasers",
+          phase: "touchpoints",
           name: "Mail - Teaser in confirmation email (Magazine)",
           sub: "Create a HTML to be integrated in the confirmation emails",
           months: ["2026-07", "2026-08"],
@@ -1279,14 +1461,15 @@
           responsible: "Katrin",
           goal: "CTR ≥ 1.5%",
           description:
-            "Events have been selected — still open whether we'll be allowed to integrate the teaser for them. Asked Thomas W. to integrate the teaser directly in the future email template.\n\nConfirmation from Marcel for Engadiner Skimarathon still pending — ticket will be created once confirmed.",
+            "Current CTR: not available yet (no click data on the teaser so far). Tag the teaser link with UTM parameters to measure it once it is live.\n\nEvents have been selected — still open whether we'll be allowed to integrate the teaser for them. Asked Thomas W. to integrate the teaser directly in the future email template.\n\nConfirmation from Marcel for Engadiner Skimarathon still pending — ticket will be created once confirmed.",
         },
         {
           stream: ["coach", "magazine"],
           category: "Touchpoints & teasers",
+          phase: "touchpoints",
           name: "Mail - Post registration teasing",
           sub: "Teasing pre race with sequencing and different bias",
-          months: ["2026-10", "2026-11"],
+          months: ["2027-01"],
           effort: "low",
           impact: "high",
           status: "todo",
@@ -1296,9 +1479,10 @@
         {
           stream: ["coach", "magazine"],
           category: "Touchpoints & teasers",
+          phase: "touchpoints",
           name: "Mail - Post race teasing",
           sub: "Post race subscription teasing with a sequencing J+1 → J+21",
-          months: ["2026-10", "2026-11"],
+          months: ["2027-01"],
           effort: "low",
           impact: "med",
           status: "todo",
@@ -1308,9 +1492,10 @@
         {
           stream: ["coach", "magazine"],
           category: "Touchpoints & teasers",
+          phase: "touchpoints",
           name: "Mail - Congratulation's email",
           sub: "integrate teaser in the congratulation's email",
-          months: ["2026-10", "2026-11"],
+          months: ["2027-01"],
           effort: "low",
           impact: "high",
           status: "todo",
@@ -1318,10 +1503,10 @@
           goal: "CTR ≥ 2.5%",
         },
         {
-          stream: ["coach", "magazine"],
+          stream: "coach",
           category: "Touchpoints & teasers",
           name: "Mail - FFL Newsletter",
-          sub: "Use Fit for Life Newsletter to promote our products (coach + abo)",
+          sub: "Use the Fit for Life newsletter to promote Coach",
           months: ["2026-10", "2026-11"],
           effort: "low",
           impact: "high",
@@ -1332,6 +1517,7 @@
         {
           stream: ["coach", "magazine"],
           category: "Touchpoints & teasers",
+          phase: "touchpoints",
           name: "Mail - Welcome Mail",
           sub: "Pre-race touchpoint — Update the welcome mail template to push the newsletter sign-up",
           months: ["2026-11"],
@@ -1347,14 +1533,16 @@
         {
           stream: ["coach", "magazine"],
           category: "Touchpoints & teasers",
+          phase: "touchpoints",
           name: "Articles / content pages",
           sub: "List all articles / content where we could integrate a teaser for a product",
-          months: ["2026-11"],
+          months: ["2027-01"],
           effort: "high",
           impact: "low",
           status: "todo",
           type: "foundation",
           responsible: "Raphael",
+          goal: "Top articles with a magazine CTA validated by Katrin",
           description:
             "• Raphael provides the list of the 100 most-read articles on the site\n• Katrin checks which ones would justify a CTA to the Fit for Life Magazine\n• Raphael implements\n\nFor fitforlife.ch, see 'Article subscription prompts — top 20 articles'.",
         },
@@ -1383,13 +1571,15 @@
         {
           stream: ["coach", "magazine"],
           category: "Testing & optimization",
+          phase: "touchpoints",
           name: "CTA - A/B tests",
           sub: "create A/B tests for each teaser with traffic",
-          months: ["2026-11", "2026-12"],
+          months: ["2027-01"],
           effort: "low",
           impact: "vhigh",
           status: "todo",
           responsible: "Raphael",
+          goal: "One A/B test running for each teaser with enough traffic",
         },
         {
           stream: "coach",
@@ -2232,6 +2422,7 @@
         {
           stream: "magazine",
           category: "Strategy & foundations",
+          phase: "foundations",
           name: "Fit for Life magazine — plan",
           sub: "To discuss with stakeholders",
           months: ["2026-07", "2026-10"],
@@ -2240,6 +2431,7 @@
           status: "done",
           type: "foundation",
           responsible: "Raphael",
+          goal: "Plan validated by the stakeholders",
           link: "https://claude.ai/artifact/KjcuHoLmYJh41dQPzk3udq?sk=yK9CDOtWd1BSlAkBntLGWA",
           linkLabel: "Fit for Life strategy (Claude artifact)",
           description:
@@ -2248,6 +2440,7 @@
         {
           stream: "magazine",
           category: "Strategy & foundations",
+          phase: "foundations",
           name: "Fit for Life magazine — stakeholder feedback analysis",
           sub: "Analyses requested by Valentin Belz as feedback on the Fit for Life magazine plan",
           months: ["2026-11"],
@@ -2255,36 +2448,42 @@
           impact: "high",
           status: "done",
           responsible: "Valentin Belz",
+          goal: "Requested analyses shared with the stakeholders",
           description:
             "Feedback requested from Valentin Belz — what would be interesting:\n• Baseline figures\n• Profiles of subscribers, cancellers and other relevant profiles\n• Timing analysis (is there a strong moment to sell?)\n• Message and positioning\n• Consent (who are we allowed to communicate with?)",
         },
         {
           stream: "magazine",
           category: "Touchpoints & teasers",
+          phase: "touchpoints",
           name: "Website Home Datasport",
           sub: "Pre-race touchpoint — magazine presence on the Datasport home page",
-          months: ["2026-12"],
+          months: ["2027-01"],
           effort: "med",
           impact: "med",
           status: "todo",
           responsible: "Raphael",
+          goal: "Magazine visible on the home page, CTR ≥ 0.5%",
         },
         {
           stream: "magazine",
           category: "Touchpoints & teasers",
+          phase: "touchpoints",
           name: "Online registration (OnReg)",
           sub: "Pre-race touchpoint — magazine offer during online race registration",
-          months: ["2027-01", "2027-02"],
+          months: ["2027-01"],
           effort: "med",
           impact: "vhigh",
           status: "todo",
           responsible: "Raphael",
+          goal: "Know where the offer appears, and track orders coming from OnReg",
           description:
             "Next step:\n• Katrin to test and verify where the offer is present on OnReg and where it isn't",
         },
         {
           stream: "magazine",
           category: "Strategy & foundations",
+          phase: "fix-shop",
           name: "Fit for Life Website",
           sub: "Quick wins on the current WordPress — rebuild postponed",
           months: ["2026-11", "2027-01"],
@@ -2292,12 +2491,14 @@
           impact: "med",
           status: "inprogress",
           responsible: "Raphael",
+          goal: "Quick wins live and measured before the paid pilot",
           description:
             "Decision (Nov 2026): no rebuild for now. Test quick wins on WordPress first (see 'Website quick wins — fitforlife.ch' and 'Tracking — fitforlife.ch'), then run the 1-month paid pilot. A rebuild is reconsidered only if the pilot works.",
         },
         {
           stream: "magazine",
           category: "Touchpoints & teasers",
+          phase: "touchpoints",
           name: "Newsletter CTA tracking — utm_source",
           sub: "setting up of tracking of CTAs to our website only on our newsletters by implementing utm_source=newsletter",
           months: ["2026-07", "2026-07"],
@@ -2313,18 +2514,21 @@
         {
           stream: "magazine",
           category: "Touchpoints & teasers",
+          phase: "touchpoints",
           name: "follow-up emails on sample receivers",
           sub: "Create a dedicated communication on the receivers of the magazine samples",
-          months: ["2026-10", "2026-12"],
+          months: ["2027-01"],
           effort: "med",
           impact: "high",
           status: "todo",
           responsible: "Raphael",
+          goal: "CTR ≥ 2% on the sequence",
           description: "Free issue → paid sequence:\n• D0, D7, D21: offer\n• D30: call",
         },
         {
           stream: "magazine",
           category: "Touchpoints & teasers",
+          phase: "touchpoints",
           name: "Partnerships optimizations (publireportages)",
           sub: "analyze partnerships that are pushed on datasport.com to increase traffic on the pages",
           months: ["2026-07", "2026-07"],
@@ -2332,10 +2536,10 @@
           impact: "low",
           status: "inprogress",
           responsible: "Raphael",
-          goal: "Mise en place d'un tracking, audit des measures qu'on peut avancer",
+          goal: "Tracking in place, and an audit of what can move forward",
         },
         {
-          stream: "magazine",
+          stream: "b2b",
           category: "Strategy & foundations",
           name: "Digital Presence by partners",
           sub: "Define a strategy for digital acquisition by partners (define best practices and acquisition strategy)",
@@ -2345,6 +2549,7 @@
           status: "todo",
           type: "foundation",
           responsible: "Raphael",
+          goal: "Best practices shared with 3 key partners",
         },
         {
           stream: "b2b",
@@ -2373,32 +2578,38 @@
         {
           stream: "magazine",
           category: "Strategy & foundations",
-          name: "Free sample issue strategy",
-          sub: "Which target audience gets which issue for free, and when",
-          months: ["2026-07", "2026-09"],
-          effort: "high",
+          phase: "foundations",
+          name: "Free sample → subscriber conversion — current state & figures",
+          sub: "What is in place today to turn free-issue receivers into subscribers, and the current conversion rate",
+          months: ["2026-11"],
+          effort: "med",
           impact: "high",
-          status: "inprogress",
-          responsible: "Katrin",
+          status: "done",
+          responsible: "Raphael",
+          goal: "Current conversion rate known (baseline)",
           description:
-            "Katrin is drafting a plan with ideas on where and how free copies could be offered.\n\nSocks campaign started.",
+            "Current follow-up of free-issue receivers on the list:\n• 4 emails in the month after the free issue (M+1)\n• Then 2 emails in M+2\n\nCurrent free issue (Probeheft) → subscriber conversion: ≈ 3% — 22 active subscribers out of 680 receivers on the May–October 2026 lists. Baseline for 'Free sample → subscriber conversion — new activations'.",
+          result: "≈ 3% conversion (22 / 680, May–Oct 2026 lists)",
         },
         {
           stream: ["coach", "magazine"],
           category: "Strategy & foundations",
+          phase: "foundations",
           name: "Bundle & rewards offer strategy",
           sub: "Which bundle and reward offers, when and how to offer them",
-          months: ["2026-07", "2026-09"],
+          months: ["2026-07", "2026-11"],
           effort: "high",
           impact: "high",
           status: "inprogress",
           responsible: "Katrin",
+          goal: "At least 2 bundle offers ready to sell",
           description:
-            "Sandro is in discussions with various providers regarding bundles. He has organized two bundle options we'll be able to offer soon: flasks and a trail running vest.",
+            "Sandro is in discussions with various providers regarding bundles. He has organized two bundle options we'll be able to offer soon: flasks and a trail running vest.\n\nTo close in November: the Christmas campaign and the January paid pilot use these offers.",
         },
         {
           stream: ["magazine", "offline"],
           category: "Touchpoints & teasers",
+          phase: "touchpoints",
           name: "Event presence — Magazine",
           sub: "Hand out and sell the magazine at an event",
           months: ["2027-03", "2027-05"],
@@ -2406,6 +2617,7 @@
           impact: "high",
           status: "todo",
           responsible: "Katrin",
+          goal: "≥ 30 leads collected at one event",
           description:
             "Proposal: instead of one shared event, each of us takes a separate event\n• Katrin — Magazine\n• Raphael — Coach\n\nNext step: pick a German-speaking event where Katrin will try to collect leads.",
         },
@@ -2425,6 +2637,7 @@
         {
           stream: ["magazine", "offline"],
           category: "Touchpoints & teasers",
+          phase: "touchpoints",
           name: "Magazine placement in running shops & physios",
           sub: "Display copies of the magazine in running shops, physiotherapy practices, fitness centers, etc.",
           months: ["2026-07", "2026-08"],
@@ -2439,6 +2652,7 @@
         {
           stream: ["coach", "magazine"],
           category: "Strategy & foundations",
+          phase: "touchpoints",
           name: "Social media advertising",
           sub: "Social media strategy for FFL — which content drives sales",
           months: ["2026-07", "2026-09"],
@@ -2446,6 +2660,7 @@
           impact: "med",
           status: "inprogress",
           responsible: "Katrin",
+          goal: "One story per week, free-issue requests from Instagram tracked",
           description:
             "Weekly Instagram story on FFL to promote the free issue.",
         },
@@ -2764,6 +2979,7 @@
         {
           stream: "magazine",
           category: "Website quick wins — fitforlife.ch",
+          phase: "fix-shop",
           name: "Product page — fix blocking bugs",
           sub: "Hidden size label, disabled buy button, distracting links",
           months: ["2026-11"],
@@ -2777,30 +2993,35 @@
         {
           stream: "magazine",
           category: "Website quick wins — fitforlife.ch",
+          phase: "fix-shop",
           name: "Product page — clearer offer & mobile UX",
           sub: "Value framing, reassurance, sticky buy button, express pay",
-          months: ["2026-11", "2026-12"],
+          months: ["2026-11"],
           effort: "low",
           impact: "high",
           status: "todo",
           responsible: "Raphael",
+          goal: "Mobile add-to-cart rate up (contributes to the ≥ 18% target)",
           description: "Show the value (socks for CHF 1 more than the Jahresabo, price per issue). Add reassurance near the button (first issue date, renewal and cancellation terms, gift option). Add a sticky buy button on mobile. Place Apple Pay / Google Pay under the main button with 'oder direkt bezahlen mit'.",
         },
         {
           stream: "magazine",
           category: "Website quick wins — fitforlife.ch",
+          phase: "fix-shop",
           name: "Reusable product page template",
           sub: "Cover, inside spreads, experts, sample article, gift gallery",
-          months: ["2026-12", "2027-01"],
+          months: ["2027-01", "2027-02"],
           effort: "med",
           impact: "high",
           status: "todo",
           responsible: "Raphael",
+          goal: "A new bundle page can go live within a day",
           description: "Template so each new bundle only needs photos and text. Magazine block: current cover, 3–4 spreads, next issue's contents, the experts, one sample article. Gift block: gallery, size guide, benefits, partner logo. Ask brand partners for the assets in each deal.",
         },
         {
           stream: "magazine",
           category: "Website quick wins — fitforlife.ch",
+          phase: "fix-shop",
           name: "Cart & checkout simplification",
           sub: "Fewer fields, less distraction",
           months: ["2026-11"],
@@ -2808,12 +3029,13 @@
           impact: "high",
           status: "todo",
           responsible: "Raphael",
-          goal: "Checkout → order ≥ 80%",
-          description: "A quarter to 40% of checkouts are not finished. Turn the coupon field into a small 'Gutscheincode?' link. Remove the Schnupperabo banner from cart and checkout. Show 'Versand inklusive'. Make the phone optional and hide optional fields (Firma, Wohnung, Kanton). Put PLZ before Ort on one line. Review the duplicate Stripe Link fields. Remove Klarna (3 orders).",
+          goal: "Classic checkout → order (express excluded): ≈50% → ≥ 55%",
+          description: "Baseline (1 Jan – 26 Oct 2026). About 600 visits reached the checkout (Matomo segments). Express payments (Apple Pay, Google Pay, Link: 88 orders in WooCommerce) are paid from the product page, so they skip the cart and the checkout. Counting them as checkout orders inflates the rate.\n\nWith express (all orders ÷ checkouts reached):\n• Matomo: 357 orders ÷ ≈600 = ≈60%\n• WooCommerce: 390 valid orders ÷ ≈600 = ≈65%\n• Earlier audit range '60–77%' / 'a quarter to 40% not finished' uses these totals (method behind 77% not documented)\n\nWithout express (classic checkout only, the real checkout → order rate):\n• WooCommerce: 390 − 88 = 302 orders ÷ ≈600 = ≈50%\n• Matomo: 357 − ≈81 express (88 × 92% Matomo capture) = ≈276 ÷ ≈600 = ≈46%\n• So about half of the checkouts are not finished, not a quarter to 40%\n\nCaveats: 'checkout reached' is a Matomo segment, not a tracked event, and Matomo misses ≈8% of visits/orders (consent). Before the changes: track 'checkout started' as an event and measure cart → checkout → order for one month, express counted separately.\n\nChanges: Turn the coupon field into a small 'Gutscheincode?' link. Remove the Schnupperabo banner from cart and checkout. Show 'Versand inklusive'. Make the phone optional and hide optional fields (Firma, Wohnung, Kanton). Put PLZ before Ort on one line. Review the duplicate Stripe Link fields. Remove Klarna (3 orders).",
         },
         {
           stream: "magazine",
           category: "Website quick wins — fitforlife.ch",
+          phase: "fix-shop",
           name: "Checkout source question — remove default",
           sub: "'Per Post' is preselected, so the data is biased",
           months: ["2026-11"],
@@ -2822,26 +3044,30 @@
           status: "todo",
           type: "foundation",
           responsible: "Raphael",
+          goal: "Source answers no longer biased by a preselected default",
           description: "Remove the default answer. Keep a short list, ideally moved to the thank-you page.",
         },
         {
           stream: "magazine",
           category: "Website quick wins — fitforlife.ch",
+          phase: "fix-shop",
           name: "TWINT payment — feasibility",
           sub: "Check if Stripe TWINT can be enabled in WooCommerce",
-          months: ["2026-11", "2026-12"],
+          months: ["2026-12"],
           effort: "med",
           impact: "med",
           status: "todo",
           responsible: "Raphael",
+          goal: "Go / no-go decision on TWINT",
           description: "Card payments already go through Stripe. Check Stripe → Payment methods → TWINT for the Swiss account, then whether it shows up in the WooCommerce Stripe plugin. Keep invoice payment (44% of orders). Status: to check.",
         },
         {
           stream: "magazine",
           category: "Website quick wins — fitforlife.ch",
+          phase: "fix-shop",
           name: "Abandoned cart reminder email",
           sub: "265 abandoned carts in 2026, ≈ CHF 27,800",
-          months: ["2026-11", "2026-12"],
+          months: ["2026-12"],
           effort: "med",
           impact: "vhigh",
           status: "todo",
@@ -2852,6 +3078,7 @@
         {
           stream: "magazine",
           category: "Website quick wins — fitforlife.ch",
+          phase: "fix-shop",
           name: "Shop range cleanup",
           sub: "4 clear choices, hide zero-sale products",
           months: ["2026-11"],
@@ -2859,27 +3086,31 @@
           impact: "high",
           status: "todo",
           responsible: "Raphael",
+          goal: "4–5 clear offers in the shop, no zero-sale products visible",
           description: "Unpublish the ≈15 old bundles with no sales (Blackroll, Ultraflask, running.COACH…) and add 301 redirects to /shop/. Lead with Schnupperabo, Jahresabo, Jahresabo + gift of the moment (DirtySox socks: 2nd best seller, CHF 4,455) and Geschenkabo. Shoe bundles only as limited campaigns. Partner offers hidden, reachable only via the partner link.",
         },
         {
           stream: "magazine",
           category: "Website quick wins — fitforlife.ch",
+          phase: "fix-shop",
           name: "Landing pages — Schnupperabo & Christmas Geschenkabo",
           sub: "Ad landing pages: price and gift above the fold, one button",
-          months: ["2026-11", "2026-12"],
+          months: ["2026-11"],
           effort: "med",
           impact: "high",
           status: "todo",
           responsible: "Raphael",
+          goal: "Both pages live before the pilot, visit → order ≥ 2%",
           deadline: "2026-11-30",
           description: "Two landing pages used by the paid pilot and by the newsletters. The Christmas page must be live before the gift campaign.",
         },
         {
           stream: "magazine",
           category: "Website quick wins — fitforlife.ch",
+          phase: "fix-shop",
           name: "Article subscription prompts — top 20 articles",
           sub: "In-house boxes instead of the 'Werbung' banner",
-          months: ["2026-11", "2026-12"],
+          months: ["2026-12", "2027-01"],
           effort: "med",
           impact: "high",
           status: "todo",
@@ -2890,9 +3121,10 @@
         {
           stream: "magazine",
           category: "Website quick wins — fitforlife.ch",
+          phase: "fix-shop",
           name: "PDF lead magnet — email before download",
           sub: "≈9,300 free PDF downloads in 2026, no email collected",
-          months: ["2026-12", "2027-01"],
+          months: ["2027-01", "2027-02"],
           effort: "med",
           impact: "high",
           status: "todo",
@@ -2903,31 +3135,36 @@
         {
           stream: "magazine",
           category: "Website quick wins — fitforlife.ch",
+          phase: "fix-shop",
           name: "Newsletter sign-up page rework",
           sub: "Form at the top, disciplines, welcome gift",
-          months: ["2026-12"],
+          months: ["2027-01"],
           effort: "med",
           impact: "med",
           status: "todo",
           responsible: "Raphael",
+          goal: "More newsletter sign-ups from the page (≈ 10% of visits)",
           link: "https://fitforlife.ch/anmeldung-newsletter/",
           description: "The newsletter is the #1 sales channel (509 new subscriptions in 2026), but its page gets 122 visits a year. The Rapidmail iframe sits halfway down the page. Move the form to the top, add disciplines (Laufen, Velo, Triathlon, Langlauf…) to feed the scoring, offer a PDF as welcome gift, and reuse the form in the footer and in articles. Check double opt-in.",
         },
         {
           stream: "magazine",
           category: "Website quick wins — fitforlife.ch",
+          phase: "fix-shop",
           name: "Single free-issue form",
           sub: "One form on fitforlife.ch, source via link parameter, Google Sheet for the shipper",
-          months: ["2026-11", "2026-12"],
+          months: ["2026-11"],
           effort: "med",
           impact: "vhigh",
           status: "todo",
           responsible: ["Raphael", "Valentin Belz"],
+          goal: "All free-issue requests in one sheet, with a source on most of them",
           description: "Decided with the FFL lead. A custom HTML form on /kostenloseausgabe/ that sends to a Google Sheet through Apps Script (no paid WPForms tier needed). Hidden src and UTM fields filled from the link, duplicate check, one fixed list of source codes. Retire the Google Form, add 301 redirects for /probeheft/ and old pages, and link the form from the menu, the shop and articles. Prerequisites: a Datasport Google account owning the Sheet, a data processing agreement with the shipper, and a privacy policy update (nLPD).",
         },
         {
           stream: "magazine",
           category: "Website quick wins — fitforlife.ch",
+          phase: "fix-shop",
           name: "Homepage quick fixes",
           sub: "Popup on scroll, '3 ways' block",
           months: ["2026-12"],
@@ -2935,11 +3172,13 @@
           impact: "med",
           status: "todo",
           responsible: "Raphael",
+          goal: "More homepage clicks to the shop and the free-issue form than today",
           description: "Show the popup on scroll or exit intent instead of 0.5 s after arrival (also avoids Google's mobile interstitial penalty). Add an above-the-fold block: Abo (with price) · Gratis-Ausgabe · Newsletter.",
         },
         {
           stream: "magazine",
           category: "Website quick wins — fitforlife.ch",
+          phase: "fix-shop",
           name: "SEO basics — plugin, Open Graph, sponsored links",
           sub: "Meta descriptions, OG previews for ads and shares",
           months: ["2026-11"],
@@ -2947,11 +3186,13 @@
           impact: "high",
           status: "todo",
           responsible: "Raphael",
+          goal: "Meta descriptions and share previews on key pages, organic traffic stable or up",
           description: "Install one SEO plugin (Yoast / Rank Math / SEOPress): meta descriptions, Open Graph, schema. Add an H1 on the homepage and categories, and remove the NewsArticle markup from products. Add rel=\"sponsored\" on Publireportage and Produkt des Monats links. Check Search Console access. Then add alt texts, starting with the top articles.",
         },
         {
           stream: "magazine",
           category: "Website quick wins — fitforlife.ch",
+          phase: "fix-shop",
           name: "Fix 404 pages",
           sub: "≈250 entries per month land on 'Seite nicht gefunden'",
           months: ["2026-12"],
@@ -2959,11 +3200,13 @@
           impact: "med",
           status: "todo",
           responsible: "Raphael",
+          goal: "404 entries halved (≈250 → < 125 per month)",
           description: "List the broken URLs in Matomo and set 301 redirects to the matching article or the shop.",
         },
         {
           stream: "magazine",
           category: "Tracking — fitforlife.ch",
+          phase: "fix-shop",
           name: "Analytics cleanup — keep Matomo, remove unused GA4",
           sub: "Two GA4 tags load via Site Kit, nobody uses them",
           months: ["2026-11"],
@@ -2972,11 +3215,13 @@
           status: "todo",
           type: "foundation",
           responsible: "Raphael",
+          goal: "One analytics setup, no unused tags",
           description: "Matomo stays the analytics source for fitforlife.ch (history, matches WooCommerce at ≈92%). Find who owns G-TEVRP6HSDJ and G-J6NBKJY37E, then remove them or keep only one. No new GA4 setup.",
         },
         {
           stream: "magazine",
           category: "Tracking — fitforlife.ch",
+          phase: "fix-shop",
           name: "UTM convention + link builder",
           sub: "Every link and QR code tagged the same way",
           months: ["2026-11"],
@@ -2991,19 +3236,22 @@
         {
           stream: "magazine",
           category: "Tracking — fitforlife.ch",
+          phase: "paid",
           name: "Meta Pixel + CAPI and Google Ads conversion tag",
           sub: "Purchase and free-issue form, through Complianz consent",
-          months: ["2026-11", "2026-12"],
+          months: ["2026-12"],
           effort: "med",
           impact: "vhigh",
           status: "todo",
           type: "foundation",
           responsible: "Raphael",
-          description: "Required before any paid spend. Track the purchase (value and product) and the free-issue form submission. Respect Complianz consent.",
+          goal: "Purchases and free-issue requests visible in Meta and Google before the pilot",
+          description: "Required before any paid spend. Live early December so the pixel collects data before the January pilot. Track the purchase (value and product) and the free-issue form submission. Respect Complianz consent.",
         },
         {
           stream: "magazine",
           category: "Tracking — fitforlife.ch",
+          phase: "fix-shop",
           name: "Source stored on every order + WooCommerce attribution report",
           sub: "src/UTM saved on orders and free-issue requests",
           months: ["2026-11"],
@@ -3012,11 +3260,27 @@
           status: "todo",
           type: "foundation",
           responsible: "Raphael",
+          goal: "Source stored on ≥ 80% of orders and free-issue requests",
           description: "Use the built-in WooCommerce order attribution report alongside Matomo. Store the src/UTM on orders and on free-issue requests.",
         },
         {
           stream: "magazine",
           category: "Tracking — fitforlife.ch",
+          phase: "fix-shop",
+          name: "Consent & nLPD check — emails, tags, audiences",
+          sub: "What we may send, track and upload, before the reminders and the paid pilot",
+          months: ["2026-11"],
+          effort: "med",
+          impact: "high",
+          status: "todo",
+          responsible: "Raphael",
+          goal: "Go / no-go documented for each use case",
+          description: "One check for everything that depends on consent and the privacy policy (nLPD):\n• Abandoned cart reminder email\n• Meta Pixel + CAPI and Google Ads conversion tag (Complianz)\n• Subscriber exclusion list and Lookalike / Customer Match uploads\n• Free-issue form data sent to the shipper\nOutput: what is allowed, what needs a privacy policy update, and what is dropped.",
+        },
+        {
+          stream: "magazine",
+          category: "Tracking — fitforlife.ch",
+          phase: "fix-shop",
           name: "Microsoft Clarity on the purchase funnel",
           sub: "Heatmaps and session recordings",
           months: ["2026-11"],
@@ -3025,27 +3289,31 @@
           status: "todo",
           type: "foundation",
           responsible: "Raphael",
+          goal: "Monthly review with 2–3 findings added to the backlog",
           description: "Load Clarity through Complianz on product pages, cart, checkout, top articles and the homepage. Review it monthly with the funnel figures.",
         },
         {
           stream: "magazine",
           category: "Tracking — fitforlife.ch",
+          phase: "paid",
           name: "Weekly acquisition tracking sheet",
           sub: "Spend, leads, sales, cost per subscription vs thresholds",
-          months: ["2026-11", "2027-01"],
+          months: ["2026-12", "2027-01"],
           effort: "low",
           impact: "high",
           status: "todo",
           type: "foundation",
           responsible: "Raphael",
+          goal: "Updated every week during the pilot",
           description: "Feeds the go / no-go of the paid pilot.",
         },
         {
           stream: "magazine",
           category: "Touchpoints & teasers",
+          phase: "touchpoints",
           name: "Advertorial pages — FFL end block",
           sub: "'More expert content in FIT for LIFE' + offer at the end of each advertorial",
-          months: ["2026-12"],
+          months: ["2027-01"],
           effort: "low",
           impact: "med",
           status: "todo",
@@ -3057,17 +3325,19 @@
         {
           stream: "magazine",
           category: "Touchpoints & teasers",
+          phase: "touchpoints",
           name: "datasport.com/fit-for-life page redesign",
           sub: "3 clear paths: Subscribe (with prices) · Free issue · Newsletter",
-          months: ["2026-12", "2027-01"],
+          months: ["2027-01"],
           effort: "med",
           impact: "med",
           status: "todo",
           responsible: "Raphael",
-          description: "Today there are no prices, 'S'abonner' opens the Sportnews sign-up, the newsletter block sits at 89% of the page, and the free-issue form is in German on the FR page.",
+          goal: "Outbound click rate ≈ 24% → ≥ 30% of page views",
+          description: "Baseline (GA4 Website - PROD, 19 Aug – 16 Nov 2026, /de /fr /en /it/fit-for-life):\n• 683 page views (≈ 230 / month), 385 users — DE 455 · FR 101 · EN 86 · IT 41\n• Avg engagement time ≈ 17–32 s per user\n• 163 outbound clicks (GA4 'click' event, e.g. to fitforlife.ch) ≈ 24% of page views — DE 127 · FR 15 · EN 13 · IT 8\n• Form submissions: 0 tracked (the free-issue form is not measured in GA4)\n• Destination of the clicks (shop vs free issue vs newsletter) not split yet: add link-level tracking before the redesign.\n\nToday there are no prices, 'S'abonner' opens the Sportnews sign-up, the newsletter block sits at 89% of the page, and the free-issue form is in German on the FR page.",
         },
         {
-          stream: "magazine",
+          stream: "b2b",
           category: "Touchpoints & teasers",
           name: "Gewinnspiele — FFL opt-in & nurturing",
           sub: "FFL opt-in, qualifying questions, FFL subscription as prize, post-contest sequence",
@@ -3076,34 +3346,40 @@
           impact: "high",
           status: "done",
           responsible: "Raphael",
+          goal: "FFL opt-in collected on every contest",
           link: "https://datasport.com/de/hyroxpuma.html?utm_source=fitforlife&utm_medium=qrCode&utm_campaign=hyrox&variant=full",
           linkLabel: "Gewinnspiel page (HYROX × Puma) with FFL Probeausgabe confirmation",
         },
         {
           stream: ["coach", "magazine"],
           category: "Touchpoints & teasers",
+          phase: "touchpoints",
           name: "Pre-race email (bib, D-7) — FFL tips",
           sub: "Last-week tips signed by FFL, very high open rate",
-          months: ["2027-01", "2027-02"],
+          months: ["2027-01"],
           effort: "med",
           impact: "high",
           status: "todo",
           responsible: "Raphael",
+          goal: "CTR ≥ 2% on the FFL block",
         },
         {
           stream: "magazine",
           category: "Touchpoints & teasers",
+          phase: "touchpoints",
           name: "MyDS — FFL offers opt-in & interests",
           sub: "Opt-in 'FIT for LIFE offers' + sports / topics to feed the scoring",
-          months: ["2027-01", "2027-03"],
+          months: ["2027-01", "2027-02"],
           effort: "med",
           impact: "med",
           status: "todo",
           responsible: "Raphael",
+          goal: "Opt-in live in MyDS, first opt-ins collected",
         },
         {
           stream: "magazine",
           category: "Offers & commercial",
+          phase: "christmas",
           name: "Christmas gift subscription campaign",
           sub: "'Give FIT for LIFE to a runner you know'",
           months: ["2026-11", "2026-12"],
@@ -3111,57 +3387,83 @@
           impact: "vhigh",
           status: "todo",
           responsible: ["Valentin Belz", "Raphael"],
+          goal: "More Geschenkabo sales than last Christmas",
           deadline: "2026-12-20",
-          description: "Send to subscribers and to the athlete base, using the Geschenkabo landing page. Owners: Valentin for the offer, Raphael for the landing page and tracking.",
+          description: "Launch end of November, live until 20 December (gift deadline). Needs the Geschenkabo landing page, the offer and the tracking ready in November.\n\nSend to subscribers and to the athlete base, using the Geschenkabo landing page. Owners: Valentin for the offer, Raphael for the landing page and tracking.",
         },
         {
           stream: "magazine",
           category: "Offers & commercial",
+          phase: "offers-retention",
           name: "Premium articles + expert teaser to the athlete base",
           sub: "Best content offered with an offer attached, plus the expert of the next issue",
-          months: ["2027-01", "2027-03"],
+          months: ["2027-02"],
           effort: "med",
           impact: "high",
           status: "todo",
           responsible: ["Valentin Belz", "Raphael"],
+          goal: "CTR ≥ 2% on the offer",
         },
         {
           stream: "magazine",
           category: "Offers & commercial",
+          phase: "fix-shop",
           name: "Missing data from the Abo service",
           sub: "Anonymised row-level export, trial → paid per channel, costs per channel, target CAC",
-          months: ["2026-11", "2026-12"],
+          months: ["2026-11"],
           effort: "low",
           impact: "high",
           status: "todo",
           type: "foundation",
           responsible: "Valentin Belz",
+          goal: "Export received, trial → paid per channel available",
+          description: "Requested from Valentin on 27 Oct 2026, still open. Blocks the subscriber exclusion list (paid pilot, January) and the renewal / win-back emails (February): follow up in November.",
+        },
+        {
+          stream: "magazine",
+          category: "Offers & commercial",
+          phase: "offers-retention",
+          name: "Free sample → subscriber conversion — new activations",
+          sub: "Identify what can be activated on top of the current M+1 / M+2 emails, run it and measure the impact on the conversion rate",
+          months: ["2027-02"],
+          effort: "med",
+          impact: "high",
+          status: "todo",
+          responsible: "Raphael",
+          description:
+            "Starts from the current state (4 emails in M+1, 2 in M+2, ≈ 3% conversion — see 'Free sample → subscriber conversion — current state & figures').\n\nIdentify what can be activated on top:\n• Gaps in the sequence (no follow-up after M+2, missing channel, no reminder before the offer ends)\n• Quick wins with the existing tools (Rapidmail automation, single free-issue form with source, UTM)\n• Segmentation by source / discipline\n\nMeasure the impact:\n• Conversion rate per monthly list cohort, compared to the 3% baseline\n• Conversion per source and per activation, once the source is stored on every free-issue request",
+          goal: "Free issue → subscriber conversion above the 3% baseline",
         },
         {
           stream: "magazine",
           category: "Retention",
+          phase: "offers-retention",
           name: "Renewal email at D-45",
           sub: "'Your year with FFL' + renewal bonus",
-          months: ["2027-01", "2027-02"],
+          months: ["2027-02"],
           effort: "low",
           impact: "high",
           status: "todo",
           responsible: "Raphael",
+          goal: "Renewal rate up vs current (baseline to measure)",
         },
         {
           stream: "magazine",
           category: "Retention",
+          phase: "offers-retention",
           name: "Win-back email to cancelled subscribers",
           sub: "New return offer, email before phone",
-          months: ["2027-01", "2027-02"],
+          months: ["2027-02"],
           effort: "low",
           impact: "med",
           status: "todo",
           responsible: ["Valentin Belz", "Raphael"],
+          goal: "≥ 3% of contacted cancelled subscribers come back",
         },
         {
           stream: "magazine",
           category: "Retention",
+          phase: "paid",
           name: "Subscriber exclusion list for campaigns",
           sub: "Current subscribers excluded from acquisition ads and mails",
           months: ["2026-12"],
@@ -3169,26 +3471,57 @@
           impact: "med",
           status: "todo",
           responsible: "Raphael",
+          goal: "No current subscriber in acquisition audiences",
         },
         {
           stream: "magazine",
           category: "Paid acquisition",
+          phase: "paid",
+          name: "Funnel review before the paid pilot",
+          sub: "Check that the shop fixes worked before buying traffic",
+          months: ["2026-12"],
+          effort: "low",
+          impact: "high",
+          status: "todo",
+          responsible: "Raphael",
+          goal: "Go for the pilot if add-to-cart and checkout rates are up vs baseline",
+          description: "End of December, compare with the baselines: product page → add-to-cart (12%), classic checkout → order (≈ 50%), share of orders with a known source. If the funnel has not improved, fix it before spending on ads.",
+        },
+        {
+          stream: "magazine",
+          category: "Paid acquisition",
+          phase: "paid",
+          name: "Pilot ad creatives & budget sign-off",
+          sub: "DE / FR visuals and copy, accounts, budget approved",
+          months: ["2026-12"],
+          effort: "med",
+          impact: "high",
+          status: "todo",
+          responsible: "Raphael",
+          goal: "Creatives ready and budget signed off before 1 January",
+          description: "Prerequisites of the January pilot:\n• Visuals and copy for Meta (DE first, FR if budget allows) and Google Search ads\n• Google Ads and Meta Business accounts with access\n• Budget CHF 1,500–2,500 signed off by the FFL team",
+        },
+        {
+          stream: "magazine",
+          category: "Paid acquisition",
+          phase: "paid",
           name: "1-month paid acquisition pilot (Meta + Google)",
           sub: "Prove that subscriptions can be bought at an acceptable cost on the current site",
-          months: ["2026-12", "2027-01"],
+          months: ["2027-01"],
           effort: "high",
           impact: "vhigh",
           status: "todo",
           responsible: "Raphael",
           goal: "Schnupperabo ≤ CHF 41 · Jahresabo ≤ CHF 83 · 1st-year ROAS ≥ 0.87",
-          description: "Starts only once the tracking items and the product/checkout fixes are live.\n• Meta: German-speaking Switzerland, 35–64, endurance sports, with the Schnupperabo CHF 20 and Christmas Geschenkabo offers\n• Google Search: brand + intent queries (Laufmagazin, Trainingsplan Halbmarathon, Geschenk Läufer)\n• Retargeting of readers of the top articles\nBudget CHF 1,500–2,500, set by the FFL team. Weekly review.\nPrerequisites: Google Ads and Meta Business accounts, budget sign-off.",
+          description: "Starts only once the tracking items and the product/checkout fixes are live, and after the December funnel review.\n• Meta: German-speaking Switzerland, 35–64, endurance sports, with the Schnupperabo CHF 20 offer (New Year / training resolutions angle). The Christmas Geschenkabo runs in December, outside the pilot.\n• Google Search: brand + intent queries (Laufmagazin, Trainingsplan Halbmarathon)\n• Retargeting of readers of the top articles\nBudget CHF 1,500–2,500, set by the FFL team. Weekly review. Go / no-go at the end of January on cost per Schnupperabo / Jahresabo: the Schnupperabo → paid conversion is only visible months later.\nPrerequisites: Google Ads and Meta Business accounts, budget sign-off.",
         },
         {
           stream: "magazine",
           category: "Paid acquisition",
+          phase: "paid",
           name: "Brand test in ads: 'FIT for LIFE' vs 'FIT for LIFE by Datasport'",
           sub: "Which brand name performs better in ads",
-          months: ["2026-12", "2027-01"],
+          months: ["2027-01"],
           effort: "low",
           impact: "med",
           status: "todo",
@@ -3198,18 +3531,21 @@
         {
           stream: "magazine",
           category: "Paid acquisition",
+          phase: "paid",
           name: "Lookalike & Customer Match audiences",
           sub: "Built from loyal subscribers, opt-ins only",
-          months: ["2027-01", "2027-03"],
+          months: ["2027-02", "2027-03"],
           effort: "med",
           impact: "high",
           status: "todo",
           responsible: "Raphael",
+          goal: "Cost per subscription at or below the pilot result",
           description: "Depends on the consent / nLPD check and on the pilot result.",
         },
         {
           stream: "magazine",
           category: "Paid acquisition",
+          phase: "offers-retention",
           name: "Subscriber referral programme",
           sub: "Personal code, reward for both",
           months: ["2027-02", "2027-03"],
@@ -3217,6 +3553,7 @@
           impact: "med",
           status: "todo",
           responsible: "Raphael",
+          goal: "First referrals within 3 months of launch",
           description: "Magazine-specific. Different from the existing B2B/Coach 'Referral Program'.",
         },
       ];
@@ -3606,6 +3943,297 @@
         document.getElementById("roadmap").innerHTML = html;
       }
 
+      // FFL Magazine strategy tab: high-level steps. Measures join a step through their `phase` field;
+      // progress and counts are computed from them. `months` = planned window of the step (same format as
+      // a measure's months); without it the period is computed from the measures. `key` = highlighted measures.
+      const magazinePhases = [
+        {
+          id: "foundations",
+          num: "0",
+          title: "Foundations",
+          objective:
+            "Agree on the plan with stakeholders, and on the free-issue and bundle offers the next steps build on.",
+          kpis: ["Plan aligned with stakeholders"],
+          key: [
+            "Fit for Life magazine — plan",
+            "Fit for Life magazine — stakeholder feedback analysis",
+            "Free sample → subscriber conversion — current state & figures",
+          ],
+        },
+        {
+          id: "fix-shop",
+          num: "1",
+          months: ["2026-11"],
+          title: "Fix the shop & measure",
+          objective:
+            "Make fitforlife.ch convert the visitors it already has, and know where every order comes from, before sending more traffic to it. November covers what Christmas and the pilot need; the other shop improvements continue from December to February.",
+          kpis: [
+            "Product page → add-to-cart: 12% → ≥ 18%",
+            "Classic checkout → order (express excluded): ≈50% → ≥ 55%",
+            "'Direct / unknown' share of product-page entries: 85% → < 30%",
+          ],
+          key: [
+            "Product page — fix blocking bugs",
+            "Cart & checkout simplification",
+            "Abandoned cart reminder email",
+            "Single free-issue form",
+            "Article subscription prompts — top 20 articles",
+            "SEO basics — plugin, Open Graph, sponsored links",
+            "UTM convention + link builder",
+            "Source stored on every order + WooCommerce attribution report",
+          ],
+        },
+        {
+          id: "christmas",
+          num: "2",
+          months: ["2026-11", "2026-12"],
+          title: "Christmas gift campaign",
+          objective:
+            "Launch end of November, live until 20 December: 'Give FIT for LIFE to a runner you know', sent to subscribers and the athlete base.",
+          kpis: ["More Geschenkabo sales than last Christmas"],
+          key: [
+            "Christmas gift subscription campaign",
+            "Landing pages — Schnupperabo & Christmas Geschenkabo",
+          ],
+        },
+        {
+          id: "touchpoints",
+          num: "3",
+          months: ["2027-01"],
+          title: "Bring Datasport athletes to FFL",
+          objective:
+            "Set up in January, then running continuously: show the magazine at the moments Datasport already reaches athletes (registration, race emails, results and datasport.com).",
+          kpis: [
+            "Race email teasers: CTR 1.5–4%",
+            "Results & dashboard CTAs: CTR ≥ 1% (≈ 0.15% today for the Coach teaser)",
+            "Advertorial & article blocks: CTR ≥ 1%",
+          ],
+          key: [
+            "Mail - Teaser in confirmation email (Magazine)",
+            "Mail - Post registration teasing",
+            "Mail - Post race teasing",
+            "Pre-race email (bib, D-7) — FFL tips",
+            "CTA - Results page (Magazine)",
+            "CTA - Dashboard page (Magazine)",
+            "Online registration (OnReg)",
+            "datasport.com/fit-for-life page redesign",
+          ],
+        },
+        {
+          id: "paid",
+          num: "4",
+          months: ["2027-01"],
+          title: "Paid acquisition pilot",
+          objective:
+            "Prepare in December (tags, exclusion list, creatives, budget, funnel review), run the pilot in January and decide go / no-go at the end of the month.",
+          kpis: [
+            "Cost per Schnupperabo ≤ CHF 41",
+            "Cost per Jahresabo ≤ CHF 83",
+            "1st-year ROAS ≥ 0.87",
+          ],
+          key: [
+            "Meta Pixel + CAPI and Google Ads conversion tag",
+            "1-month paid acquisition pilot (Meta + Google)",
+            "Weekly acquisition tracking sheet",
+            "Funnel review before the paid pilot",
+          ],
+        },
+        {
+          id: "offers-retention",
+          num: "5",
+          months: ["2027-02"],
+          title: "Offers & retention",
+          objective:
+            "Keep the subscribers we win and turn them into ambassadors: renewal, win-back, premium content and referral. Needs the Abo service export (renewal dates, cancellations).",
+          kpis: [
+            "Free issue → subscriber conversion: above the 3% baseline",
+            "Renewal and win-back rates up vs current (baseline to measure)",
+          ],
+          key: [
+            "Free sample → subscriber conversion — new activations",
+            "Renewal email at D-45",
+            "Win-back email to cancelled subscribers",
+            "Subscriber referral programme",
+          ],
+        },
+      ];
+
+      function statusCounts(rows) {
+        const c = { done: 0, inprogress: 0, todo: 0, onhold: 0, canceled: 0 };
+        rows.forEach((m) => c[m.status]++);
+        return c;
+      }
+      function statusSegsHtml(rows) {
+        const c = statusCounts(rows);
+        return ["done", "inprogress", "todo", "onhold", "canceled"]
+          .filter((st) => c[st] > 0)
+          .map(
+            (st) =>
+              `<div class="gantt-seg seg-${st}" style="width:${((c[st] / rows.length) * 100).toFixed(2)}%"></div>`,
+          )
+          .join("");
+      }
+      function boundsOf(rows) {
+        const b = rows.map(measureMonthBounds);
+        return {
+          start: new Date(Math.min(...b.map((x) => x.start.getTime()))),
+          end: new Date(Math.max(...b.map((x) => x.end.getTime()))),
+        };
+      }
+      function periodLabel({ start, end }) {
+        const last = new Date(end.getFullYear(), end.getMonth() - 1, 1);
+        const key = (d) =>
+          `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+        return start.getTime() === last.getTime()
+          ? monthKeyLabel(key(start))
+          : `${monthKeyLabel(key(start))} – ${monthKeyLabel(key(last))}`;
+      }
+
+      function renderStrategy() {
+        const phases = magazinePhases
+          .map((p) => {
+            const rows = measures.filter((m) => m.phase === p.id);
+            if (!rows.length) return null;
+            const bounds = p.months ? boundsOf([p]) : boundsOf(rows);
+            return { ...p, rows, bounds };
+          })
+          .filter(Boolean);
+        const all = phases.flatMap((p) => p.rows);
+        const now = new Date();
+        const isDone = (p) =>
+          p.rows.every((m) => m.status === "done" || m.status === "canceled");
+        const total = statusCounts(all);
+        const pilot = measures.find(
+          (m) => m.name === "1-month paid acquisition pilot (Meta + Google)",
+        );
+
+        document.getElementById("strategy-summary").innerHTML = `
+    <div class="metric"><div class="metric-label">Go / no-go on paid ads</div><div class="metric-value">${pilot ? monthKeyLabel(measureMonthBounds(pilot).endKey) : "—"}</div></div>
+    <div class="metric"><div class="metric-label">Measures</div><div class="metric-value">${all.length}</div></div>
+    <div class="metric"><div class="metric-label">Done</div><div class="metric-value" style="color:#2d6a4a">${total.done}</div></div>
+    <div class="metric"><div class="metric-label">In progress</div><div class="metric-value" style="color:#854F0B">${total.inprogress}</div></div>
+  `;
+
+        // Timeline limited to the magazine months.
+        const range = {
+          start: new Date(Math.min(...phases.map((p) => p.bounds.start.getTime()))),
+          end: new Date(Math.max(...phases.map((p) => p.bounds.end.getTime()))),
+        };
+        const months = [];
+        for (
+          let d = new Date(range.start);
+          d < range.end;
+          d.setMonth(d.getMonth() + 1)
+        )
+          months.push(new Date(d));
+        const n = months.length;
+        const idx = (d) =>
+          (d.getFullYear() - range.start.getFullYear()) * 12 +
+          (d.getMonth() - range.start.getMonth());
+        const todayFrac = (now - range.start) / (range.end - range.start);
+        const showToday = todayFrac >= 0 && todayFrac <= 1;
+        const todayPct = (todayFrac * 100).toFixed(2);
+        const gridBg = `repeating-linear-gradient(to right, rgba(0,0,0,0.05) 0, rgba(0,0,0,0.05) 1px, transparent 1px, transparent calc(100%/${n}))`;
+        const numHtml = (p) =>
+          `<span class="phase-num${p.side ? " is-side" : isDone(p) ? " is-done" : ""}">${isDone(p) ? "✓" : p.num}</span>`;
+
+        document.getElementById("strategy-timeline").innerHTML = `
+    <div class="strategy-section-title">Timeline</div>
+    <div class="gantt-wrap">
+      <div class="gantt-header">
+        <div class="gantt-label"></div>
+        <div class="gantt-header-months">
+          ${months.map((d) => `<div>${d.getMonth() === 0 || idx(d) === 0 ? `${monthNames[d.getMonth()]} '${String(d.getFullYear()).slice(2)}` : monthNames[d.getMonth()]}</div>`).join("")}
+          ${showToday ? `<div class="gantt-today" style="left:${todayPct}%"></div><div class="gantt-today-label" style="left:${todayPct}%">Today</div>` : ""}
+        </div>
+      </div>
+      ${phases
+        .map((p) => {
+          const c = statusCounts(p.rows);
+          const left = (idx(p.bounds.start) / n) * 100;
+          const width =
+            ((idx(p.bounds.end) - idx(p.bounds.start)) / n) * 100;
+          return `<div class="gantt-row category-row" data-phase="${p.id}">
+        <div class="gantt-label">
+          <div class="gantt-label-title">${numHtml(p)}${p.title}</div>
+          <div class="gantt-label-sub">${c.done}/${p.rows.length} done${c.inprogress ? ` · ${c.inprogress} in progress` : ""}</div>
+        </div>
+        <div class="gantt-track" style="background-image:${gridBg}">
+          ${showToday ? `<div class="gantt-today" style="left:${todayPct}%"></div>` : ""}
+          <div class="gantt-bar" style="left:calc(${left}% + 2px); width:calc(${width}% - 4px)" title="${p.title} — ${periodLabel(p.bounds)}">${statusSegsHtml(p.rows)}</div>
+        </div>
+      </div>`;
+        })
+        .join("")}
+    </div>
+    <div class="roadmap-legend">
+      <span><span class="legend-seg seg-todo"></span>To do</span>
+      <span><span class="legend-seg seg-inprogress"></span>In progress</span>
+      <span><span class="legend-seg seg-done"></span>Done</span>
+    </div>`;
+
+        const measureItem = (m) =>
+          `<li><span class="measure-link" data-id="${m.id}">${m.name}</span><span class="badge status-${m.status}">${statusLabels[m.status]}</span></li>`;
+        document.getElementById("strategy-phases").innerHTML = `
+    <div class="strategy-section-title">Steps</div>
+    <div class="phase-cards">
+      ${phases
+        .map((p) => {
+          const c = statusCounts(p.rows);
+          // Steps with up to 8 measures list them all; larger ones show the key measures + a collapsible full list.
+          const keyRows = p.key
+            .map((name) => p.rows.find((m) => m.name === name) ||
+              measures.find((m) => inStream(m, "magazine") && m.name === name),
+            )
+            .filter(Boolean);
+          const showAll = p.rows.length <= 8;
+          const listRows = showAll
+            ? [...keyRows, ...p.rows.filter((m) => !keyRows.includes(m))]
+            : keyRows.slice(0, 8);
+          return `<div class="phase-card" id="phase-${p.id}">
+        <div class="phase-card-head">
+          ${numHtml(p)}
+          <div class="phase-card-title">${p.title}</div>
+          <div class="phase-card-period">${periodLabel(p.bounds)}</div>
+        </div>
+        <div class="phase-objective">${p.objective}</div>
+        <div class="phase-progress">
+          <div class="gantt-bar">${statusSegsHtml(p.rows)}</div>
+          <span>${c.done}/${p.rows.length} done</span>
+        </div>
+        <div>
+          <div class="phase-block-title">Targets</div>
+          <ul class="phase-list">${p.kpis.map((k) => `<li class="phase-kpi">${k}</li>`).join("")}</ul>
+        </div>
+        <div>
+          <div class="phase-block-title">${showAll ? "Measures" : "Key measures"}</div>
+          <ul class="phase-list">${listRows.map(measureItem).join("")}</ul>
+        </div>
+        ${
+          showAll
+            ? ""
+            : `<details class="phase-all">
+          <summary>All ${p.rows.length} measures</summary>
+          <ul class="phase-list">${p.rows.map(measureItem).join("")}</ul>
+        </details>`
+        }
+      </div>`;
+        })
+        .join("")}
+    </div>`;
+      }
+
+      document
+        .getElementById("strategy-timeline")
+        .addEventListener("click", (e) => {
+          const row = e.target.closest("[data-phase]");
+          if (!row) return;
+          const card = document.getElementById(`phase-${row.dataset.phase}`);
+          card.scrollIntoView({ behavior: "smooth", block: "start" });
+          card.classList.add("is-highlighted");
+          setTimeout(() => card.classList.remove("is-highlighted"), 1500);
+        });
+
       function renderTable() {
         const streams = activeStream === "all" ? streamOrder : [activeStream];
         const filtered = measures.filter(
@@ -3728,16 +4356,32 @@
           renderTable();
         });
 
+      // Tabs with a shareable hash (e.g. "#ffl-strategy" opens the strategy tab directly).
+      const tabHashes = { strategy: "#ffl-strategy" };
+      let activeTab = "roadmap";
+      function showTab(tab) {
+        activeTab = tab;
+        document
+          .querySelectorAll(".tab-btn")
+          .forEach((b) => b.classList.toggle("active", b.dataset.tab === tab));
+        ["roadmap", "mesures", "strategy"].forEach((t) => {
+          document.getElementById(`tab-${t}`).style.display =
+            t === tab ? "" : "none";
+        });
+      }
+      function tabFromHash(hash) {
+        return Object.keys(tabHashes).find((t) => tabHashes[t] === hash);
+      }
+      function currentTabUrl() {
+        return (
+          location.pathname + location.search + (tabHashes[activeTab] || "")
+        );
+      }
+
       document.querySelectorAll(".tab-btn").forEach((btn) => {
         btn.addEventListener("click", () => {
-          document
-            .querySelectorAll(".tab-btn")
-            .forEach((b) => b.classList.toggle("active", b === btn));
-          const tab = btn.dataset.tab;
-          document.getElementById("tab-roadmap").style.display =
-            tab === "roadmap" ? "" : "none";
-          document.getElementById("tab-mesures").style.display =
-            tab === "mesures" ? "" : "none";
+          showTab(btn.dataset.tab);
+          history.replaceState(null, "", currentTabUrl());
         });
       });
 
@@ -3845,8 +4489,8 @@
 
       function closeMeasureModal() {
         document.getElementById("measure-modal").style.display = "none";
-        if (location.hash)
-          history.pushState(null, "", location.pathname + location.search);
+        if (location.hash.startsWith("#m-"))
+          history.pushState(null, "", currentTabUrl());
       }
 
       document.addEventListener("click", (e) => {
@@ -3872,12 +4516,18 @@
       window.addEventListener("popstate", () => {
         const match = location.hash.match(/^#m-(.+)$/);
         if (match) openMeasureModal(match[1], { skipHash: true });
-        else closeMeasureModal();
+        else {
+          document.getElementById("measure-modal").style.display = "none";
+          showTab(tabFromHash(location.hash) || activeTab);
+        }
       });
 
       renderRoadmap();
       renderTable();
+      renderStrategy();
 
+      const initialTab = tabFromHash(location.hash);
+      if (initialTab) showTab(initialTab);
       const initialMatch = location.hash.match(/^#m-(.+)$/);
       if (initialMatch) openMeasureModal(initialMatch[1], { skipHash: true });
     </script>

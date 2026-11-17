@@ -2,7 +2,7 @@
 
 Static roadmap page of marketing/product measures. No build, no dependencies: open `index.html` in a browser to check changes.
 
-- `index.html` — the roadmap (Roadmap tab = Gantt, Detailed measures tab = table + detail modal). All data lives in the `measures` array in the inline `<script>`; everything else (summary, filters, months, timeline) is computed from it.
+- `index.html` — the roadmap (Roadmap tab = Gantt, Detailed measures tab = table + detail modal, FFL Magazine strategy tab = high-level steps for the magazine, shareable as `#ffl-strategy`). All data lives in the `measures` array in the inline `<script>`; everything else (summary, filters, months, timeline) is computed from it.
 - `matrice-touchpoints.html` — standalone product × timing matrix (Coach / Magazine), separate page.
 - `screenshots/` — images referenced by measures.
 - `notes/` — personal notes, git-ignored.
@@ -17,6 +17,7 @@ Almost every request is an edit of one or more entries in `measures`. The field 
 - `effort` / `impact`: `low | med | high | vhigh`.
 - `responsible`: a name or an array of names. Only `Raphael` and `Katrin` have filter buttons / colored badges.
 - `type: "foundation"` adds the Foundation badge.
+- `phase` (magazine measures only): step of the FFL Magazine strategy tab — `foundations | fix-shop | touchpoints | paid | offers-retention | christmas`. Every new magazine measure needs one. Step titles, planned months, objectives, targets and key measures live in `magazinePhases`.
 - `link` / `linkLabel`: string, or matching arrays for several tickets.
 - `description`: free text, `\n` for line breaks, `•` for bullets.
 - `screenshots`: paths with spaces URL-encoded (`screenshots/foo%20bar.png`).
